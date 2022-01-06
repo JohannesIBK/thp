@@ -1,0 +1,56 @@
+.overlay {
+    position: absolute;
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.main-header {
+    margin-top: 10%;
+    color: white;
+    font-size: 46px;
+}
+
+.second-header {
+    color: white;
+}
+
+.full-screen {
+    position: absolute;
+    height: calc(100vh - 64px);
+    width: 100%;
+    @media screen and (max-width: 599px) {
+        height: calc(100vh - 56px);
+    }
+}
+
+.infos {
+    width: 100%;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    justify-content: center;
+
+    position: absolute;
+    bottom: 0;
+
+    a {
+        color: white;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.background {
+    background: url("../../../assets/background.jpg") no-repeat center center;
+    z-index: -1;
+    filter: blur(2px) brightness(30%);
+}
+
+.center-content {
+    text-align: center;
+}

@@ -1,0 +1,36 @@
+<main>
+  <section class="header">
+    <div class="navigation">
+      <h1 class="no-margin">Übersicht</h1>
+    </div>
+
+    <mat-divider></mat-divider>
+  </section>
+
+  <section *ngIf="loaded">
+    <mat-tab-group (selectedIndexChange)="selectTab($event)">
+      <mat-tab *ngFor="let phase of tournament.phases" [label]="phase.name">
+        <mat-tab-group (selectedIndexChange)="selectGroup($event)">
+          <mat-tab *ngFor="let group of counter(phase.groups); index as i" [label]="'Gruppe ' + groups[i]">
+            <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Spieler </th>
+                <td mat-cell *matCellDef="let element"> {{playerNameString(element.players)}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="points">
+                <th mat-header-cell *matHeaderCellDef> Punkte </th>
+                <td mat-cell *matCellDef="let element"> {{element.points}} </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columns"></tr>
+              <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+            </table>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-tab>
+    </mat-tab-group>
+  </section>
+</main>
+
+<app-spinner *ngIf="!loaded"></app-spinner>

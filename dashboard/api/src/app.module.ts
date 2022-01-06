@@ -34,7 +34,7 @@ import { ClientModule } from "./api/client/client.module";
       inject: [ConfigService],
       useFactory: async (configService: ConfigService<IConfig, true>) => ({
         type: "postgres",
-        // logging: !configService.get("PRODUCTION"),
+        logging: !configService.get("PRODUCTION"),
         url: configService.get("PG_URI"),
         entities: [UserEntity, TournamentEntity, PlayerEntity, LogEntity, TeamEntity, StatsEntity, PhaseEntity, PhaseEntryEntity],
         synchronize: !configService.get("PRODUCTION"),

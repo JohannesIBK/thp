@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { iCreateTournamentPayload, ITournament } from "../types/tournament.interface";
+import { ICreateTournamentPayload, ITournament } from "../types/tournament.interface";
 import { AuthService } from "./auth.service";
 
 @Injectable({
@@ -20,7 +20,7 @@ export class TournamentService {
       .pipe();
   }
 
-  create(payload: iCreateTournamentPayload): Observable<ITournament> {
+  create(payload: ICreateTournamentPayload): Observable<ITournament> {
     return this.http
       .put<ITournament>(`${environment.url}/tournament`, payload, {
         headers: { Authorization: this.authService.token },
