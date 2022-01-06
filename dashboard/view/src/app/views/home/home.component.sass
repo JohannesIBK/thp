@@ -1,0 +1,45 @@
+.background
+  background: center top no-repeat
+  background-size: cover
+  height: 100vh
+  z-index: -1
+  position: relative
+  transform: scale(1.1)
+  filter: blur(1px) brightness(80%)
+
+.content
+  text-align: center
+  z-index: 1
+  width: 90%
+  position: absolute
+  top: 30vh
+  left: 50%
+  transform: translate(-50%, -50%)
+  color: white
+
+  h1
+    font-size: 60px
+    line-height: 50px
+    display: inline
+
+    font-family: "lato", sans-serif
+
+    @media (max-width: 550px)
+      font-size: 30px
+
+footer
+  text-align: center
+  z-index: 1
+  width: 90%
+  position: absolute
+  bottom: -1vh
+  left: 50%
+  transform: translate(-50%, -50%)
+  color: #c3c3c3
+
+  p
+    margin-bottom: 0
+
+  a
+    text-decoration: none
+    color: #98a9ee

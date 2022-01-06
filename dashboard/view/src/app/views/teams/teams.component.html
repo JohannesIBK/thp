@@ -1,0 +1,95 @@
+<main>
+  <section class="header">
+    <div class="navigation">
+      <h1 class="no-margin">Teams</h1>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <ng-container *ngIf="tournament">
+          <button mat-menu-item>
+            <mat-icon>group_add</mat-icon>
+            <span>Spieler als Team hinzufügen</span>
+          </button>
+        </ng-container>
+      </mat-menu>
+    </div>
+
+    <mat-divider></mat-divider>
+  </section>
+
+  <section *ngIf="loaded">
+    <mat-grid-list [cols]="3">
+      <mat-grid-tile>
+        <div class="grid-item-wrapper">
+          <div class="players-container">
+            <h2>Spieler ohne Team</h2>
+
+            <div
+              id="allPlayers"
+              cdkDropList
+              [cdkDropListData]="players"
+              cdkDropListConnectedTo="teamPlayers"
+              class="dd-box"
+              (cdkDropListDropped)="drop($event)">
+              <div class="dd-item" *ngFor="let player of players" [cdkDragData]="player" cdkDrag>{{ player.name }}</div>
+            </div>
+          </div>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="grid-item-wrapper">
+          <div class="players-container">
+            <h2>Team</h2>
+
+            <div
+              *ngIf="currentTeam"
+              id="teamPlayers"
+              cdkDropList
+              [cdkDropListData]="currentTeam.players"
+              cdkDropListConnectedTo="allPlayers"
+              class="dd-box"
+              (cdkDropListDropped)="drop($event)"
+              [cdkDropListEnterPredicate]="canAddPlayerToTeam()">
+              <div class="dd-item" *ngFor="let player of currentTeam.players" cdkDrag [cdkDragData]="player">
+                {{ player.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="grid-item-wrapper">
+          <h2>Team auswählen</h2>
+
+          <div class="grid-content">
+            <mat-form-field appearance="fill">
+              <mat-label>Wähle ein Team aus</mat-label>
+              <mat-select [ngModel]="currentTeam" (selectionChange)="selectNewTeam($event)" [disabled]="saving">
+                <mat-option [value]="undefined">Kein Team</mat-option>
+                <mat-option *ngFor="let team of teams" [value]="team">{{ playerNameString(team.players) }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="accent" (click)="addTeam()" [disabled]="saving">Team hinzufügen</button>
+
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="saveCurrentTeam()"
+              [disabled]="saving || !enableSaveButton()"
+              class="saving-button">
+              <div class="items">
+                Team speichern
+                <mat-spinner [diameter]="15" *ngIf="saving" class="add-spinner"></mat-spinner>
+              </div>
+            </button>
+          </div>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </section>
+</main>
+
+<app-spinner *ngIf="!loaded"></app-spinner>

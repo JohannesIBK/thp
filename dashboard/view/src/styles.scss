@@ -1,0 +1,41 @@
+@font-face {
+    font-family: Lato;
+    src: url("assets/font/mc.ttf") format("truetype");
+}
+
+body {
+    margin: 0;
+}
+
+main {
+    width: 90%;
+    margin: 5vh auto;
+    color: white;
+}
+
+.no-margin {
+    margin: 0 !important;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.header {
+    .navigation {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    margin-bottom: 1rem;
+}
+
+.align-end {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}

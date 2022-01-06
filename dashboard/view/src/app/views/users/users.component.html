@@ -1,0 +1,45 @@
+<main>
+  <section class="header">
+    <div class="navigation">
+      <h1 class="no-margin">Spieler</h1>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openCreateUserDialog()">
+          <mat-icon>person_add</mat-icon>
+          <span>User hinzufügen</span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <mat-divider></mat-divider>
+  </section>
+
+  <section *ngIf="loaded">
+    <mat-table [dataSource]="users" class="mat-elevation-z8">
+      <ng-container matColumnDef="username">
+        <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
+        <mat-cell *matCellDef="let user"> {{ user.username }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="permission">
+        <mat-header-cell *matHeaderCellDef> Rang </mat-header-cell>
+        <mat-cell *matCellDef="let user"> {{ permissionToName(user.permission) }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="remove">
+        <mat-header-cell *matHeaderCellDef> Löschen </mat-header-cell>
+        <mat-cell *matCellDef="let user">
+          <button mat-icon-button [disabled]="user.id === currentUser?.id" (click)="openDeleteUserDialog(user.id)">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    </mat-table>
+  </section>
+</main>

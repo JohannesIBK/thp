@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>Team disqualifizieren</h1>
+<div mat-dialog-content>
+  <p>
+    Wenn du ein Team disqualifizierst, werden keine Punkte mehr gezählt, das Team wird speziell markiert und in der Wertung ganz unten
+    angezeigt.
+  </p>
+
+  <mat-form-field class="full-width" appearance="fill">
+    <mat-label>Grund</mat-label>
+    <textarea matInput placeholder="Cheating" [formControl]="reasonInput"></textarea>
+  </mat-form-field>
+</div>
+<mat-dialog-actions class="align-end">
+  <button mat-button [mat-dialog-close]="" cdkFocusInitial>Nein</button>
+
+  <button color="warn" mat-raised-button [disabled]="reasonInput.invalid" (click)="disqualifyTeam()">
+    <div class="button-content">
+      Disqualifizieren
+      <mat-spinner [diameter]="15" *ngIf="loading" class="spinner"></mat-spinner>
+    </div>
+  </button>
+</mat-dialog-actions>

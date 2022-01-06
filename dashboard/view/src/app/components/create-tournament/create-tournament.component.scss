@@ -1,0 +1,49 @@
+.info-input {
+    width: 20rem;
+}
+
+.info-form {
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.text-field {
+    width: 100%;
+}
+
+.phase-add-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.first-field {
+    margin-right: 0.25rem;
+}
+
+.last-field {
+    margin-left: 0.25rem;
+}
+
+.basic-fields {
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.phase-field {
+    margin-right: 0.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.phase-text-field {
+    margin-top: 1.5rem;
+}
+
+table {
+    width: 100%;
+}
+
+.element-row td {
+    border-bottom-width: 0;
+}

@@ -1,0 +1,23 @@
+<h1 mat-dialog-title class="no-margin">Spieler hinzufügen</h1>
+<p class="dialog-info">
+  Öffne dieses Menu mit <b>+</b><br />
+  Bestätige mit <b>Enter</b>
+</p>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="form">
+    <mat-form-field class="full-width" appearance="fill" *ngFor="let i of [].constructor(tournament.teamSize)">
+      <mat-label>Minecraft-Name</mat-label>
+      <input matInput cdkFocusInitial [formControl]="names[i]" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="align-end">
+  <button mat-button [mat-dialog-close]="null">Abbrechen</button>
+  <button color="accent" mat-button [disabled]="form.invalid" (click)="addPlayers()">
+    <div class="add-button-content">
+      Hinzufügen
+      <mat-spinner [diameter]="15" *ngIf="loading" class="add-spinner"></mat-spinner>
+    </div>
+  </button>
+</mat-dialog-actions>

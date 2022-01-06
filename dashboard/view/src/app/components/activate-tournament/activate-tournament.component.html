@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Turnier aktivieren</h1>
+<div mat-dialog-content>
+  <p>Ein aktives Turnier kann nicht mehr bearbeitet werden.</p>
+  <p>Ist ein Turnier nicht aktiviert, werden keine Kills gezählt und es wird nicht erkannt.</p>
+</div>
+<mat-dialog-actions class="align-end">
+  <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Nein</button>
+  <button mat-raised-button color="warn" (click)="activateTournament()">Ja</button>
+</mat-dialog-actions>

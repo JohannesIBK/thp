@@ -1,0 +1,13 @@
+.add-button-content {
+    display: flex;
+    align-items: center;
+
+    .add-spinner {
+        margin-left: 0.5rem;
+    }
+}
+
+.dialog-info {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+}

@@ -1,0 +1,30 @@
+<h1 mat-dialog-title>Neuen User erstellen</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Username</mat-label>
+      <input matInput [formControl]="username" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Passwort</mat-label>
+      <input matInput [formControl]="password" type="password" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Berechtigung</mat-label>
+      <mat-select [formControl]="permission">
+        <mat-option [value]="Permission.USER">User</mat-option>
+        <mat-option [value]="Permission.HELPER">Helper</mat-option>
+        <mat-option [value]="Permission.ADMIN" *ngIf="userPermission === Permission.HEAD">Admin</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions class="align-end">
+  <button mat-button [mat-dialog-close]="null">Abbrechen</button>
+  <button color="accent" mat-stroked-button [disabled]="form.invalid" (click)="createUser()">
+    <div class="add-button-content">
+      Hinzufügen
+      <mat-spinner [diameter]="15" *ngIf="loading" class="add-spinner"></mat-spinner>
+    </div>
+  </button>
+</div>

@@ -1,0 +1,71 @@
+import { Component, Inject } from "@angular/core";
+import { FormControl, FormGroup, Validators as V } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { ITournament } from "../../types/tournament.interface";
+import { HttpErrorResponse } from "@angular/common/http";
+import { MinetoolsService } from "../../services/minetools.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { IPlayer } from "../../types/player.interface";
+
+@Component({
+  selector: "app-add-player-teams",
+  templateUrl: "./add-player-team.component.html",
+  styleUrls: ["./add-player-team.component.scss"],
+})
+export class AddPlayerTeamComponent {
+  loading = false;
+  players: IPlayer[] = [];
+  names: Record<number, FormControl> = {};
+  form: FormGroup;
+
+  constructor(
+    private readonly dialogRef: MatDialogRef<AddPlayerTeamComponent>,
+    @Inject(MAT_DIALOG_DATA) public readonly tournament: ITournament,
+    private readonly minetoolsService: MinetoolsService,
+    private readonly snackBar: MatSnackBar,
+  ) {
+    for (let i = 0; i < tournament.teamSize; i++) {
+      this.names[i] = new FormControl("", [V.required, V.minLength(3), V.maxLength(16)]);
+    }
+
+    this.form = new FormGroup(this.names);
+  }
+
+  addPlayers(): void {
+    if (this.form.invalid) return;
+
+    this.loading = true;
+
+    const players = [];
+
+    for (const key in this.names) {
+      players.push(this.names[key].value);
+    }
+
+    this.resolvePlayers(players);
+  }
+
+  resolvePlayers(players: string[]): void {
+    if (!players.length) {
+      this.dialogRef.close(players);
+    }
+
+    const name = players[0];
+
+    this.minetoolsService.getByCache(name).subscribe({
+      next: (player) => {
+        if (player) {
+          this.players.push({ name: player.name, uuid: player.uuid });
+          players.shift();
+          this.resolvePlayers(players);
+        } else {
+          this.snackBar.open(`Der Spieler ${name} wurde nicht gefunden`, "OK", { duration: 3000 });
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.snackBar.open(`Ein Problem mit der MineTools API ist aufgetreten. Code: ${error.status}`);
+      },
+    });
+  }
+}

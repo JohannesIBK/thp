@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Teams Upload Preview</h1>
+<mat-dialog-content class="mat-typography">
+  <span style="visibility: hidden"> https://www.youtube.com/watch?v=dQw4w9WgXcQ -> https://twitter.com/johannesibk </span>
+
+  <table [dataSource]="teams" class="mat-elevation-z8" mat-table>
+    <ng-container matColumnDef="username">
+      <th *matHeaderCellDef mat-header-cell>Usernamen</th>
+      <td *matCellDef="let element" mat-cell>{{ element.username.join(", ") }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="groups">
+      <th *matHeaderCellDef mat-header-cell>Gruppe</th>
+      <td *matCellDef="let element" mat-cell>{{ element.group }}</td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="tableColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: tableColumns" mat-row></tr>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions class="align-end">
+  <button mat-button [mat-dialog-close]="false">Abbrechen</button>
+  <button [mat-dialog-close]="teams.data" color="primary" mat-stroked-button>Erstellen</button>
+</mat-dialog-actions>

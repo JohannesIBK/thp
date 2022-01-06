@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Team qualifizieren</h1>
+<div mat-dialog-content>
+  <p>Wenn du ein Team qualifizierst, kann es wieder ganz normal mitspielen.</p>
+</div>
+<mat-dialog-actions class="align-end">
+  <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Nein</button>
+
+  <button color="warn" mat-raised-button (click)="qualifyTeam()">
+    <div class="button-content">
+      Qualifizieren
+      <mat-spinner [diameter]="15" *ngIf="loading" class="spinner"></mat-spinner>
+    </div>
+  </button>
+</mat-dialog-actions>

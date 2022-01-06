@@ -1,0 +1,32 @@
+<main>
+  <div class="download">
+    <a class="download-button" color="primary" download href="/client-download" mat-raised-button>
+      <mat-icon> get_app</mat-icon>
+      Download
+    </a>
+  </div>
+
+  <div class="commands">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Getting Started</mat-panel-title>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Commands</mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>
+          <span class="cmd">/fa -r-start-&lt;RundenID&gt;</span> <br />Startet eine Runde. Die RundenID erhälst du von einem Leiter.
+        </p>
+        <p><span class="cmd">/fa -r-end</span> <br />Beendet eine Runde. Weitere Kills & Wins werden nicht gezählt.</p>
+        <p>
+          <span class="cmd">/fa -r-restart</span> <br />Löscht alle Daten von der derzeitigen Runde aus dem Excel Sheet.
+          <span class="warn">Kann nicht rückgängig gemacht werden!</span>
+        </p>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</main>

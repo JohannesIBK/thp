@@ -1,0 +1,69 @@
+<mat-toolbar class="navbar" color="primary">
+  <a [disableRipple]="true" class="nav-main" mat-button routerLink="">
+    <span class="nav-title">THP</span>
+  </a>
+  <span class="nav-spacer"></span>
+
+  <ng-container *ngIf="user && user.permission >= Permission.ADMIN">
+    <a routerLink="/phases">
+      <button class="nav-icon login-icon" mat-button>
+        <mat-icon>view_agenda</mat-icon>
+        <span class="hide-small"> Phasen </span>
+      </button>
+    </a>
+
+    <a routerLink="/management">
+      <button class="nav-icon login-icon" mat-button>
+        <mat-icon>source</mat-icon>
+        <span class="hide-small"> Verwaltung </span>
+      </button>
+    </a>
+
+    <a routerLink="/user">
+      <button class="nav-icon login-icon" mat-button>
+        <mat-icon>manage_accounts</mat-icon>
+        <span class="hide-small"> User </span>
+      </button>
+    </a>
+
+    <a routerLink="/teams">
+      <button class="nav-icon login-icon" mat-button>
+        <mat-icon>groups</mat-icon>
+        <span class="hide-small"> Teams </span>
+      </button>
+    </a>
+
+    <a routerLink="/players">
+      <button class="nav-icon login-icon" mat-button>
+        <mat-icon>contacts</mat-icon>
+        <span class="hide-small"> Spieler </span>
+      </button>
+    </a>
+
+    <a routerLink="/tournament">
+      <button class="nav-icon login-icon" mat-button>
+        <mat-icon>emoji_events</mat-icon>
+        <span class="hide-small"> Tournament </span>
+      </button>
+    </a>
+
+    <a routerLink="/login">
+      <button *ngIf="!user" class="nav-icon login-icon" mat-button>
+        <mat-icon>login</mat-icon>
+        <span> Login </span>
+      </button>
+    </a>
+  </ng-container>
+
+  <button *ngIf="user" [matMenuTriggerFor]="menu" class="user-info" mat-button>
+    <mat-icon>person</mat-icon>
+    <span class="hide-small"> {{ user.username }} </span>
+  </button>
+
+  <mat-menu #menu="matMenu">
+    <a routerLink="/change-password">
+      <button mat-menu-item>Passwort ändern</button>
+    </a>
+    <button (click)="logout()" mat-menu-item>Logout</button>
+  </mat-menu>
+</mat-toolbar>

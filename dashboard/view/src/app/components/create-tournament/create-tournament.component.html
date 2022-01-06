@@ -1,0 +1,94 @@
+<h1 mat-dialog-title>Turnier erstellen</h1>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="infoForm" class="info-form">
+    <div class="basic-fields">
+      <mat-form-field class="info-input first-field">
+        <mat-label>Name</mat-label>
+        <input [formControl]="name" matInput maxlength="64" minlength="3" />
+      </mat-form-field>
+
+      <mat-form-field class="info-input last-field">
+        <mat-label>Teamgröße</mat-label>
+        <input [formControl]="teamSize" matInput max="4" min="1" type="number" />
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field class="text-field" appearance="fill">
+        <mat-label>Beschreibung</mat-label>
+        <textarea matInput [formControl]="description" cdkTextareaAutosize></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+
+  <br />
+  <h2 class="no-margin">Phasen</h2>
+  <p>Phasen sind die verschiedenen Stadien im Turnier. Häufige Phasen sind Qualifizierung, KO-Phase und Finale.</p>
+  <form (ngSubmit)="addPhase()" [formGroup]="phaseForm" class="phase-form">
+    <div class="basic-fields">
+      <mat-form-field class="info-input phase-field">
+        <mat-label>Name</mat-label>
+        <input [formControl]="phaseName" matInput />
+        <mat-hint>Name wird in der Übersicht angezeigt.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="info-input phase-field">
+        <mat-label>Kürzel</mat-label>
+        <input [formControl]="phaseAcronym" matInput />
+        <mat-hint>Kürzel wird für das Programm zum Kills zählen verwendet.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="info-input phase-field">
+        <mat-label>Teams</mat-label>
+        <input [formControl]="phaseTeams" matInput type="number" />
+        <mat-hint>Die Anzahl an Teams, die pro Runde spielen können (Map-Größe).</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="info-input phase-field">
+        <mat-label>Gruppen</mat-label>
+        <input [formControl]="phaseGroups" matInput type="number" />
+        <mat-hint>Anzahl der Gruppen in dieser Phase.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="info-input phase-field">
+        <mat-label>Runden</mat-label>
+        <input [formControl]="phaseRounds" matInput type="number" />
+        <mat-hint>Die Anzahl an Runden die diese Phase besitzt.</mat-hint>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field class="phase-text-field text-field" appearance="fill">
+        <mat-label>Beschreibung</mat-label>
+        <textarea matInput [formControl]="phaseDescription" cdkTextareaAutosize></textarea>
+        <mat-hint>Wird in der Übersicht angezeigt, zB Namen der Maps</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="phase-add-button-wrapper">
+      <button mat-stroked-button color="accent" type="submit" [disabled]="!validPhaseForm">Hinzufügen</button>
+    </div>
+  </form>
+
+  <table mat-table [dataSource]="phases" multiTemplateDataRows class="mat-elevation-z8">
+    <ng-container matColumnDef="{{ column }}" *ngFor="let column of columns">
+      <th mat-header-cell *matHeaderCellDef>{{ columnNames[column] }}</th>
+      <!--      {{ element[column] || "X" }}-->
+      <td mat-cell *matCellDef="let element">
+        <div *ngIf="element[column] !== undefined; then value; else remove"></div>
+        <ng-template #value>{{ element[column] }}</ng-template>
+        <ng-template #remove>
+          <span class="cursor-pointer" (click)="removePhase(element.acronym)">
+            <mat-icon>delete_forever</mat-icon>
+          </span>
+        </ng-template>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let element; columns: columns" class="element-row"></tr>
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions class="align-end">
+  <button mat-button [mat-dialog-close]="null">Abbrechen</button>
+  <button [mat-dialog-close]="getData()" color="primary" mat-raised-button>Erstellen</button>
+</mat-dialog-actions>

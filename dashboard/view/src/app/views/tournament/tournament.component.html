@@ -1,0 +1,77 @@
+<main>
+  <section class="header">
+    <div class="navigation">
+      <h1 class="no-margin">Turniere</h1>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <ng-container *ngIf="tournament">
+          <button mat-menu-item (click)="openActivateDialog()" [disabled]="tournament.active">
+            <mat-icon>flash_on</mat-icon>
+            <span>Aktivieren</span>
+          </button>
+          <button mat-menu-item [disabled]="tournament?.active">
+            <mat-icon>edit</mat-icon>
+            <span>Bearbeiten</span>
+          </button>
+          <button mat-menu-item (click)="openDeleteDialog()">
+            <mat-icon>delete_forever</mat-icon>
+            <span>Löschen</span>
+          </button>
+        </ng-container>
+      </mat-menu>
+    </div>
+
+    <mat-divider></mat-divider>
+  </section>
+
+  <section class="content" *ngIf="tournament && loaded">
+    <h2>{{ tournament.name }}</h2>
+    <div class="tournament-info">
+      <mat-grid-list cols="5" rowHeight="25px">
+        <mat-grid-tile><b>ID</b></mat-grid-tile>
+        <mat-grid-tile><b>Teams-Größe</b></mat-grid-tile>
+        <mat-grid-tile><b>Phasen</b></mat-grid-tile>
+        <mat-grid-tile><b>Spieleranzahl</b></mat-grid-tile>
+        <mat-grid-tile><b>Läuft derzeit</b></mat-grid-tile>
+
+        <mat-grid-tile>{{ tournament.id }}</mat-grid-tile>
+        <mat-grid-tile>{{ tournament.teamSize }}</mat-grid-tile>
+        <mat-grid-tile>{{ tournament.phases.length }}</mat-grid-tile>
+        <mat-grid-tile>{{ phases[0].groups * phases[0].teams }}</mat-grid-tile>
+        <mat-grid-tile>{{ tournament.active ? "Ja" : "Nein" }}</mat-grid-tile>
+      </mat-grid-list>
+
+      <div class="tournament-description">
+        <span class="tournament-info-header">Beschreibung</span><br />
+        <span class="tournament-info-text">{{ tournament.description }}</span>
+      </div>
+    </div>
+
+    <div class="tournament-phases">
+      <h2 class="no-margin">Phasen des Turniers</h2>
+
+      <mat-grid-list cols="6" rowHeight="25px">
+        <mat-grid-tile><b>Name</b></mat-grid-tile>
+        <mat-grid-tile><b>Kürzel</b></mat-grid-tile>
+        <mat-grid-tile><b>Gruppen</b></mat-grid-tile>
+        <mat-grid-tile><b>Teams</b></mat-grid-tile>
+        <mat-grid-tile><b>Runden</b></mat-grid-tile>
+        <mat-grid-tile><b>Anzahl der Spieler</b></mat-grid-tile>
+
+        <div *ngFor="let phase of phases">
+          <mat-grid-tile>{{ phase.name }}</mat-grid-tile>
+          <mat-grid-tile>{{ phase.acronym }}</mat-grid-tile>
+          <mat-grid-tile>{{ phase.groups }}</mat-grid-tile>
+          <mat-grid-tile>{{ phase.teams }}</mat-grid-tile>
+          <mat-grid-tile>{{ phase.rounds }}</mat-grid-tile>
+          <mat-grid-tile>{{ phase.teams * phase.groups }}</mat-grid-tile>
+        </div>
+      </mat-grid-list>
+    </div>
+  </section>
+</main>
+
+<app-spinner *ngIf="!loaded"></app-spinner>

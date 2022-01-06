@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Turnier löschen</h1>
+<div mat-dialog-content>
+  <p>
+    Willst du das Turnier wirklich löschen? Alle Daten, inklusive Spieldaten wie Kills, Wins und anderes wird unwiderruflich gelöscht.
+  </p>
+</div>
+<mat-dialog-actions class="align-end">
+  <button mat-button (click)="deleteTournament()">Ja</button>
+  <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Nein</button>
+</mat-dialog-actions>

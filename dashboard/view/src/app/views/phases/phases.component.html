@@ -1,0 +1,84 @@
+<main>
+  <section class="header">
+    <div class="navigation">
+      <h1 class="no-margin">Phasen</h1>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <ng-container *ngIf="tournament">
+          <button mat-menu-item [disabled]="!phase" (click)="deletePhaseEntries()">
+            <mat-icon>delete_sweep</mat-icon>
+            <span>Phase zurücksetzen</span>
+          </button>
+        </ng-container>
+      </mat-menu>
+    </div>
+
+    <mat-divider></mat-divider>
+  </section>
+
+  <section *ngIf="loaded === 3" class="overview">
+    <div class="select-section">
+      <mat-form-field appearance="fill" class="phase-select">
+        <mat-label>Phase auswählen</mat-label>
+        <mat-select [(ngModel)]="phase" (selectionChange)="selectPhase($event)">
+          <mat-option *ngFor="let phase of tournament.phases" [value]="phase">
+            {{ phase.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="phase-select">
+        <mat-label>Stats anzeigen für</mat-label>
+        <mat-select [(ngModel)]="showStatsFor" (selectionChange)="changeStatsView()">
+          <mat-option [value]="0">Ausgewählte Phase</mat-option>
+          <mat-option *ngFor="let phase of tournament.phases" [value]="phase">
+            {{ phase.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="accent" (click)="sortTeams()" [disabled]="!phase">Teams nach Punkten sortieren</button>
+
+      <div class="grid-item-wrapper">
+        <h2>Teams</h2>
+
+        <div
+          id="all"
+          cdkDropList
+          [cdkDropListData]="unrankedTeams"
+          [cdkDropListConnectedTo]="getConnectedGroups()"
+          class="dd-box"
+          (cdkDropListDropped)="drop($event)">
+          <div class="dd-item" *ngFor="let team of unrankedTeams" [cdkDragData]="team" cdkDrag>
+            {{ playerNameString(team.players) }}
+            <span>({{ team.points }})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-section">
+      <div class="grid-item-wrapper" *ngFor="let group of getGroups()">
+        <h2>Gruppe {{ group }}</h2>
+
+        <div
+          [id]="group"
+          cdkDropList
+          [cdkDropListData]="rankedTeams.get(group)!"
+          [cdkDropListConnectedTo]="getConnectedGroups()"
+          [cdkDropListEnterPredicate]="canAddPlayerToPhase(group)"
+          class="dd-box"
+          (cdkDropListDropped)="drop($event)">
+          <div class="dd-item" *ngFor="let team of rankedTeams.get(group)!" [cdkDragData]="team" cdkDrag>
+            {{ playerNameString(team.players) }}
+            <span>({{ team.points }})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-spinner *ngIf="loaded !== 3"></app-spinner>

@@ -1,0 +1,75 @@
+<main>
+  <section class="header">
+    <div class="navigation">
+      <h1 class="no-margin">Spieler</h1>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <ng-container *ngIf="tournament">
+          <button mat-menu-item (click)="openAddPlayerDialog()">
+            <mat-icon>person_add_alt_1</mat-icon>
+            <span>Spieler hinzufügen</span>
+          </button>
+          <button mat-menu-item [disabled]="tournament.teamSize === 1">
+            <mat-icon>group_add</mat-icon>
+            <span>Spieler als Team hinzufügen</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>group_add</mat-icon>
+            <span>Spieler über CSV hinzufügen</span>
+          </button>
+        </ng-container>
+      </mat-menu>
+    </div>
+
+    <mat-divider></mat-divider>
+  </section>
+
+  <section class="content" *ngIf="loaded">
+    <div class="players-add"></div>
+
+    <div class="dd-box">
+      <mat-grid-list [cols]="10" rowHeight="25px">
+        <mat-grid-tile colspan="1">
+          <div class="grid-item-wrapper">Nr.</div>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="2">
+          <div class="grid-item-wrapper">Name</div>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="4">
+          <div class="grid-item-wrapper">UUID</div>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="2">
+          <div class="grid-item-wrapper">Team</div>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="1">
+          <div class="grid-item-wrapper">Löschen</div>
+        </mat-grid-tile>
+
+        <ng-container *ngFor="let player of players; index as index">
+          <mat-grid-tile colspan="1">
+            <div class="grid-item-wrapper">{{ index + 1 }}</div>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="2">
+            <div class="grid-item-wrapper">{{ player.name }}</div>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="4">
+            <div class="grid-item-wrapper">{{ player.uuid }}</div>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="2">
+            <div class="grid-item-wrapper">{{ player.team ? player.team : "Kein Team" }}</div>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="1">
+            <div class="grid-item-wrapper">
+              <mat-icon (click)="deletePlayer(player.uuid)" class="cursor-pointer">delete_forever</mat-icon>
+            </div>
+          </mat-grid-tile>
+        </ng-container>
+      </mat-grid-list>
+    </div>
+  </section>
+</main>
+
+<app-spinner *ngIf="!loaded"></app-spinner>
