@@ -24,7 +24,7 @@ export class StatsEntity {
   @Column("int")
   userId: number;
 
-  @Column("date")
+  @Column("timestamptz")
   time: Date;
 
   constructor(payload?: IOptionalStats) {

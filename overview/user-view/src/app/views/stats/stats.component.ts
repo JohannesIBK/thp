@@ -56,7 +56,7 @@ export class StatsComponent implements OnInit {
   openViewLogComponent(phase: string, teamId: number): void {
     const stats = this.stats.get(phase)!;
     const logs = stats.get(teamId);
-    this.dialog.open(ViewLogsComponent, { data: logs });
+    this.dialog.open(ViewLogsComponent, { data: logs, width: "90vw" });
   }
 
   subscribeToStats() {
