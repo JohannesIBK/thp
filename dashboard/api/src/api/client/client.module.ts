@@ -4,6 +4,7 @@ import { PlayerEntity } from "../../database/player.entity";
 import { StatsEntity } from "../../database/stats.entity";
 import { UserEntity } from "../../database/user.entity";
 import { PlayerService } from "../../services/player.service";
+import { SocketService } from "../../services/socket.service";
 import { StatsService } from "../../services/stats.service";
 import { UserService } from "../../services/user.service";
 import { ClientController } from "./client.controller";
@@ -11,6 +12,6 @@ import { ClientController } from "./client.controller";
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, StatsEntity, PlayerEntity])],
   controllers: [ClientController],
-  providers: [UserService, StatsService, PlayerService],
+  providers: [UserService, StatsService, PlayerService, SocketService],
 })
 export class ClientModule {}

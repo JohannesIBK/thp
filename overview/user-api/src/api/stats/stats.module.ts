@@ -12,6 +12,7 @@ import { StatsService } from "../../services/stats.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { StatsController } from "./stats.controller";
+import { StatsGateway } from "./stats.gateway";
 
 @Module({
   imports: [
@@ -26,6 +27,6 @@ import { StatsController } from "./stats.controller";
     ]),
   ],
   controllers: [StatsController],
-  providers: [TournamentService, PhaseService, TeamService, StatsService, PlayerService],
+  providers: [TournamentService, PhaseService, TeamService, StatsService, PlayerService, StatsGateway],
 })
 export class StatsModule {}

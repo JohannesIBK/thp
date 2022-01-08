@@ -12,7 +12,6 @@ async function bootstrap() {
   const config = app.get<ConfigService<IConfig, true>>(ConfigService);
 
   app.setGlobalPrefix("api");
-  // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.useGlobalPipes(
     new ValidationPipe({
       validatorPackage: require("@nestjs/class-validator"),
@@ -22,6 +21,8 @@ async function bootstrap() {
 
   if (!config.get("PRODUCTION")) {
     app.enableCors({ origin: "http://localhost:4200", credentials: true });
+  } else {
+    app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   }
 
   await app.register(fastifyCookie, {

@@ -8,12 +8,13 @@ import { PhaseDto } from "../../dto/phase.dto";
 import { QueryTeamDto } from "../../dto/query-team.dto";
 import { ResetRoundDto } from "../../dto/reset-round.dto";
 import { PermissionEnum } from "../../enums/permission.enum";
+import { SocketService } from "../../services/socket.service";
 import { StatsService } from "../../services/stats.service";
 import { IJwtUser } from "../../types/jwt-user.interface";
 
 @Controller("stats")
 export class StatsController {
-  constructor(private readonly statsService: StatsService) {}
+  constructor(private readonly statsService: StatsService, private readonly socketService: SocketService) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
@@ -44,7 +45,8 @@ export class StatsController {
       time: new Date(),
     });
 
-    await this.statsService.saveLog(stat);
+    const entity = await this.statsService.saveLog(stat);
+    this.socketService.sendStats(entity);
     return await this.statsService.findLogs({ teamId: payload.teamId, phase: payload.phase });
   }
 

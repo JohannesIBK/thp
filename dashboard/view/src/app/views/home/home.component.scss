@@ -1,0 +1,60 @@
+.overlay {
+  position: absolute;
+  z-index: 1;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.main-header {
+  margin-top: 10%;
+  color: white;
+  font-size: 46px;
+  font-weight: bolder;
+  letter-spacing: 3px;
+  text-shadow: 5px 5px 4px rgba(0,0,0, 0.5);
+}
+
+.second-header {
+  color: white;
+}
+
+.full-screen {
+  position: absolute;
+  height: calc(100vh - 64px);
+  width: 100%;
+  @media screen and (max-width: 599px) {
+    height: calc(100vh - 56px);
+  }
+}
+
+.infos {
+  padding: 0;
+  width: 100%;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  justify-content: center;
+
+  position: absolute;
+  bottom: 0;
+
+  a {
+    color: white;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.background {
+  background: url("../../../assets/background/gomme_lobby.png") no-repeat;
+  z-index: -1;
+  filter: blur(1px) brightness(80%);
+}
+
+.center-content {
+  text-align: center;
+}

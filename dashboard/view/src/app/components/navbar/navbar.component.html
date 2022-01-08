@@ -46,14 +46,14 @@
         <span class="hide-small"> Tournament </span>
       </button>
     </a>
-
-    <a routerLink="/login">
-      <button *ngIf="!user" class="nav-icon login-icon" mat-button>
-        <mat-icon>login</mat-icon>
-        <span> Login </span>
-      </button>
-    </a>
   </ng-container>
+
+  <a routerLink="/login">
+    <button *ngIf="!user" class="nav-icon login-icon" mat-button>
+      <mat-icon>login</mat-icon>
+      <span> Login </span>
+    </button>
+  </a>
 
   <button *ngIf="user" [matMenuTriggerFor]="menu" class="user-info" mat-button>
     <mat-icon>person</mat-icon>

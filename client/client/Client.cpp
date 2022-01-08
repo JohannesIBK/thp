@@ -5,10 +5,8 @@
 
 #include <iostream>
 #include <iostream>
-#include <cwchar>
 #include <windows.h>
 #include <Lmcons.h>
-#include <clocale>
 #include <regex>
 #include "curl/curl.h"
 #include "rapidjson/document.h"
@@ -91,7 +89,6 @@ public:
         if (d.HasMember("token")) {
             Value& token = d["token"];
             this->g_token = token.GetString();
-            cout << "Token: " << endl;
             return true;
         }
         else if (d.HasMember("message")) {
@@ -273,10 +270,15 @@ public:
         bool skip_line = false;
         string line;
 
-        while ((ch = fgetwc(log_file)) != WEOF) {
+        while ((ch = fgetc(log_file)) != WEOF) {
             str_len++;
 
-            if (str_len == 1 && ch != '[') skip_line = true;
+            if (str_len == 1 && ch != '[') { 
+                printf("%c\n", ch);
+                skip_line = true;
+            }
+
+            
 
             if (ch == '\n') {
                 if (!skip_line) {
@@ -290,6 +292,7 @@ public:
                         actions.push_back(line);
                     }
                 }
+
                 skip_line = false;
                 str_len = 0;
                 line.clear();
@@ -307,7 +310,7 @@ public:
 
 class InputHandler {
 public:
-    bool uses_bac;
+    bool uses_bac = false;
 
     static vector<string> GetLoginCredentials() {
         vector<string> credentials;
@@ -339,8 +342,6 @@ public:
 
 
 int main() {
-    setlocale(LC_CTYPE, "de_DE.UTF-8");
-
     regex KILL_REGEX = regex("([a-zA-Z0-9_]{3,16}) wurde von ([a-zA-Z0-9_]{3,16})");
     regex WIN_REGEX = regex("([a-zA-Z0-9_]{3,16}) hat SkyWars gewonnen");
     regex STATUS_REGEX = regex(R"(\[Freunde\] Spieler f.r -r-(((start)-([a-zA-Z0-9]{1,16})-([0-9]))|(stop)) nicht gefunden)");
@@ -377,7 +378,7 @@ int main() {
     string buffer;
 
     while (true) {
-        Sleep(100);
+        Sleep(500);
         minecraft.ReadMinecraftChat();
         vector<string> skywars = minecraft.GetSkyWars();
         vector<string> actions = minecraft.GetActions();

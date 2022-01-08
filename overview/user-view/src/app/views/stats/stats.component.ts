@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ApiService } from "../../api.service";
+import { ApiService } from "../../services/api.service";
+import { SocketService } from "../../services/socket.service";
 import { MatTableDataSourceWithCustomSort } from "../../sort-table-data-source";
 import { IPhaseEntry } from "../../types/phase.interface";
 import { IPlayer } from "../../types/player.interface";
@@ -23,9 +24,14 @@ export class StatsComponent implements OnInit {
   groups = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   tournament!: ITournament;
   loaded = false;
+  updates = false;
   columns = ["name", "points"];
 
-  constructor(private readonly apiService: ApiService, private readonly snackBar: MatSnackBar) {}
+  constructor(
+    private readonly socketService: SocketService,
+    private readonly apiService: ApiService,
+    private readonly snackBar: MatSnackBar,
+  ) {}
 
   ngOnInit(): void {
     this.apiService.fetchTournament().subscribe({
@@ -41,6 +47,25 @@ export class StatsComponent implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.snackBar.open(error.error.message, "OK", { duration: 3000 });
       },
+    });
+  }
+
+  subscribeToStats() {
+    this.socketService.connectSocket();
+    this.updates = true;
+    this.socketService.onMessage().subscribe((stats) => {
+      const map = this.stats.get(stats.phase);
+      if (map) {
+        const teamStats = map.get(stats.teamId) || [];
+        teamStats.push(stats);
+        map.set(stats.teamId, teamStats);
+      }
+
+      let team = this.currentTeams.find((t) => t.id === stats.teamId);
+      if (team) {
+        team.points = team.points + stats.points;
+        this.teams = [...this.teams.filter((t) => t.id !== stats.teamId), team];
+      }
     });
   }
 

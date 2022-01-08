@@ -9,6 +9,7 @@ import { AddKillDto } from "../../dto/add-kill.dto";
 import { AddWinDto } from "../../dto/add-win.dto";
 import { LoginDto } from "../../dto/login.dto";
 import { PlayerService } from "../../services/player.service";
+import { SocketService } from "../../services/socket.service";
 import { StatsService } from "../../services/stats.service";
 import { UserService } from "../../services/user.service";
 import { IJwtUser } from "../../types/jwt-user.interface";
@@ -19,6 +20,7 @@ export class ClientController {
     private readonly userService: UserService,
     private readonly statsService: StatsService,
     private readonly playerService: PlayerService,
+    private readonly socketService: SocketService,
   ) {}
 
   @Post("login")
@@ -62,7 +64,8 @@ export class ClientController {
       time: new Date(),
     });
 
-    await this.statsService.saveLog(stat);
+    const entity = await this.statsService.saveLog(stat);
+    this.socketService.sendStats(entity);
   }
 
   @Post("win")
@@ -88,6 +91,7 @@ export class ClientController {
       time: new Date(),
     });
 
-    await this.statsService.saveLog(stat);
+    const entity = await this.statsService.saveLog(stat);
+    this.socketService.sendStats(entity);
   }
 }

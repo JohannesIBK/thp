@@ -26,6 +26,7 @@
 }
 
 .infos {
+    padding: 0;
     width: 100%;
     color: white;
     display: flex;
@@ -46,9 +47,9 @@
 }
 
 .background {
-    background: url("../../../assets/background.jpg") no-repeat center center;
+    background: url("../../../assets/lobby_sw.png") no-repeat;
     z-index: -1;
-    filter: blur(2px) brightness(30%);
+    filter: blur(1px) brightness(80%);
 }
 
 .center-content {
