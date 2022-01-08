@@ -13,7 +13,6 @@ import { TournamentModule } from "./api/tournament/tournament.module";
 import { TournamentEntity } from "./database/tournament.entity";
 import { PlayerModule } from "./api/player/player.module";
 import { PlayerEntity } from "./database/player.entity";
-import { LogEntity } from "./database/log.entity";
 import { TeamEntity } from "./database/team.entity";
 import { StatsEntity } from "./database/stats.entity";
 import { PhaseEntity } from "./database/phase.entity";
@@ -36,14 +35,14 @@ import { ClientModule } from "./api/client/client.module";
         type: "postgres",
         logging: !configService.get("PRODUCTION"),
         url: configService.get("PG_URI"),
-        entities: [UserEntity, TournamentEntity, PlayerEntity, LogEntity, TeamEntity, StatsEntity, PhaseEntity, PhaseEntryEntity],
+        entities: [UserEntity, TournamentEntity, PlayerEntity, TeamEntity, StatsEntity, PhaseEntity, PhaseEntryEntity],
         synchronize: !configService.get("PRODUCTION"),
       }),
     }),
     WinstonModule.forRoot({
       level: "info",
       exitOnError: false,
-      transports: [new transports.Console(), new transports.File({ filename: "./logs/combined.log" })],
+      transports: [new transports.File({ filename: "./logs/combined.log" })],
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

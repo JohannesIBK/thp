@@ -92,18 +92,13 @@ export class StatsComponent implements OnInit {
     const phase = this.tournament.phases[index];
     const phaseStats = this.stats.get(phase.acronym);
 
-    if (!phaseStats) {
-      this.currentTeams = [];
-      this.selectGroup(0);
-      return;
-    }
-
     const relations = this.relations.filter((r) => r.phase === phase.acronym);
     const teams: ITeamWithStats[] = [];
 
     for (let team of this.teams) {
       const entry = relations.find((r) => r.teamId === team.id);
-      const stats = phaseStats!.get(team.id) || [];
+      let stats: IStats[] = [];
+      if (phaseStats) stats = phaseStats.get(team.id) || [];
       let points = 0;
       for (const stat of stats) {
         points += stat.points;

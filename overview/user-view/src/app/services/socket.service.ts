@@ -13,7 +13,6 @@ export class SocketService {
 
   connectSocket(): void {
     this.socket = io(environment.url, { path: "/api/live-stats", withCredentials: true });
-    console.log(this.socket);
     this.socket.connect();
   }
 

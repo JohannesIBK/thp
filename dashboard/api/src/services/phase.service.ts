@@ -39,4 +39,9 @@ export class PhaseService {
   findAll(): Promise<PhaseEntity[]> {
     return this.phaseRepository.find();
   }
+
+  async deleteAll(): Promise<void> {
+    await this.phaseEntryRepository.delete({});
+    await this.phaseRepository.delete({});
+  }
 }

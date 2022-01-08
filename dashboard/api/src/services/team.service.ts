@@ -27,6 +27,11 @@ export class TeamService {
     await this.playerRepository.update({ team: teamId }, { team: undefined });
   }
 
+  async deleteAll(): Promise<void> {
+    await this.teamRepository.delete({});
+    await this.playerRepository.delete({});
+  }
+
   async removePlayer(teamId: number): Promise<void> {
     const result = await this.teamRepository
       .createQueryBuilder()

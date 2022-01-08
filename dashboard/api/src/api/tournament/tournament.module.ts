@@ -1,4 +1,9 @@
 import { Module } from "@nestjs/common";
+import { PlayerEntity } from "../../database/player.entity";
+import { StatsEntity } from "../../database/stats.entity";
+import { TeamEntity } from "../../database/team.entity";
+import { StatsService } from "../../services/stats.service";
+import { TeamService } from "../../services/team.service";
 import { TournamentController } from "./tournament.controller";
 import { TournamentService } from "../../services/tournament.service";
 import { JwtWrapperModule } from "../../auth/jwt-wrapper.module";
@@ -12,8 +17,11 @@ import { PhaseEntity } from "../../database/phase.entity";
 import { PhaseEntryEntity } from "../../database/phase-entry.entity";
 
 @Module({
-  imports: [JwtWrapperModule, TypeOrmModule.forFeature([TournamentEntity, UserEntity, PhaseEntity, PhaseEntryEntity])],
+  imports: [
+    JwtWrapperModule,
+    TypeOrmModule.forFeature([TournamentEntity, UserEntity, PhaseEntity, PhaseEntryEntity, TeamEntity, PlayerEntity, StatsEntity]),
+  ],
   controllers: [TournamentController],
-  providers: [TournamentService, AuthService, UserService, PhaseService],
+  providers: [TournamentService, AuthService, UserService, PhaseService, TeamService, StatsService],
 })
 export class TournamentModule {}

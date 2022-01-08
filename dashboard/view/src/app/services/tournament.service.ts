@@ -31,7 +31,7 @@ export class TournamentService {
 
   delete(): Observable<void> {
     return this.http
-      .delete<void>(`${environment.url}/tournament/`, {
+      .delete<void>(`${environment.url}/tournament`, {
         headers: { Authorization: this.authService.token },
         withCredentials: true,
       })

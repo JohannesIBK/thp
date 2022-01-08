@@ -12,11 +12,15 @@ export class TournamentService {
     return this.tournamentRepository.save(tournament);
   }
 
-  findById(id: number): Promise<TournamentEntity | undefined> {
-    return this.tournamentRepository.findOne(id);
+  findOne(): Promise<TournamentEntity | undefined> {
+    return this.tournamentRepository.findOne({});
   }
 
   async update(update: IOptionalTournament): Promise<void> {
     await this.tournamentRepository.update({ id: 1 }, update);
+  }
+
+  async deleteTournament(): Promise<void> {
+    await this.tournamentRepository.delete({});
   }
 }

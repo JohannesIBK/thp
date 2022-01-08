@@ -42,7 +42,7 @@ export class PlayerController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async createPlayersAsTeam(@Body() payload: CreatePlayersTeamDto): Promise<PlayerEntity[]> {
-    const tournament = await this.tournamentService.findById(1);
+    const tournament = await this.tournamentService.findOne();
     if (!tournament) throw new NotFoundException("Es wurde kein Turnier gefunden");
 
     if (payload.players.length !== tournament.teamSize)

@@ -24,6 +24,10 @@ export class PlayerService {
     return this.playerRepository.createQueryBuilder().delete().whereInIds(uuid).returning("team").execute();
   }
 
+  deleteAll(): Promise<DeleteResult> {
+    return this.playerRepository.delete({});
+  }
+
   findOne(condition: FindOneOptions<PlayerEntity>): Promise<PlayerEntity | undefined> {
     return this.playerRepository.findOne(condition);
   }
