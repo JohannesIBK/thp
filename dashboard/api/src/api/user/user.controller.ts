@@ -22,6 +22,7 @@ import { JwtAuthGuard } from "../../auth/auth.guard";
 import { UserEntity } from "../../database/user.entity";
 import { HasPermission } from "../../decorators/permission.decorator";
 import { User } from "../../decorators/user.decorator";
+import { ChangePasswordDto } from "../../dto/change-password.dto";
 import { CreateUserDto } from "../../dto/create-user.dto";
 import { EditUserDto } from "../../dto/edit-user.dto";
 import { LoginDto } from "../../dto/login.dto";
@@ -144,6 +145,23 @@ export class UserController {
     }
 
     throw new BadRequestException("Username oder Passwort falsch");
+  }
+
+  @Post("change-password")
+  @UseGuards(JwtAuthGuard)
+  async changePassword(@Body() payload: ChangePasswordDto, @User() jwtUser: IJwtUser): Promise<void> {
+    const user = await this.userService.findOne({ where: { id: jwtUser.id } });
+
+    if (!user) throw new BadRequestException("Der User wurde nicht gefunden.");
+
+    const isSamePassword = await compare(payload.old, user.password);
+
+    if (!isSamePassword) {
+      throw new BadRequestException("Das Passwort stimmt nicht mit dem alten überein.");
+    }
+
+    const password = await hash(payload.new, 12);
+    await this.userService.update({ id: jwtUser.id }, { password });
   }
 
   @Delete("logout")
