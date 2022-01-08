@@ -1,6 +1,8 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { ViewLogsComponent } from "../../components/view-logs/view-logs.component";
 import { ApiService } from "../../services/api.service";
 import { SocketService } from "../../services/socket.service";
 import { MatTableDataSourceWithCustomSort } from "../../sort-table-data-source";
@@ -31,6 +33,7 @@ export class StatsComponent implements OnInit {
     private readonly socketService: SocketService,
     private readonly apiService: ApiService,
     private readonly snackBar: MatSnackBar,
+    private readonly dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +51,12 @@ export class StatsComponent implements OnInit {
         this.snackBar.open(error.error.message, "OK", { duration: 3000 });
       },
     });
+  }
+
+  openViewLogComponent(phase: string, teamId: number): void {
+    const stats = this.stats.get(phase)!;
+    const logs = stats.get(teamId);
+    this.dialog.open(ViewLogsComponent, { data: logs });
   }
 
   subscribeToStats() {

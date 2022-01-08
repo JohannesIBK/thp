@@ -17,12 +17,24 @@
             <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef>Spieler</th>
-                <td mat-cell *matCellDef="let element">{{ playerNameString(element.players) }}</td>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [ngClass]="{ disqualified: element.disqualified }"
+                  (click)="openViewLogComponent(phase.acronym, element.id)">
+                  {{ playerNameString(element.players) }}
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="points">
                 <th mat-header-cell *matHeaderCellDef>Punkte</th>
-                <td mat-cell *matCellDef="let element">{{ element.points }}</td>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [ngClass]="{ disqualified: element.disqualified }"
+                  (click)="openViewLogComponent(phase.acronym, element.id)">
+                  {{ element.points }}
+                </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="columns"></tr>

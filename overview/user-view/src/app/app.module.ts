@@ -2,10 +2,12 @@ import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatRippleModule } from "@angular/material/core";
+import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -17,10 +19,11 @@ import { NavbarComponent } from "./components/navbar/navbar.component";
 import { SpinnerComponent } from "./components/spinner/spinner.component";
 import { HomeComponent } from "./views/home/home.component";
 import { StatsComponent } from "./views/stats/stats.component";
-import { ViewLogsComponent } from './components/view-logs/view-logs.component';
+import { ViewLogsComponent } from "./components/view-logs/view-logs.component";
+import { UserLogComponent } from "./components/user-log/user-log.component";
 
 @NgModule({
-  declarations: [HomeComponent, StatsComponent, NavbarComponent, AppComponent, SpinnerComponent, ViewLogsComponent],
+  declarations: [HomeComponent, StatsComponent, NavbarComponent, AppComponent, SpinnerComponent, ViewLogsComponent, UserLogComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -35,6 +38,8 @@ import { ViewLogsComponent } from './components/view-logs/view-logs.component';
     MatDividerModule,
     MatTabsModule,
     MatTableModule,
+    MatDialogModule,
+    MatSortModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

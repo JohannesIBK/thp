@@ -1,1 +1,21 @@
-<p>view-logs works!</p>
+<h1 mat-dialog-title>Team Logs</h1>
+<div mat-dialog-content>
+  <table mat-table [dataSource]="tableData" matSort>
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+      <td mat-cell *matCellDef="let row">Grund</td>
+    </ng-container>
+
+    <ng-container matColumnDef="points">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Progress</th>
+      <td mat-cell *matCellDef="let row">Punkte</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">Keine Daten</td>
+    </tr>
+  </table>
+</div>

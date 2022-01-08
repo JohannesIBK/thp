@@ -22,7 +22,7 @@
 #pragma comment (lib, "advapi32.lib")
 
 
-#define URL "http://localhost:3000"
+#define URL "https://thp-dashboard.greuter.dev"
 
 using namespace std;
 using namespace rapidjson;
