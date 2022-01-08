@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { FormControl, FormGroup, Validators as V } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -31,8 +31,8 @@ export class LoginComponent {
       next: () => {
         this.router.navigate([""]).then();
       },
-      error: () => {
-        this.snackbar.open("Username oder Passwort falsch!");
+      error: (error: HttpErrorResponse) => {
+        this.snackbar.open(error.error.message, "OK", { duration: 3000 });
       },
     });
   }
