@@ -274,7 +274,6 @@ public:
             str_len++;
 
             if (str_len == 1 && ch != '[') { 
-                printf("%c\n", ch);
                 skip_line = true;
             }
 
