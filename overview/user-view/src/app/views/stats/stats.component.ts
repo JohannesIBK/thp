@@ -150,6 +150,7 @@ export class StatsComponent implements OnInit {
 
         this.teams = _teams;
         this.relations = relations;
+        this.subscribeToStats();
         this.loaded = true;
 
         this.selectTab(0);
