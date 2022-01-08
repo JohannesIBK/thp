@@ -7,11 +7,10 @@ export class SocketService {
   socket: Socket;
 
   constructor() {
-    this.socket = io("http://localhost:3300", { path: "/api/live-stats" });
+    this.socket = io("http://localhost:3210", { path: "/api/live-stats" });
   }
 
   sendStats(stats: StatsEntity): void {
-    console.log(stats);
     this.socket.emit("receive-stats", stats);
   }
 }
