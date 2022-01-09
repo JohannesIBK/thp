@@ -1,13 +1,12 @@
-import { BadRequestException, Body, Controller, Post, Response, UseGuards, Request } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Post, Response, UseGuards } from "@nestjs/common";
 import { compare } from "bcrypt";
 import { randomBytes } from "crypto";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply } from "fastify";
 import { ClientAuthGuard } from "../../auth/client-auth.guard";
 import { StatsEntity } from "../../database/stats.entity";
 import { User } from "../../decorators/user.decorator";
 import { AddKillDto } from "../../dto/add-kill.dto";
 import { AddWinDto } from "../../dto/add-win.dto";
-import { LoginDto } from "../../dto/login.dto";
 import { PlayerService } from "../../services/player.service";
 import { SocketService } from "../../services/socket.service";
 import { StatsService } from "../../services/stats.service";
@@ -59,7 +58,7 @@ export class ClientController {
       teamId: player?.team,
       round: payload.round,
       points: 1,
-      reason: `${payload.killer} killed ${payload.killed}`,
+      reason: `${payload.killer} hat ${payload.killed} getötet`,
       userId: user.id,
       time: new Date(),
     });
@@ -86,7 +85,7 @@ export class ClientController {
       teamId: player?.team,
       round: payload.round,
       points: 2,
-      reason: "Win",
+      reason: `Runde ${payload.round + 1} gewonnen`,
       userId: user.id,
       time: new Date(),
     });

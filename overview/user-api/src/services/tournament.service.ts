@@ -7,7 +7,7 @@ import { TournamentEntity } from "../database/tournament.entity";
 export class TournamentService {
   constructor(@InjectRepository(TournamentEntity) private readonly tournamentRepository: Repository<TournamentEntity>) {}
 
-  findById(id: number): Promise<TournamentEntity | undefined> {
-    return this.tournamentRepository.findOne(id);
+  findOne(): Promise<TournamentEntity | undefined> {
+    return this.tournamentRepository.findOne({});
   }
 }

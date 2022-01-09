@@ -17,7 +17,7 @@ export class TournamentService {
   }
 
   async update(update: IOptionalTournament): Promise<void> {
-    await this.tournamentRepository.update({ id: 1 }, update);
+    await this.tournamentRepository.update({}, update);
   }
 
   async deleteTournament(): Promise<void> {

@@ -18,7 +18,7 @@ export class StatsController {
 
   @Get("tournament")
   async getTournament(): Promise<IExtendedTournamentResponse> {
-    const tournament = await this.tournamentService.findById(1);
+    const tournament = await this.tournamentService.findOne();
     if (!tournament) throw new BadRequestException("Derzeit läuft kein Turnier");
 
     const phases = await this.phaseService.findAll();
