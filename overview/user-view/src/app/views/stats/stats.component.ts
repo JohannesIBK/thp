@@ -20,7 +20,7 @@ import { ITournament } from "../../types/tournament.interface";
 export class StatsComponent implements OnInit {
   teams: ITeamWithPlayers[] = [];
   currentTeams: ITeamWithStats[] = [];
-  stats = new Map<string, Map<number, IStats[]> | null>();
+  stats = new Map<string, Map<number, IStats[]>>();
   relations: IPhaseEntry[] = [];
   tableData = new MatTableDataSourceWithCustomSort<ITeamWithStats>([]);
   groups = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -42,7 +42,7 @@ export class StatsComponent implements OnInit {
         this.tournament = tournament;
 
         for (const phase of tournament.phases) {
-          this.stats.set(phase.acronym, null);
+          this.stats.set(phase.acronym, new Map());
         }
 
         this.fetchData();
@@ -56,6 +56,8 @@ export class StatsComponent implements OnInit {
   openViewLogComponent(phase: string, teamId: number): void {
     const stats = this.stats.get(phase)!;
     const logs = stats.get(teamId);
+    if (!logs) return;
+
     this.dialog.open(ViewLogsComponent, { data: logs, width: "90vw" });
   }
 

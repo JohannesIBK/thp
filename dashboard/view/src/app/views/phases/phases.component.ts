@@ -3,6 +3,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import { lastValueFrom } from "rxjs";
 import { AuthService } from "../../services/auth.service";
 import { PhaseService } from "../../services/phase.service";
 import { StatsService } from "../../services/stats.service";
@@ -110,6 +111,46 @@ export class PhasesComponent implements OnInit {
     }
   }
 
+  async insertPlayers(): Promise<void> {
+    if (!this.phase) return;
+
+    function getRandomGroup() {
+      return groups[Math.random() * (groups.length - 1)];
+    }
+
+    let groups: string[] = [];
+    for (let i = 0; i < this.phase.groups; i++) {
+      groups.push(this.alphabet[i]);
+    }
+
+    this.sortTeams();
+
+    for (const [group, teams] of this.rankedTeams.entries()) {
+      if (teams.length === this.phase.teams) {
+        groups = groups.filter((g) => g !== group);
+      }
+    }
+
+    for (const team of this.unrankedTeams) {
+      const group = getRandomGroup();
+      let newEntry: IPhaseEntryCreate;
+
+      newEntry = {
+        phase: this.phase!.acronym,
+        group: group,
+        teamId: team.id,
+      };
+
+      const res = await this.saveEntry(newEntry);
+      if (res) {
+        const teams = this.rankedTeams.get(group)!;
+        if (teams.length === this.phase.groups) {
+          groups = groups.filter((g) => g !== group);
+        }
+      }
+    }
+  }
+
   getTeamStats(phase: string): Map<number, number> {
     const phaseStats = this.teamStats.get(phase);
     if (phaseStats) return phaseStats;
@@ -180,16 +221,17 @@ export class PhasesComponent implements OnInit {
     });
   }
 
-  saveEntry(entry: IPhaseEntryCreate): void {
-    this.phaseService.saveEntry(entry).subscribe({
-      next: (responseEntry: IPhaseEntry) => {
-        this.relations = [...this.relations.filter((e) => e.id !== entry.id), responseEntry];
-        if (this.phase) this.selectPhase({ value: this.phase });
-      },
-      error: (error: HttpErrorResponse) => {
-        this.snackBar.open(error.error.message, "OK", { duration: 3000 });
-      },
-    });
+  async saveEntry(entry: IPhaseEntryCreate): Promise<IPhaseEntry | undefined> {
+    try {
+      const responseEntry = await lastValueFrom(this.phaseService.saveEntry(entry));
+      this.relations = [...this.relations.filter((e) => e.id !== entry.id), responseEntry];
+      if (this.phase) this.selectPhase({ value: this.phase });
+
+      return responseEntry;
+    } catch (error: any) {
+      this.snackBar.open(error.error.message, "OK", { duration: 3000 });
+      return;
+    }
   }
 
   fetchTournament(): void {

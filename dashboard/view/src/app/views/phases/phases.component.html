@@ -40,7 +40,12 @@
         </mat-select>
       </mat-form-field>
 
-      <button mat-raised-button color="accent" (click)="sortTeams()" [disabled]="!phase">Teams nach Punkten sortieren</button>
+      <button mat-raised-button color="accent" class="full-width" (click)="sortTeams()" [disabled]="!phase">
+        Teams nach Punkten sortieren
+      </button>
+      <button mat-raised-button color="accent" class="full-width mt" (click)="insertPlayers()" [disabled]="!phase">
+        Spieler zufällig einsortieren
+      </button>
 
       <div class="grid-item-wrapper">
         <h2>Teams</h2>
@@ -61,7 +66,7 @@
     </div>
     <div class="phase-section">
       <div class="grid-item-wrapper" *ngFor="let group of getGroups()">
-        <h2>Gruppe {{ group }}</h2>
+        <h2>Gruppe {{ group }} ({{ rankedTeams.get(group)!.length }})</h2>
 
         <div
           [id]="group"
