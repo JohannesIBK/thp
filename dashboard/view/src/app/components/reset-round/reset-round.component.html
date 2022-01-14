@@ -20,11 +20,11 @@
   </form>
 </div>
 <mat-dialog-actions class="align-end">
-  <button mat-button [mat-dialog-close]="false">Abbrechen</button>
-  <button color="accent" mat-stroked-button [disabled]="form.invalid" (click)="resetRound()">
+  <button color="warn" mat-stroked-button [disabled]="form.invalid" (click)="resetRound()">
     <div class="add-button-content">
       Löschen
       <mat-spinner [diameter]="15" *ngIf="loading" class="add-spinner"></mat-spinner>
     </div>
   </button>
+  <button mat-button cdkFocusInitial [mat-dialog-close]="false">Abbrechen</button>
 </mat-dialog-actions>
