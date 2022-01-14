@@ -9,7 +9,7 @@ import { AuthService } from "../../services/auth.service";
 import { MinetoolsService } from "../../services/minetools.service";
 import { PlayerService } from "../../services/player.service";
 import { TournamentService } from "../../services/tournament.service";
-import { Permission } from "../../types/enums";
+import { PermissionEnum } from "../../types/enums";
 import { IPlayer } from "../../types/player.interface";
 import { ITournament } from "../../types/tournament.interface";
 
@@ -70,7 +70,7 @@ export class PlayersComponent implements OnInit {
       },
       error: async (error: HttpErrorResponse) => {
         if (error.status === 404) {
-          if (this.authService.rawUser?.permission === Permission.ADMIN) {
+          if (this.authService.rawUser?.permission === PermissionEnum.ADMIN) {
             await this.router.navigate(["tournaments"]);
           } else {
             await this.router.navigate(["/"]);

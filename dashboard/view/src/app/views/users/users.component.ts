@@ -5,9 +5,10 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatTableDataSource } from "@angular/material/table";
 import { CreateUserComponent } from "../../components/create-user/create-user.component";
 import { DeleteUserComponent } from "../../components/delete-user/delete-user.component";
+import { EditUserComponent } from "../../components/edit-user/edit-user.component";
 import { AuthService } from "../../services/auth.service";
 import { UserService } from "../../services/user.service";
-import { Permission } from "../../types/enums";
+import { PermissionEnum } from "../../types/enums";
 import { IUser } from "../../types/user.interface";
 
 @Component({
@@ -16,35 +17,23 @@ import { IUser } from "../../types/user.interface";
   styleUrls: ["./users.component.scss"],
 })
 export class UsersComponent implements OnInit {
-  currentUser?: IUser;
+  currentUser!: IUser;
   loaded = false;
-  Permission = Permission;
+  permissionEnum = PermissionEnum;
   users = new MatTableDataSource<IUser>([]);
-  displayedColumns = ["username", "permission", "remove"];
+  displayedColumns = ["username", "permission", "edit", "remove"];
 
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly snackbar: MatSnackBar,
     private readonly dialog: MatDialog,
-  ) {
-    this.users.filterPredicate = (data: IUser, filterValue: string) => {
-      if ("user".startsWith(filterValue)) {
-        return data.permission === Permission.USER;
-      } else if ("admin".startsWith(filterValue)) {
-        return data.permission === Permission.ADMIN;
-      } else if ("helper".startsWith(filterValue)) {
-        return data.permission === Permission.HELPER;
-      }
-
-      return data.username.toLowerCase().startsWith(filterValue);
-    };
-  }
+  ) {}
 
   ngOnInit(): void {
     if (this.authService.token) {
-      this.fetchUsers();
       this.currentUser = this.authService.rawUser!;
+      this.fetchUsers();
     } else {
       this.authService.user.subscribe((user) => {
         this.currentUser = user;
@@ -80,6 +69,16 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  openEditUserDialog(user: IUser): void {
+    const dialog = this.dialog.open(EditUserComponent, { data: { user, currentUser: this.currentUser } });
+
+    dialog.afterClosed().subscribe((result: IUser | null) => {
+      if (result) {
+        this.users.data = [...this.users.data.filter((u) => u.id !== result.id), result];
+      }
+    });
+  }
+
   fetchUsers(): void {
     this.userService.getAll().subscribe({
       next: (users) => {
@@ -92,15 +91,15 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  permissionToName(permission: Permission): string {
+  permissionToName(permission: PermissionEnum): string {
     switch (permission) {
-      case Permission.ADMIN:
+      case PermissionEnum.ADMIN:
         return "Admin";
-      case Permission.HEAD:
+      case PermissionEnum.HEAD:
         return "Head-Admin";
-      case Permission.HELPER:
+      case PermissionEnum.HELPER:
         return "Helper";
-      case Permission.USER:
+      case PermissionEnum.USER:
         return "User";
       default:
         return "";

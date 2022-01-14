@@ -12,9 +12,9 @@
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Berechtigung</mat-label>
       <mat-select [formControl]="permission">
-        <mat-option [value]="Permission.USER">User</mat-option>
-        <mat-option [value]="Permission.HELPER">Helper</mat-option>
-        <mat-option [value]="Permission.ADMIN" *ngIf="userPermission === Permission.HEAD">Admin</mat-option>
+        <mat-option [value]="PermissionEnum.USER">User</mat-option>
+        <mat-option [value]="PermissionEnum.HELPER">Helper</mat-option>
+        <mat-option [value]="PermissionEnum.ADMIN" *ngIf="userPermission === PermissionEnum.HEAD">Admin</mat-option>
       </mat-select>
     </mat-form-field>
   </form>

@@ -54,6 +54,7 @@ import { PlayersComponent } from "./views/players/players.component";
 import { TeamsComponent } from "./views/teams/teams.component";
 import { TournamentComponent } from "./views/tournament/tournament.component";
 import { UsersComponent } from "./views/users/users.component";
+import { EditUserComponent } from "./components/edit-user/edit-user.component";
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { UsersComponent } from "./views/users/users.component";
     DeleteUserComponent,
     TeamSiteDisabledComponent,
     ResetRoundComponent,
+    EditUserComponent,
   ],
   imports: [
     BrowserModule,

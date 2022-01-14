@@ -4,7 +4,7 @@ import { FormControl, FormGroup, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserService } from "../../services/user.service";
-import { Permission } from "../../types/enums";
+import { PermissionEnum } from "../../types/enums";
 
 @Component({
   selector: "app-create-user",
@@ -13,10 +13,10 @@ import { Permission } from "../../types/enums";
 })
 export class CreateUserComponent {
   loading = false;
-  Permission = Permission;
+  PermissionEnum = PermissionEnum;
   username = new FormControl("", [V.required, V.minLength(3), V.maxLength(16)]);
   password = new FormControl("", [V.required, V.minLength(8)]);
-  permission = new FormControl(Permission.USER, [V.required]);
+  permission = new FormControl(PermissionEnum.USER, [V.required]);
   form = new FormGroup({
     username: this.username,
     password: this.password,
@@ -24,7 +24,7 @@ export class CreateUserComponent {
   });
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public readonly userPermission: Permission,
+    @Inject(MAT_DIALOG_DATA) public readonly userPermission: PermissionEnum,
     private readonly dialogRef: MatDialogRef<CreateUserComponent>,
     private readonly userService: UserService,
     private readonly snackBar: MatSnackBar,

@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { ICreateUserPayload, IEditUserPayload, IUser } from "../types/user.interface";
+import { ICreateUserPayload, IUser } from "../types/user.interface";
 import { AuthService } from "./auth.service";
 
 @Injectable({
@@ -29,9 +29,9 @@ export class UserService {
       .pipe();
   }
 
-  editUser(payload: IEditUserPayload): Observable<IUser> {
+  editUser(payload: IUser): Observable<IUser> {
     return this.http
-      .patch<IUser>(`${environment.url}/user`, payload, {
+      .patch<IUser>(`${environment.url}/user/${payload.id}`, payload, {
         headers: {
           Authorization: this.authService.token,
         },

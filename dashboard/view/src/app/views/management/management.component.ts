@@ -13,7 +13,7 @@ import { PhaseService } from "../../services/phase.service";
 import { StatsService } from "../../services/stats.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
-import { Permission, TeamManageResponse } from "../../types/enums";
+import { PermissionEnum, TeamManageResponse } from "../../types/enums";
 import { IPhase, IPhaseEntry } from "../../types/phase.interface";
 import { IStats } from "../../types/stats.interface";
 import { ITeamWithPlayers, ITeamWithStats } from "../../types/team.interface";
@@ -201,7 +201,7 @@ export class ManagementComponent implements OnInit {
       },
       error: async (error: HttpErrorResponse) => {
         if (error.status === 404) {
-          if (this.authService.rawUser?.permission === Permission.ADMIN) {
+          if (this.authService.rawUser?.permission === PermissionEnum.ADMIN) {
             await this.router.navigate(["tournaments"]);
           } else {
             await this.router.navigate(["/"]);

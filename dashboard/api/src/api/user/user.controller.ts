@@ -104,7 +104,7 @@ export class UserController {
       throw new BadRequestException("Der User konnte nicht gefunden werden.");
     }
 
-    if (editUser.permission >= user.permission) {
+    if (editUser.permission >= user.permission && user.permission !== PermissionEnum.HEAD) {
       throw new ForbiddenException("Du kannst diesen User nicht bearbeiten.");
     }
 

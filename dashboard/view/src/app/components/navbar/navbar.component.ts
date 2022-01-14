@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
-import { Permission } from "../../types/enums";
+import { PermissionEnum } from "../../types/enums";
 import { IUser } from "../../types/user.interface";
 
 @Component({
@@ -12,7 +12,7 @@ import { IUser } from "../../types/user.interface";
 })
 export class NavbarComponent implements OnInit {
   user?: IUser;
-  Permission = Permission;
+  Permission = PermissionEnum;
 
   constructor(private readonly authService: AuthService, private readonly snackBar: MatSnackBar, private readonly router: Router) {}
 

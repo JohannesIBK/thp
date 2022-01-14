@@ -1,31 +1,31 @@
-export enum Permission {
+export enum PermissionEnum {
   /**
    * User is not logged in.
    * Only in frontend
-   * @type {Permission.NOTHING}
+   * @type {PermissionEnum.NOTHING}
    */
   NOTHING = -1,
   /**
    * Normal User - No permissions
-   * @type {Permission.USER}
+   * @type {PermissionEnum.USER}
    */
   USER,
   /**
    * Helper - Is bound to one or multiple tournaments
    * Can only send tournament data
-   * @type {Permission.HELPER}
+   * @type {PermissionEnum.HELPER}
    */
   HELPER = 3,
   /**
    * Admin - Is able to create users, helpers and tournaments
    * Can only manage tournaments the user created
-   * @type {Permission.ADMIN}
+   * @type {PermissionEnum.ADMIN}
    */
   ADMIN = 7,
   /**
    * Head Admin - Is able to create admins, helpers or users
    * Can manage all accounts and tournaments
-   * @type {Permission.HEAD}
+   * @type {PermissionEnum.HEAD}
    */
   HEAD = 10,
 }
