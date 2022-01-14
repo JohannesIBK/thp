@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>User bearbeiten</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Username</mat-label>
+      <input matInput [formControl]="username" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Berechtigung</mat-label>
+      <mat-select [formControl]="permission">
+        <mat-option [value]="PermissionEnum.USER" [disabled]="currentUser.id === user.id">User</mat-option>
+        <mat-option [value]="PermissionEnum.HELPER" [disabled]="currentUser.id === user.id">Helper</mat-option>
+        <mat-option
+          [value]="PermissionEnum.ADMIN"
+          *ngIf="currentUser.permission === PermissionEnum.HEAD"
+          [disabled]="currentUser.id === user.id">
+          Admin
+        </mat-option>
+        <mat-option [value]="PermissionEnum.HEAD" *ngIf="currentUser.permission === PermissionEnum.HEAD" disabled>
+          Site-Admin
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+<mat-dialog-actions class="align-end">
+  <button mat-button [mat-dialog-close]="false">Abbrechen</button>
+  <button color="accent" mat-stroked-button [disabled]="canEditUser()" (click)="editUser()">
+    <div class="add-button-content">
+      Bearbeiten
+      <mat-spinner [diameter]="15" *ngIf="loading" class="add-spinner"></mat-spinner>
+    </div>
+  </button>
+</mat-dialog-actions>
