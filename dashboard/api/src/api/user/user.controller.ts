@@ -90,12 +90,12 @@ export class UserController {
     @Param("id", new ParseIntPipe()) id: number,
     @Body() payload: EditUserDto,
     @User() user: IJwtUser,
-  ): Promise<UserEntity> {
+  ): Promise<UserEntity | undefined> {
     if (!payload.permission && !payload.username) {
       throw new BadRequestException("Mindestens eine Sache muss verändert werden");
     }
 
-    if (payload.permission && user.permission >= payload.permission) {
+    if (typeof payload.permission !== "undefined" && user.permission <= payload.permission) {
       throw new ForbiddenException("Du kannst keine Berechtigungen setzen, die über dir sind.");
     }
 
@@ -110,7 +110,8 @@ export class UserController {
 
     try {
       const entity = new UserEntity({ id, permission: payload.permission, username: payload.username });
-      return this.userService.save(entity);
+      await this.userService.save(entity);
+      return this.userService.findOne({ where: { id }, select: ["username", "permission", "id"] });
     } catch {
       throw new BadRequestException("Der Username ist bereits vergeben.");
     }
