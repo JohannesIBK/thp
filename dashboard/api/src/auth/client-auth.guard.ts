@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { FastifyRequest } from "fastify";
+import { PermissionEnum } from "../enums/permission.enum";
 import { UserService } from "../services/user.service";
 
 @Injectable()
@@ -19,6 +20,8 @@ export class ClientAuthGuard implements CanActivate {
     if (!user) {
       throw new UnauthorizedException("Dein Token ist ungültig");
     }
+
+    if (user.permission < PermissionEnum.HELPER) throw new ForbiddenException("Du hast keine Berechtigungen den Client zu benutzen.");
 
     request.user = {
       id: user.id,

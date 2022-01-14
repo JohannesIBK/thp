@@ -7,6 +7,7 @@ import { StatsEntity } from "../../database/stats.entity";
 import { User } from "../../decorators/user.decorator";
 import { AddKillDto } from "../../dto/add-kill.dto";
 import { AddWinDto } from "../../dto/add-win.dto";
+import { PermissionEnum } from "../../enums/permission.enum";
 import { PlayerService } from "../../services/player.service";
 import { SocketService } from "../../services/socket.service";
 import { StatsService } from "../../services/stats.service";
@@ -25,6 +26,9 @@ export class ClientController {
   @Post("login")
   async login(@Body() payload: any, @Response() response: FastifyReply): Promise<void> {
     const user = await this.userService.findByUsername(payload.username.toLowerCase());
+
+    if ((user?.permission || 0) < PermissionEnum.HELPER)
+      throw new BadRequestException("Du hast keine Berechtigung, dich hier einzuloggen.");
 
     if (user && (await compare(payload.password, user.password))) {
       const token = randomBytes(32).toString("base64url");
