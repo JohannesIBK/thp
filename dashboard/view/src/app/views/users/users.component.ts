@@ -43,7 +43,7 @@ export class UsersComponent implements OnInit {
   }
 
   openCreateUserDialog(): void {
-    const dialog = this.dialog.open(CreateUserComponent);
+    const dialog = this.dialog.open(CreateUserComponent, { data: this.currentUser.permission });
 
     dialog.afterClosed().subscribe((result) => {
       if (result) {
@@ -96,7 +96,7 @@ export class UsersComponent implements OnInit {
       case PermissionEnum.ADMIN:
         return "Admin";
       case PermissionEnum.HEAD:
-        return "Head-Admin";
+        return "Site-Admin";
       case PermissionEnum.HELPER:
         return "Helper";
       case PermissionEnum.USER:
