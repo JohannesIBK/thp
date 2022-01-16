@@ -13,7 +13,7 @@
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Runde</mat-label>
       <mat-select [formControl]="roundSelect">
-        <mat-option *ngFor="let _ of counter(data.phase.rounds); index as i" [value]="i + 1">Runde {{ i + 1 }}</mat-option>
+        <mat-option *ngFor="let _ of counter(data.phase.rounds); index as i" [value]="i">Runde {{ i + 1 }}</mat-option>
       </mat-select>
     </mat-form-field>
   </form>
