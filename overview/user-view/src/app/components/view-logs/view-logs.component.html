@@ -1,23 +1,26 @@
 <h1 mat-dialog-title>Team Logs</h1>
 <div mat-dialog-content>
-  <table mat-table [dataSource]="tableData" matSort>
-    <ng-container matColumnDef="reason">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="reason">Grund</th>
-      <td mat-cell *matCellDef="let stat">{{ stat.reason }}</td>
-    </ng-container>
+  <mat-tab-group (selectedIndexChange)="selectTab($event)">
+    <mat-tab *ngFor="let _ of counter(data.phase.rounds); index as i" [label]="'Runde ' + (i + 1)">
+      <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef>Grund</th>
+          <td mat-cell *matCellDef="let element">{{ element.reason || "Kein Grund angegeben" }}</td>
+        </ng-container>
 
-    <ng-container matColumnDef="points">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="points">Punkte</th>
-      <td mat-cell *matCellDef="let stat">{{ stat.points }}</td>
-    </ng-container>
+        <ng-container matColumnDef="points">
+          <th mat-header-cell *matHeaderCellDef>Punkte</th>
+          <td mat-cell *matCellDef="let element">{{ element.points }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
 
-    <tr mat-header-row *matHeaderRowDef="columns"></tr>
-    <tr mat-row *matRowDef="let row; columns: columns"></tr>
-
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="4">Keine Daten</td>
-    </tr>
-  </table>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="2">Keine Daten gefunden</td>
+        </tr>
+      </table>
+    </mat-tab>
+  </mat-tab-group>
 </div>
 
 <mat-dialog-actions class="align-end">

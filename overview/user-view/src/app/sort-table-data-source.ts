@@ -1,10 +1,12 @@
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
+import { ITeamWithStats } from "./types/team.interface";
 
-export class MatTableDataSourceWithCustomSort<T> extends MatTableDataSource<T> {
-  _compareFn = new Intl.Collator("pl", { sensitivity: "base", numeric: true }).compare;
-
-  override sortData: (data: T[], sort: MatSort) => T[] = (data: T[], sort: MatSort): T[] => {
+export class MatPointsTableSort extends MatTableDataSource<ITeamWithStats> {
+  override sortData: (data: ITeamWithStats[], sort: MatSort) => ITeamWithStats[] = (
+    data: ITeamWithStats[],
+    sort: MatSort,
+  ): ITeamWithStats[] => {
     const active = sort.active;
     const direction = sort.direction;
 
@@ -12,20 +14,31 @@ export class MatTableDataSourceWithCustomSort<T> extends MatTableDataSource<T> {
       return data;
     }
 
-    return data.sort((a, b) => {
-      if ((a as any)?.disqualified) {
-        return direction === "asc" ? 1 : 1;
-      }
-      if ((b as any)?.disqualified) {
+    return data.sort((a: ITeamWithStats, b: ITeamWithStats) => {
+      if ((a as any)?.disqualified || (b as any)?.disqualified) {
         return direction === "asc" ? 1 : 1;
       }
 
-      const valueA = this.sortingDataAccessor(a, active);
-      const valueB = this.sortingDataAccessor(b, active);
+      let pointsA = 0;
+      let pointsB = 0;
 
-      const comparatorResult = this._compareFn(<string>valueA, <string>valueB);
+      const toSort = active.slice(6);
+      if (toSort === "All") {
+        for (const points of a.points.values()) {
+          pointsA += points;
+        }
 
-      return comparatorResult * (direction === "asc" ? 1 : -1);
+        for (const points of b.points.values()) {
+          pointsB += points;
+        }
+      } else {
+        const index = parseInt(toSort);
+
+        pointsA = a.points.get(index) || 0;
+        pointsB = b.points.get(index) || 0;
+      }
+
+      return (pointsA - pointsB) * (direction === "asc" ? 1 : -1);
     });
   };
 }

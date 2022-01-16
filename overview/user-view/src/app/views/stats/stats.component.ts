@@ -6,8 +6,8 @@ import { MatSort } from "@angular/material/sort";
 import { ViewLogsComponent } from "../../components/view-logs/view-logs.component";
 import { ApiService } from "../../services/api.service";
 import { SocketService } from "../../services/socket.service";
-import { MatTableDataSourceWithCustomSort } from "../../sort-table-data-source";
-import { IPhaseEntry } from "../../types/phase.interface";
+import { MatPointsTableSort } from "../../sort-table-data-source";
+import { IPhase, IPhaseEntry } from "../../types/phase.interface";
 import { IPlayer } from "../../types/player.interface";
 import { IStats } from "../../types/stats.interface";
 import { ITeamWithPlayers, ITeamWithStats } from "../../types/team.interface";
@@ -23,7 +23,7 @@ export class StatsComponent implements OnInit {
   currentTeams: ITeamWithStats[] = [];
   stats = new Map<string, Map<number, IStats[]>>();
   relations: IPhaseEntry[] = [];
-  tableData = new MatTableDataSourceWithCustomSort<ITeamWithStats>([]);
+  tableData = new MatPointsTableSort([]);
   groups = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   tournament!: ITournament;
   loaded = false;
@@ -65,12 +65,12 @@ export class StatsComponent implements OnInit {
     this.tableData.sort = this.sort;
   }
 
-  openViewLogComponent(phase: string, teamId: number): void {
-    const stats = this.stats.get(phase)!;
+  openViewLogComponent(phase: IPhase, teamId: number): void {
+    const stats = this.stats.get(phase.acronym)!;
     const logs = stats.get(teamId);
     if (!logs) return;
 
-    this.dialog.open(ViewLogsComponent, { data: logs, width: "90vw" });
+    this.dialog.open(ViewLogsComponent, { data: { stats: logs, phase }, width: "90vw" });
   }
 
   subscribeToStats() {
@@ -102,36 +102,36 @@ export class StatsComponent implements OnInit {
 
     if (index === 0) {
       this.tableData.data = this.currentTeams;
-      this.tableData.data.sort((a, b) => {
-        let aSum = 0;
-        let bSum = 0;
-
-        for (const points of a.points.values()) {
-          aSum += points;
-        }
-
-        for (const points of b.points.values()) {
-          bSum += points;
-        }
-
-        return bSum - aSum;
-      });
+      // this.tableData.data.sort((a, b) => {
+      //   let aSum = 0;
+      //   let bSum = 0;
+      //
+      //   for (const points of a.points.values()) {
+      //     aSum += points;
+      //   }
+      //
+      //   for (const points of b.points.values()) {
+      //     bSum += points;
+      //   }
+      //
+      //   return bSum - aSum;
+      // });
     } else {
       this.tableData.data = this.currentTeams.filter((t) => t.group === this.groups[index - 1]);
-      this.tableData.data.sort((a, b) => {
-        let aSum = 0;
-        let bSum = 0;
-
-        for (const points of a.points.values()) {
-          aSum += points;
-        }
-
-        for (const points of b.points.values()) {
-          bSum += points;
-        }
-
-        return bSum - aSum;
-      });
+      // this.tableData.data.sort((a, b) => {
+      //   let aSum = 0;
+      //   let bSum = 0;
+      //
+      //   for (const points of a.points.values()) {
+      //     aSum += points;
+      //   }
+      //
+      //   for (const points of b.points.values()) {
+      //     bSum += points;
+      //   }
+      //
+      //   return bSum - aSum;
+      // });
     }
   }
 
@@ -165,20 +165,20 @@ export class StatsComponent implements OnInit {
       }
     }
 
-    teams.sort((a, b) => {
-      let aSum = 0;
-      let bSum = 0;
-
-      for (const points of a.points.values()) {
-        aSum += points;
-      }
-
-      for (const points of b.points.values()) {
-        bSum += points;
-      }
-
-      return bSum - aSum;
-    });
+    // teams.sort((a, b) => {
+    //   let aSum = 0;
+    //   let bSum = 0;
+    //
+    //   for (const points of a.points.values()) {
+    //     aSum += points;
+    //   }
+    //
+    //   for (const points of b.points.values()) {
+    //     bSum += points;
+    //   }
+    //
+    //   return bSum - aSum;
+    // });
     this.currentTeams = teams;
     this.selectGroup(0);
   }
