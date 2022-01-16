@@ -40,7 +40,7 @@
         <mat-grid-tile>{{ tournament.id }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.teamSize }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.phases.length }}</mat-grid-tile>
-        <mat-grid-tile>{{ phases[0].groups * phases[0].teams }}</mat-grid-tile>
+        <mat-grid-tile>{{ phases[0].groups * phases[0].teams * tournament.teamSize }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.active ? "Ja" : "Nein" }}</mat-grid-tile>
       </mat-grid-list>
 
@@ -67,7 +67,7 @@
           <mat-grid-tile>{{ phase.groups }}</mat-grid-tile>
           <mat-grid-tile>{{ phase.teams }}</mat-grid-tile>
           <mat-grid-tile>{{ phase.rounds }}</mat-grid-tile>
-          <mat-grid-tile>{{ phase.teams * phase.groups }}</mat-grid-tile>
+          <mat-grid-tile>{{ phase.teams * phase.groups * tournament.teamSize }}</mat-grid-tile>
         </div>
       </mat-grid-list>
     </div>
