@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSort } from "@angular/material/sort";
 import { ViewLogsComponent } from "../../components/view-logs/view-logs.component";
 import { ApiService } from "../../services/api.service";
 import { SocketService } from "../../services/socket.service";
@@ -29,6 +30,13 @@ export class StatsComponent implements OnInit {
   updates = false;
   columns = ["name", "points"];
 
+  private sort!: MatSort;
+
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.setDataSourceAttributes();
+  }
+
   constructor(
     private readonly socketService: SocketService,
     private readonly apiService: ApiService,
@@ -51,6 +59,10 @@ export class StatsComponent implements OnInit {
         this.snackBar.open(error.error.message, "OK", { duration: 3000 });
       },
     });
+  }
+
+  setDataSourceAttributes() {
+    this.tableData.sort = this.sort;
   }
 
   openViewLogComponent(phase: string, teamId: number): void {
@@ -86,7 +98,14 @@ export class StatsComponent implements OnInit {
 
   selectGroup(index: number) {
     this.tableData.data = [];
-    this.tableData.data = this.currentTeams.filter((t) => t.group === this.groups[index]);
+    this.tableData.data = this.currentTeams.sort();
+    if (index === 0) {
+      this.tableData.data = this.currentTeams;
+      this.tableData.data.sort((a, b) => b.points - a.points);
+    } else {
+      this.tableData.data = this.currentTeams.filter((t) => t.group === this.groups[index - 1]);
+      this.tableData.data.sort((a, b) => b.points - a.points);
+    }
   }
 
   selectTab(index: number): void {
