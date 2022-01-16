@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ITournament } from "../../types/tournament.interface";
 import { HttpErrorResponse } from "@angular/common/http";
-import { MinetoolsService } from "../../services/minetools.service";
+import { MojangService } from "../../services/mojang.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { IPlayer } from "../../types/player.interface";
 
@@ -21,7 +21,7 @@ export class AddPlayerTeamComponent {
   constructor(
     private readonly dialogRef: MatDialogRef<AddPlayerTeamComponent>,
     @Inject(MAT_DIALOG_DATA) public readonly tournament: ITournament,
-    private readonly minetoolsService: MinetoolsService,
+    private readonly mojangService: MojangService,
     private readonly snackBar: MatSnackBar,
   ) {
     for (let i = 0; i < tournament.teamSize; i++) {
@@ -52,7 +52,7 @@ export class AddPlayerTeamComponent {
 
     const name = players[0];
 
-    this.minetoolsService.getByCache(name).subscribe({
+    this.mojangService.getByCache(name).subscribe({
       next: (player) => {
         if (player) {
           this.players.push({ name: player.name, uuid: player.uuid });
@@ -64,7 +64,7 @@ export class AddPlayerTeamComponent {
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
-        this.snackBar.open(`Ein Problem mit der MineTools API ist aufgetreten. Code: ${error.status}`);
+        this.snackBar.open(`Ein Problem mit der Mojang API ist aufgetreten. Code: ${error.status}`);
       },
     });
   }

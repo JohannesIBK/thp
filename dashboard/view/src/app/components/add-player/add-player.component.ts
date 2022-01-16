@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { MinetoolsService } from "../../services/minetools.service";
+import { MojangService } from "../../services/mojang.service";
 import { FormControl, Validators as V } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -15,7 +15,7 @@ export class AddPlayerComponent {
   loading = false;
 
   constructor(
-    private readonly minetoolsService: MinetoolsService,
+    private readonly mojangService: MojangService,
     private readonly snackBar: MatSnackBar,
     private readonly dialogRef: MatDialogRef<AddPlayerComponent>,
   ) {}
@@ -24,7 +24,7 @@ export class AddPlayerComponent {
     if (this.name.invalid) return;
 
     this.loading = true;
-    this.minetoolsService.getByQuery(this.name.value).subscribe({
+    this.mojangService.getByQuery(this.name.value).subscribe({
       next: (player) => {
         this.loading = false;
         if (player) {
@@ -38,7 +38,7 @@ export class AddPlayerComponent {
         this.loading = false;
 
         console.log(error.error);
-        this.snackBar.open(`Ein Problem mit der MineTools API ist aufgetreten. Code: ${error.status}`);
+        this.snackBar.open(`Ein Problem mit der Mojang API ist aufgetreten. Code: ${error.status}`);
       },
     });
   }

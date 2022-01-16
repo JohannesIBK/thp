@@ -6,7 +6,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { AddPlayerComponent } from "../../components/add-player/add-player.component";
 import { AuthService } from "../../services/auth.service";
-import { MinetoolsService } from "../../services/minetools.service";
+import { MojangService } from "../../services/mojang.service";
 import { PlayerService } from "../../services/player.service";
 import { TournamentService } from "../../services/tournament.service";
 import { PermissionEnum } from "../../types/enums";
@@ -29,7 +29,7 @@ export class PlayersComponent implements OnInit {
 
   constructor(
     private readonly tournamentService: TournamentService,
-    private readonly minetoolsService: MinetoolsService,
+    private readonly mojangService: MojangService,
     private readonly playerService: PlayerService,
     private readonly authService: AuthService,
     private readonly snackBar: MatSnackBar,
