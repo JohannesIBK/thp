@@ -8,7 +8,7 @@ export class PhaseEntryEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   id: number;
 
-  @ManyToOne(() => TeamEntity)
+  @ManyToOne(() => TeamEntity, { onDelete: "CASCADE" })
   team: TeamEntity;
 
   @Column("int")
