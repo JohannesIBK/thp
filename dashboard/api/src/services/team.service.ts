@@ -15,6 +15,10 @@ export class TeamService {
     return this.teamRepository.find();
   }
 
+  findOne(id: number): Promise<TeamEntity | undefined> {
+    return this.teamRepository.findOne(id);
+  }
+
   async createTeamWithPlayers(uuids: string[]): Promise<TeamEntity> {
     const team = await this.teamRepository.save({ members: uuids.length });
     await this.playerRepository.update(uuids, { team: team.id });

@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { ITeam, ITeamsPlayersResponse, ITeamWithPlayers } from "../types/team.interface";
+import { ITeam, ITeamsPlayersResponse } from "../types/team.interface";
 import { AuthService } from "./auth.service";
 
 @Injectable({
@@ -29,10 +29,20 @@ export class TeamService {
       .pipe();
   }
 
-  createTeam(uuids: string[]): Observable<ITeamWithPlayers> {
+  createTeam(uuids: string[]): Observable<ITeamsPlayersResponse> {
     return this.http
-      .put<ITeamWithPlayers>(
+      .put<ITeamsPlayersResponse>(
         `${environment.url}/teams`,
+        { uuids },
+        { headers: { Authorization: this.authService.token }, withCredentials: true },
+      )
+      .pipe();
+  }
+
+  saveTeam(id: number, uuids: string[]): Observable<ITeamsPlayersResponse> {
+    return this.http
+      .put<ITeamsPlayersResponse>(
+        `${environment.url}/teams/${id}`,
         { uuids },
         { headers: { Authorization: this.authService.token }, withCredentials: true },
       )

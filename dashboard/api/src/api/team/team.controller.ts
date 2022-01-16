@@ -1,14 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, ForbiddenException, Get, Param, ParseIntPipe, Patch, Put, Query, UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "../../auth/auth.guard";
+import { TeamEntity } from "../../database/team.entity";
 import { HasPermission } from "../../decorators/permission.decorator";
 import { IdDto } from "../../dto/id.dto";
 import { ReasonDto } from "../../dto/reason.dto";
-import { PermissionEnum } from "../../enums/permission.enum";
-import { JwtAuthGuard } from "../../auth/auth.guard";
-import { TeamService } from "../../services/team.service";
-import { TeamEntity } from "../../database/team.entity";
 import { UuidsDto } from "../../dto/uuids.dto";
+import { PermissionEnum } from "../../enums/permission.enum";
 import { PlayerService } from "../../services/player.service";
-import { IExtendedTeamResponse, ITeamsPlayersResponse } from "../../types/response.interface";
+import { TeamService } from "../../services/team.service";
+import { ITeamsPlayersResponse } from "../../types/response.interface";
 
 @Controller("teams")
 export class TeamController {
@@ -37,13 +37,28 @@ export class TeamController {
   @Put()
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async createTeam(@Body() payload: UuidsDto): Promise<IExtendedTeamResponse> {
-    const team = await this.teamService.createTeamWithPlayers(payload.uuids);
-    const players = await this.playerService.findByIds(payload.uuids);
+  async createTeam(@Body() payload: UuidsDto): Promise<ITeamsPlayersResponse> {
+    await this.teamService.createTeamWithPlayers(payload.uuids);
 
     return {
-      ...team,
-      players: players,
+      teams: await this.teamService.findAll(),
+      players: await this.playerService.findAll(),
+    };
+  }
+
+  @Put(":id")
+  @UseGuards(JwtAuthGuard)
+  @HasPermission(PermissionEnum.ADMIN)
+  async saveTeam(@Body() payload: UuidsDto, @Param() params: IdDto): Promise<ITeamsPlayersResponse> {
+    const team = await this.teamService.findOne(parseInt(params.id));
+    if (!team) throw new ForbiddenException("Das Team wurde nicht gefunden");
+
+    await this.playerService.update({ team: team.id }, { team: null });
+    await this.playerService.update(payload.uuids, { team: team.id });
+
+    return {
+      teams: await this.teamService.findAll(),
+      players: await this.playerService.findAll(),
     };
   }
 

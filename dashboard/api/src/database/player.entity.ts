@@ -10,7 +10,7 @@ export class PlayerEntity {
   name: string;
 
   @Column("int", { nullable: true })
-  team?: number;
+  team?: number | null;
 
   constructor(payload?: IOptionalPlayer) {
     if (payload) {
