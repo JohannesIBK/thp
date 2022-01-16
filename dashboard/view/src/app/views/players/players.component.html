@@ -28,7 +28,12 @@
   </section>
 
   <section class="content" *ngIf="loaded">
-    <div class="players-add"></div>
+    <div class="search">
+      <mat-form-field class="full-width" appearance="standard">
+        <mat-label>Nach Name, UUID oder Team suchen...</mat-label>
+        <input matInput placeholder="JohannesIBK" (input)="applyFilter()" [(ngModel)]="filter" />
+      </mat-form-field>
+    </div>
 
     <div class="dd-box">
       <mat-grid-list [cols]="10" rowHeight="25px">
@@ -48,7 +53,7 @@
           <div class="grid-item-wrapper">Löschen</div>
         </mat-grid-tile>
 
-        <ng-container *ngFor="let player of players; index as index">
+        <ng-container *ngFor="let player of filteredPlayers; index as index">
           <mat-grid-tile colspan="1">
             <div class="grid-item-wrapper">{{ index + 1 }}</div>
           </mat-grid-tile>

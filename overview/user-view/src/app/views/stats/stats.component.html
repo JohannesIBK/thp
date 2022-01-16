@@ -24,14 +24,25 @@
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="points">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef>Punkte</th>
+              <ng-container matColumnDef="pointsAll">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>Punkte (all)</th>
                 <td
                   mat-cell
                   *matCellDef="let element"
                   [ngClass]="{ disqualified: element.disqualified }"
                   (click)="openViewLogComponent(phase.acronym, element.id)">
-                  {{ element.points }}
+                  {{ getPointsSum(element.points) }}
+                </td>
+              </ng-container>
+
+              <ng-container [matColumnDef]="'points' + i" *ngFor="let round of counter(phase.rounds); index as i">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>Punkte ({{ i + 1 }})</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [ngClass]="{ disqualified: element.disqualified }"
+                  (click)="openViewLogComponent(phase.acronym, element.id)">
+                  {{ element.points.get(i) || 0 }}
                 </td>
               </ng-container>
 
@@ -53,14 +64,25 @@
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="points">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef>Punkte</th>
+              <ng-container matColumnDef="pointsAll">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>Punkte (all)</th>
                 <td
                   mat-cell
                   *matCellDef="let element"
                   [ngClass]="{ disqualified: element.disqualified }"
                   (click)="openViewLogComponent(phase.acronym, element.id)">
-                  {{ element.points }}
+                  {{ getPointsSum(element.points) }}
+                </td>
+              </ng-container>
+
+              <ng-container [matColumnDef]="'points' + i" *ngFor="let round of counter(phase.rounds); index as i">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>Punkte ({{ i + 1 }})</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [ngClass]="{ disqualified: element.disqualified }"
+                  (click)="openViewLogComponent(phase.acronym, element.id)">
+                  {{ element.points.get(i) || 0 }}
                 </td>
               </ng-container>
 

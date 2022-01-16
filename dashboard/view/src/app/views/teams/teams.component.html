@@ -23,13 +23,18 @@
     <mat-grid-list [cols]="3">
       <mat-grid-tile>
         <div class="grid-item-wrapper">
+          <mat-form-field class="full-width" appearance="standard">
+            <mat-label>Nach Name suchen...</mat-label>
+            <input matInput placeholder="JohannesIBK" (input)="applyFilter()" [(ngModel)]="filter" />
+          </mat-form-field>
+
           <div class="players-container">
             <h2>Spieler ohne Team</h2>
 
             <div
               id="allPlayers"
               cdkDropList
-              [cdkDropListData]="players"
+              [cdkDropListData]="filteredPlayers"
               cdkDropListConnectedTo="teamPlayers"
               class="dd-box"
               (cdkDropListDropped)="drop($event)">
@@ -67,8 +72,12 @@
             <mat-form-field appearance="fill">
               <mat-label>Wähle ein Team aus</mat-label>
               <mat-select [ngModel]="currentTeam" (selectionChange)="selectNewTeam($event)" [disabled]="saving">
+                <mat-option>
+                  <ngx-mat-select-search [(ngModel)]="teamSearch" (keyup)="applySelectFilter()"></ngx-mat-select-search>
+                </mat-option>
+
                 <mat-option [value]="undefined">Kein Team</mat-option>
-                <mat-option *ngFor="let team of teams" [value]="team">{{ playerNameString(team.players) }}</mat-option>
+                <mat-option *ngFor="let team of filteredTeams" [value]="team">{{ playerNameString(team.players) }}</mat-option>
               </mat-select>
             </mat-form-field>
 

@@ -20,6 +20,11 @@
   </section>
 
   <section *ngIf="loaded === 2">
+    <mat-form-field class="full-width" appearance="standard">
+      <mat-label>Nach Name, Punkte oder Gruppe suchen...</mat-label>
+      <input matInput placeholder="JohannesIBK" (keyup)="applyFilter($event)" />
+    </mat-form-field>
+
     <mat-tab-group mat-align-tabs="start" (selectedIndexChange)="selectTab($event)">
       <mat-tab *ngFor="let phase of tournament.phases" [label]="phase.name">
         <table mat-table [dataSource]="tableData" class="mat-elevation-z8" matSort>

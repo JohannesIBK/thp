@@ -1,6 +1,7 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
+import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
@@ -10,7 +11,7 @@ import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { PermissionEnum } from "../../types/enums";
 import { IPlayer } from "../../types/player.interface";
-import { ITeamWithPlayers } from "../../types/team.interface";
+import { ITeam, ITeamWithPlayers } from "../../types/team.interface";
 import { ITournament } from "../../types/tournament.interface";
 import { playerNameString } from "../../utils/utils";
 
@@ -24,10 +25,14 @@ export class TeamsComponent implements OnInit {
   currentTeam?: ITeamWithPlayers;
   currentTeamCopy?: ITeamWithPlayers;
   players: IPlayer[] = [];
+  filteredPlayers: IPlayer[] = [];
   teams: ITeamWithPlayers[] = [];
+  filteredTeams: ITeamWithPlayers[] = [];
   loaded = false;
   saving = false;
   playerNameString = playerNameString;
+  teamSearch = "";
+  filter = "";
 
   constructor(
     private readonly tournamentService: TournamentService,
@@ -73,6 +78,25 @@ export class TeamsComponent implements OnInit {
   resetPlayerList(): void {
     if (!this.currentTeam) return;
     this.players = [...this.players, ...this.currentTeam.players];
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    if (this.filter.trim() === "") {
+      this.filteredPlayers = this.players;
+    } else {
+      this.filteredPlayers = this.players.filter((p) => p.name.trim().toLowerCase().includes(this.filter.trim().toLowerCase()));
+    }
+  }
+
+  applySelectFilter() {
+    const filter = this.teamSearch.trim().toLowerCase();
+
+    if (filter === "") {
+      this.filteredTeams = this.teams;
+    } else {
+      this.filteredTeams = this.teams.filter((t) => t.players.find((p) => p.name.toLowerCase().includes(filter)));
+    }
   }
 
   selectNewTeam({ value }: { value: ITeamWithPlayers | undefined }) {
@@ -81,11 +105,15 @@ export class TeamsComponent implements OnInit {
       for (const player of this.currentTeam.players) {
         if (!this.currentTeamCopy!.players.find((p) => p.uuid === player.uuid)) {
           this.players = [...this.players, player];
+          this.applyFilter();
         }
       }
     } else if (this.currentTeam?.players.length === 0) {
       if (this.currentTeam.id >= 0) this.deleteTeam(this.currentTeam.id);
-      else this.teams = this.teams.filter((t) => t.id !== -1);
+      else {
+        this.teams = this.teams.filter((t) => t.id !== -1);
+        this.applySelectFilter();
+      }
     }
     this.currentTeam = value;
     this.currentTeamCopy = value;
@@ -93,36 +121,64 @@ export class TeamsComponent implements OnInit {
 
   saveCurrentTeam(): void {
     if (!this.currentTeam) return;
-    if (this.currentTeam.players.length !== this.tournament.teamSize) this.resetPlayerList();
-
+    if (this.currentTeam.players.length !== this.tournament.teamSize) {
+      this.resetPlayerList();
+      return;
+    }
     this.saving = true;
-    this.teamService.createTeam(this.currentTeam.players.map((p) => p.uuid)).subscribe({
-      next: () => {
-        this.fetchTeams();
-        this.currentTeam = undefined;
-        this.currentTeamCopy = undefined;
-        this.saving = false;
-      },
-    });
+
+    if (this.currentTeam.id === -1) {
+      this.teamService.createTeam(this.currentTeam.players.map((p) => p.uuid)).subscribe({
+        next: ({ teams, players }) => {
+          this.mapTeams(teams, players);
+          this.addTeam();
+          this.currentTeam = undefined;
+          this.currentTeamCopy = undefined;
+          this.saving = false;
+        },
+      });
+    } else {
+      this.teamService
+        .saveTeam(
+          this.currentTeam.id,
+          this.currentTeam.players.map((p) => p.uuid),
+        )
+        .subscribe({
+          next: ({ teams, players }) => {
+            this.mapTeams(teams, players);
+            this.addTeam();
+            this.currentTeam = undefined;
+            this.currentTeamCopy = undefined;
+            this.saving = false;
+          },
+        });
+    }
+  }
+
+  mapTeams(teams: ITeam[], players: IPlayer[]): void {
+    const _teams = [];
+    let _players = players;
+
+    for (const team of teams) {
+      const teamWithPlayers: ITeamWithPlayers = {
+        ...team,
+        players: players.filter((p) => p.team === team.id),
+      };
+      _players = _players.filter((p) => p.team !== team.id);
+      _teams.push(teamWithPlayers);
+    }
+
+    this.teams = _teams;
+    this.players = _players;
+    this.players = _players;
+    this.applySelectFilter();
+    this.applyFilter();
   }
 
   fetchTeams(): void {
     this.teamService.getAllTeamsWithPlayers().subscribe({
       next: ({ teams, players }) => {
-        const _teams = [];
-        let _players = players;
-
-        for (const team of teams) {
-          const teamWithPlayers: ITeamWithPlayers = {
-            ...team,
-            players: players.filter((p) => p.team === team.id),
-          };
-          _players = _players.filter((p) => p.team !== team.id);
-          _teams.push(teamWithPlayers);
-        }
-
-        this.teams = _teams;
-        this.players = _players;
+        this.mapTeams(teams, players);
         this.loaded = true;
       },
     });
@@ -134,9 +190,11 @@ export class TeamsComponent implements OnInit {
         const team = this.teams.find((t) => t.id === teamId);
         if (team && team.players.length) {
           this.players = [...this.players, ...team.players];
+          this.applyFilter();
         }
 
         this.teams = this.teams.filter((t) => t.id !== teamId);
+        this.applySelectFilter();
       },
       error: (error: HttpErrorResponse) => {
         this.snackBar.open(error.error.message, "OK", { duration: 3000 });

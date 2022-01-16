@@ -22,5 +22,5 @@ export interface ITeamWithEntryAndStats extends ITeamWithPlayers {
 
 export interface ITeamWithStats extends ITeamWithPlayers {
   group: string;
-  points: number;
+  points: Map<number, number>;
 }

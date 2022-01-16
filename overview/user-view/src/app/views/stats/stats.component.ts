@@ -28,7 +28,7 @@ export class StatsComponent implements OnInit {
   tournament!: ITournament;
   loaded = false;
   updates = false;
-  columns = ["name", "points"];
+  columns = ["name", "pointsAll"];
 
   private sort!: MatSort;
 
@@ -86,7 +86,8 @@ export class StatsComponent implements OnInit {
 
       let team = this.currentTeams.find((t) => t.id === stats.teamId);
       if (team) {
-        team.points = team.points + stats.points;
+        const roundStats = team.points.get(stats.round) || 0;
+        team.points.set(stats.round, roundStats + stats.points);
         this.teams = [...this.teams.filter((t) => t.id !== stats.teamId), team];
       }
     });
@@ -98,19 +99,52 @@ export class StatsComponent implements OnInit {
 
   selectGroup(index: number) {
     this.tableData.data = [];
-    this.tableData.data = this.currentTeams.sort();
+
     if (index === 0) {
       this.tableData.data = this.currentTeams;
-      this.tableData.data.sort((a, b) => b.points - a.points);
+      this.tableData.data.sort((a, b) => {
+        let aSum = 0;
+        let bSum = 0;
+
+        for (const points of a.points.values()) {
+          aSum += points;
+        }
+
+        for (const points of b.points.values()) {
+          bSum += points;
+        }
+
+        return bSum - aSum;
+      });
     } else {
       this.tableData.data = this.currentTeams.filter((t) => t.group === this.groups[index - 1]);
-      this.tableData.data.sort((a, b) => b.points - a.points);
+      this.tableData.data.sort((a, b) => {
+        let aSum = 0;
+        let bSum = 0;
+
+        for (const points of a.points.values()) {
+          aSum += points;
+        }
+
+        for (const points of b.points.values()) {
+          bSum += points;
+        }
+
+        return bSum - aSum;
+      });
     }
   }
 
   selectTab(index: number): void {
     this.tableData.data = [];
     const phase = this.tournament.phases[index];
+
+    this.columns = ["name", "pointsAll"];
+
+    for (let i = 0; i < phase.rounds; i++) {
+      this.columns.push(`points${i}`);
+    }
+
     const phaseStats = this.stats.get(phase.acronym);
 
     const relations = this.relations.filter((r) => r.phase === phase.acronym);
@@ -120,9 +154,10 @@ export class StatsComponent implements OnInit {
       const entry = relations.find((r) => r.teamId === team.id);
       let stats: IStats[] = [];
       if (phaseStats) stats = phaseStats.get(team.id) || [];
-      let points = 0;
+      const points = new Map<number, number>();
       for (const stat of stats) {
-        points += stat.points;
+        const round = points.get(stat.round) || 0;
+        points.set(stat.round, round + stat.points);
       }
 
       if (entry) {
@@ -130,8 +165,20 @@ export class StatsComponent implements OnInit {
       }
     }
 
-    teams.sort((a, b) => b.points - a.points);
+    teams.sort((a, b) => {
+      let aSum = 0;
+      let bSum = 0;
 
+      for (const points of a.points.values()) {
+        aSum += points;
+      }
+
+      for (const points of b.points.values()) {
+        bSum += points;
+      }
+
+      return bSum - aSum;
+    });
     this.currentTeams = teams;
     this.selectGroup(0);
   }
@@ -175,6 +222,16 @@ export class StatsComponent implements OnInit {
         this.snackBar.open(error.error.message);
       },
     });
+  }
+
+  getPointsSum(points: Map<number, number>): number {
+    let sum = 0;
+
+    for (const point of points.values()) {
+      sum += point;
+    }
+
+    return sum;
   }
 
   counter(index: number): Array<void> {

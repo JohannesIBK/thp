@@ -23,7 +23,8 @@ export class PlayersComponent implements OnInit {
   tournament!: ITournament;
   loaded = false;
   dialogIsOpen = false;
-
+  filter = "";
+  filteredPlayers: IPlayer[] = [];
   nameField = new FormControl("", [V.required, V.maxLength(16), V.minLength(3)]);
 
   constructor(
@@ -53,6 +54,18 @@ export class PlayersComponent implements OnInit {
     }
   }
 
+  applyFilter() {
+    const filter = this.filter.trim().toLowerCase();
+
+    if (filter === "") {
+      this.filteredPlayers = this.players;
+    } else {
+      this.filteredPlayers = this.players.filter(
+        (p) => p.name.trim().toLowerCase().includes(filter) || p.uuid.includes(filter) || p.team?.toString() === filter,
+      );
+    }
+  }
+
   fetchPlayers(): void {
     this.tournamentService.getTournament().subscribe({
       next: (tournament) => {
@@ -61,6 +74,7 @@ export class PlayersComponent implements OnInit {
         this.playerService.getAllPlayers().subscribe({
           next: (players) => {
             this.players = players;
+            this.applyFilter();
             this.loaded = true;
           },
           error: (error: HttpErrorResponse) => {
@@ -93,6 +107,7 @@ export class PlayersComponent implements OnInit {
         request.subscribe({
           next: (players) => {
             this.players = players;
+            this.applyFilter();
           },
           error: (error: HttpErrorResponse) => {
             this.snackBar.open(error.error.message, "OK", { duration: 3000 });
@@ -108,6 +123,7 @@ export class PlayersComponent implements OnInit {
     this.playerService.deletePlayer(uuid).subscribe({
       next: () => {
         this.players = this.players.filter((p) => p.uuid !== uuid);
+        this.applyFilter();
       },
       error: (error: HttpErrorResponse) => {
         this.snackBar.open(error.error.message, "OK", { duration: 3000 });

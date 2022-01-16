@@ -21,6 +21,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { ActivateTournamentRequestComponent } from "./components/activate-tournament-request/activate-tournament-request.component";
@@ -116,6 +117,7 @@ import { EditUserComponent } from "./components/edit-user/edit-user.component";
     MatGridListModule,
     DragDropModule,
     MatTabsModule,
+    NgxMatSelectSearchModule,
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: JwtRefreshInterceptor, multi: true }, MatIconRegistry],
   bootstrap: [AppComponent],

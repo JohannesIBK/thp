@@ -70,6 +70,11 @@ export class ManagementComponent implements OnInit {
     this.tableData.sort = this.sort;
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.tableData.filter = filterValue.trim().toLowerCase();
+  }
+
   selectTab(index: number): void {
     this.tableData.data = [];
     const phase = this.phases[index];
