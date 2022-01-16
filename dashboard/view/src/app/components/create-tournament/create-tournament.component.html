@@ -71,7 +71,6 @@
   <table mat-table [dataSource]="phases" multiTemplateDataRows class="mat-elevation-z8">
     <ng-container matColumnDef="{{ column }}" *ngFor="let column of columns">
       <th mat-header-cell *matHeaderCellDef>{{ columnNames[column] }}</th>
-      <!--      {{ element[column] || "X" }}-->
       <td mat-cell *matCellDef="let element">
         <div *ngIf="element[column] !== undefined; then value; else remove"></div>
         <ng-template #value>{{ element[column] }}</ng-template>
