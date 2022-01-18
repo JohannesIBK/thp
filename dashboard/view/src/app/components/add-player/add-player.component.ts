@@ -28,7 +28,6 @@ export class AddPlayerComponent {
       next: (player) => {
         this.loading = false;
         if (player) {
-          console.log(player.name);
           this.dialogRef.close({ name: player.name, uuid: player.uuid });
         } else {
           this.snackBar.open("Der Spieler wurde nicht gefunden", "OK", { duration: 3000 });
@@ -36,8 +35,6 @@ export class AddPlayerComponent {
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
-
-        console.log(error.error);
         this.snackBar.open(`Ein Problem mit der Mojang API ist aufgetreten. Code: ${error.status}`);
       },
     });
