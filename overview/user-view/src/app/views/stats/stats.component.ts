@@ -27,7 +27,6 @@ export class StatsComponent implements OnInit {
   groups = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   tournament!: ITournament;
   loaded = false;
-  updates = false;
   columns = ["name", "pointsAll"];
 
   private sort!: MatSort;
@@ -75,7 +74,6 @@ export class StatsComponent implements OnInit {
 
   subscribeToStats() {
     this.socketService.connectSocket();
-    this.updates = true;
     this.socketService.onMessage().subscribe((stats) => {
       const map = this.stats.get(stats.phase);
       if (map) {
@@ -102,36 +100,8 @@ export class StatsComponent implements OnInit {
 
     if (index === 0) {
       this.tableData.data = this.currentTeams;
-      // this.tableData.data.sort((a, b) => {
-      //   let aSum = 0;
-      //   let bSum = 0;
-      //
-      //   for (const points of a.points.values()) {
-      //     aSum += points;
-      //   }
-      //
-      //   for (const points of b.points.values()) {
-      //     bSum += points;
-      //   }
-      //
-      //   return bSum - aSum;
-      // });
     } else {
       this.tableData.data = this.currentTeams.filter((t) => t.group === this.groups[index - 1]);
-      // this.tableData.data.sort((a, b) => {
-      //   let aSum = 0;
-      //   let bSum = 0;
-      //
-      //   for (const points of a.points.values()) {
-      //     aSum += points;
-      //   }
-      //
-      //   for (const points of b.points.values()) {
-      //     bSum += points;
-      //   }
-      //
-      //   return bSum - aSum;
-      // });
     }
   }
 
@@ -165,20 +135,6 @@ export class StatsComponent implements OnInit {
       }
     }
 
-    // teams.sort((a, b) => {
-    //   let aSum = 0;
-    //   let bSum = 0;
-    //
-    //   for (const points of a.points.values()) {
-    //     aSum += points;
-    //   }
-    //
-    //   for (const points of b.points.values()) {
-    //     bSum += points;
-    //   }
-    //
-    //   return bSum - aSum;
-    // });
     this.currentTeams = teams;
     this.selectGroup(0);
   }
