@@ -50,8 +50,14 @@ export class TournamentComponent implements OnInit {
     }
   }
 
-  async downloadBackup() {
-    return await lastValueFrom(this.tournamentService.getBackup());
+  async downloadBackup(): Promise<void> {
+    const file = (await lastValueFrom(this.tournamentService.getBackup())) as any;
+
+    const downloadLink = document.createElement("a");
+    downloadLink.href = window.URL.createObjectURL(file);
+    downloadLink.setAttribute("download", "backup.sql");
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
   }
 
   openRequestDialog(): void {
