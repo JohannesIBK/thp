@@ -20,6 +20,14 @@ export class TournamentService {
       .pipe();
   }
 
+  getBackup(): Observable<Blob> {
+    return this.http.get(`${environment.url}/tournament/backup`, {
+      headers: { Authorization: this.authService.token },
+      withCredentials: true,
+      responseType: "blob",
+    });
+  }
+
   create(payload: ICreateTournamentPayload): Observable<ITournament> {
     return this.http
       .put<ITournament>(`${environment.url}/tournament`, payload, {

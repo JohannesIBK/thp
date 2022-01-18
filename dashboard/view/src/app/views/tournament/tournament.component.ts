@@ -3,6 +3,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { lastValueFrom } from "rxjs";
 import { CreateTournamentComponent } from "../../components/create-tournament/create-tournament.component";
 import { AuthService } from "../../services/auth.service";
 import { TournamentService } from "../../services/tournament.service";
@@ -47,6 +48,10 @@ export class TournamentComponent implements OnInit {
         this.fetchTournament();
       });
     }
+  }
+
+  async downloadBackup() {
+    return await lastValueFrom(this.tournamentService.getBackup());
   }
 
   openRequestDialog(): void {

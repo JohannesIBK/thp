@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { PlayerEntity } from "../../database/player.entity";
 import { StatsEntity } from "../../database/stats.entity";
 import { TeamEntity } from "../../database/team.entity";
+import { RatelimitService } from "../../services/ratelimit.service";
 import { StatsService } from "../../services/stats.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentController } from "./tournament.controller";
@@ -22,6 +23,6 @@ import { PhaseEntryEntity } from "../../database/phase-entry.entity";
     TypeOrmModule.forFeature([TournamentEntity, UserEntity, PhaseEntity, PhaseEntryEntity, TeamEntity, PlayerEntity, StatsEntity]),
   ],
   controllers: [TournamentController],
-  providers: [TournamentService, AuthService, UserService, PhaseService, TeamService, StatsService],
+  providers: [TournamentService, AuthService, UserService, PhaseService, TeamService, StatsService, RatelimitService],
 })
 export class TournamentModule {}

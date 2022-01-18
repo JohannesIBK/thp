@@ -12,9 +12,13 @@
             <mat-icon>flash_on</mat-icon>
             <span>Aktivieren</span>
           </button>
-          <button mat-menu-item [disabled]="tournament?.active">
-            <mat-icon>edit</mat-icon>
-            <span>Bearbeiten</span>
+          <!--          <button mat-menu-item [disabled]="tournament?.active">-->
+          <!--            <mat-icon>edit</mat-icon>-->
+          <!--            <span>Bearbeiten</span>-->
+          <!--          </button>-->
+          <button mat-menu-item [disabled]="!tournament" (click)="downloadBackup()">
+            <mat-icon>backup</mat-icon>
+            <span>Backup herunterladen</span>
           </button>
           <button mat-menu-item (click)="openDeleteDialog()">
             <mat-icon>delete_forever</mat-icon>
