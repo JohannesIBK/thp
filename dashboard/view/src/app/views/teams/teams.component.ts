@@ -1,7 +1,6 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
@@ -66,7 +65,7 @@ export class TeamsComponent implements OnInit {
   }
 
   addTeam(): void {
-    if (this.currentTeam?.players.length) this.resetPlayerList();
+    if (this.currentTeam && this.currentTeam.players.length) this.resetPlayerList();
     this.currentTeam = { disqualified: false, players: [], members: 0, id: -1 };
     this.currentTeamCopy = { ...this.currentTeam };
   }
@@ -131,9 +130,9 @@ export class TeamsComponent implements OnInit {
       this.teamService.createTeam(this.currentTeam.players.map((p) => p.uuid)).subscribe({
         next: ({ teams, players }) => {
           this.mapTeams(teams, players);
-          this.addTeam();
           this.currentTeam = undefined;
           this.currentTeamCopy = undefined;
+          this.addTeam();
           this.saving = false;
         },
       });
@@ -146,9 +145,9 @@ export class TeamsComponent implements OnInit {
         .subscribe({
           next: ({ teams, players }) => {
             this.mapTeams(teams, players);
-            this.addTeam();
             this.currentTeam = undefined;
             this.currentTeamCopy = undefined;
+            this.addTeam();
             this.saving = false;
           },
         });
