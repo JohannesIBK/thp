@@ -27,7 +27,7 @@ export class StatsComponent implements OnInit {
   groups = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   tournament!: ITournament;
   loaded = false;
-  columns = ["name", "pointsAll"];
+  columns = new Map<string, string[]>();
 
   private sort!: MatSort;
 
@@ -50,6 +50,13 @@ export class StatsComponent implements OnInit {
 
         for (const phase of tournament.phases) {
           this.stats.set(phase.acronym, new Map());
+
+          const cols = ["name", "pointsAll"];
+          for (let i = 0; i < phase.rounds; i++) {
+            cols.push(`points${i}`);
+          }
+
+          this.columns.set(phase.acronym, cols);
         }
 
         this.fetchData();
@@ -109,12 +116,6 @@ export class StatsComponent implements OnInit {
     this.tableData.data = [];
     const phase = this.tournament.phases[index];
 
-    this.columns = ["name", "pointsAll"];
-
-    for (let i = 0; i < phase.rounds; i++) {
-      this.columns.push(`points${i}`);
-    }
-
     const phaseStats = this.stats.get(phase.acronym);
 
     const relations = this.relations.filter((r) => r.phase === phase.acronym);
@@ -169,10 +170,10 @@ export class StatsComponent implements OnInit {
 
         this.teams = _teams;
         this.relations = relations;
+        this.selectTab(0);
+
         this.subscribeToStats();
         this.loaded = true;
-
-        this.selectTab(0);
       },
       error: (error: HttpErrorResponse) => {
         this.snackBar.open(error.error.message);

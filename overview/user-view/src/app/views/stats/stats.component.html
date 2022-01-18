@@ -53,8 +53,8 @@
                 </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="columns"></tr>
-              <tr mat-row *matRowDef="let row; columns: columns"></tr>
+              <tr mat-header-row *matHeaderRowDef="columns.get(phase.acronym)"></tr>
+              <tr mat-row *matRowDef="let row; columns: columns.get(phase.acronym)"></tr>
             </table>
           </mat-tab>
 
@@ -100,8 +100,8 @@
                 </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="columns"></tr>
-              <tr mat-row *matRowDef="let row; columns: columns"></tr>
+              <tr mat-header-row *matHeaderRowDef="columns.get(phase.acronym)"></tr>
+              <tr mat-row *matRowDef="let row; columns: columns.get(phase.acronym)"></tr>
             </table>
           </mat-tab>
         </mat-tab-group>
