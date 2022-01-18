@@ -115,7 +115,7 @@ export class PhasesComponent implements OnInit {
     if (!this.phase) return;
 
     function getRandomGroup() {
-      return groups[Math.random() * (groups.length - 1)];
+      return groups[Math.round(Math.floor(Math.random() * groups.length))];
     }
 
     let groups: string[] = [];
