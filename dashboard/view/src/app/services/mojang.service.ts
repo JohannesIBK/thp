@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { map } from "rxjs/operators";
-import { ICacheMinecraftUser, IMinecraftUser, MojangResponse } from "../types/mojang.interface";
+import { ICacheMinecraftUser, IMinecraftUser, IMinetoolsResponse } from "../types/mojang.interface";
 import { addDashesToUUID } from "../utils/utils";
 
 @Injectable({
@@ -32,13 +32,13 @@ export class MojangService {
   }
 
   /*
-   * Fetches a player through the Mojang API.
+   * Fetches a player through the Minetools API (https://api.minetools.eu/uuid/).
    * Has the advantage to have no rate limit and to be slightly faster
    */
-  getByQuery(username: string): Observable<IMinecraftUser | null> {
-    return this.http.get<MojangResponse | null>(`https://api.mojang.com/users/profiles/minecraft/${username}`).pipe(
+  getByQuery(nameOrUuid: string): Observable<IMinecraftUser | null> {
+    return this.http.get<IMinetoolsResponse>(`https://api.minetools.eu/uuid/${nameOrUuid}`).pipe(
       map((res) => {
-        if (res) {
+        if (res.status === "OK") {
           localStorage.setItem(res.name.toLowerCase(), JSON.stringify({ uuid: res.id, cached_at: new Date(), name: res.name }));
 
           return {
@@ -46,7 +46,6 @@ export class MojangService {
             uuid: addDashesToUUID(res.id),
           };
         }
-
         return null;
       }),
     );
