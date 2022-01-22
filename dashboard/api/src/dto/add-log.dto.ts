@@ -10,7 +10,6 @@ export class AddLogDto {
   reason: string;
 
   @IsNumber()
-  @IsPositive()
   @Max(16)
   round: number;
 
