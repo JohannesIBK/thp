@@ -144,7 +144,7 @@ export class PhasesComponent implements OnInit {
       const res = await this.saveEntry(newEntry);
       if (res) {
         const teams = this.rankedTeams.get(group)!;
-        if (teams.length === this.phase.groups) {
+        if (teams.length === this.phase.teams) {
           groups = groups.filter((g) => g !== group);
         }
       }
