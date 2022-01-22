@@ -11,7 +11,7 @@ import { MatDialogRef } from "@angular/material/dialog";
   styleUrls: ["./add-player.component.scss"],
 })
 export class AddPlayerComponent {
-  name = new FormControl("", [V.required, V.maxLength(16), V.minLength(3)]);
+  name = new FormControl("", [V.required, V.maxLength(32), V.minLength(2)]);
   loading = false;
 
   constructor(
