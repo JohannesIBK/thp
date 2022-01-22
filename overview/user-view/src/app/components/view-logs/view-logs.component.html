@@ -2,22 +2,15 @@
 <div mat-dialog-content>
   <mat-tab-group (selectedIndexChange)="selectTab($event)">
     <mat-tab *ngFor="let _ of counter(data.phase.rounds); index as i" [label]="'Runde ' + (i + 1)">
-      <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
-        <ng-container matColumnDef="reason">
-          <th mat-header-cell *matHeaderCellDef>Grund</th>
-          <td mat-cell *matCellDef="let element">{{ element.reason || "Kein Grund angegeben" }}</td>
-        </ng-container>
+      <table class="mat-elevation-z8">
+        <tr class="table-header">
+          <th>Grund</th>
+          <th>Punkte</th>
+        </tr>
 
-        <ng-container matColumnDef="points">
-          <th mat-header-cell *matHeaderCellDef>Punkte</th>
-          <td mat-cell *matCellDef="let element">{{ element.points }}</td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns"></tr>
-
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="2">Keine Daten gefunden</td>
+        <tr *ngFor="let stat of tableData; index as i" [ngClass]="{ background: i % 2 === 0 }">
+          <td>{{ stat.reason }}</td>
+          <td>{{ stat.points }}</td>
         </tr>
       </table>
     </mat-tab>

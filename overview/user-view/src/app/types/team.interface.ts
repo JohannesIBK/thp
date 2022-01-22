@@ -2,7 +2,7 @@ import { IPlayer } from "./player.interface";
 
 export interface ITeam {
   id: number;
-  members: number;
+  members?: number;
   disqualified: boolean;
   reason?: string;
 }

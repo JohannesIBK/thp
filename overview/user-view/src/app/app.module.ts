@@ -5,10 +5,8 @@ import { MatRippleModule } from "@angular/material/core";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
-import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatSortModule } from "@angular/material/sort";
-import { MatTableModule } from "@angular/material/table";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { BrowserModule } from "@angular/platform-browser";
@@ -33,10 +31,8 @@ import { ViewLogsComponent } from "./components/view-logs/view-logs.component";
     MatButtonModule,
     HttpClientModule,
     MatSnackBarModule,
-    MatMenuModule,
     MatDividerModule,
     MatTabsModule,
-    MatTableModule,
     MatDialogModule,
     MatSortModule,
   ],

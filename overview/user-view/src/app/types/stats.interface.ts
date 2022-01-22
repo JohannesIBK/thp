@@ -4,4 +4,5 @@ export interface IStats {
   round: number;
   teamId: number;
   points: number;
+  reason: string;
 }

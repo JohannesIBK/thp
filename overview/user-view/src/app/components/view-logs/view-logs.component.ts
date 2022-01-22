@@ -10,15 +10,14 @@ import { IStats } from "../../types/stats.interface";
   styleUrls: ["./view-logs.component.scss"],
 })
 export class ViewLogsComponent {
-  tableData = new MatTableDataSource<IStats>([]);
-  columns = ["reason", "points"];
+  tableData: IStats[] = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public readonly data: { stats: IStats[]; phase: IPhase }) {
-    this.tableData.data = data.stats;
+    this.tableData = data.stats;
   }
 
   selectTab(index: number): void {
-    this.tableData.data = this.data.stats.filter((s) => s.round === index);
+    this.tableData = this.data.stats.filter((s) => s.round === index);
   }
 
   counter(i: number): Array<number> {

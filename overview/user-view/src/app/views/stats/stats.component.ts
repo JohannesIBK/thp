@@ -1,12 +1,11 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatSort } from "@angular/material/sort";
+import { Sort } from "@angular/material/sort";
 import { ViewLogsComponent } from "../../components/view-logs/view-logs.component";
 import { ApiService } from "../../services/api.service";
 import { SocketService } from "../../services/socket.service";
-import { MatPointsTableSort } from "../../sort-table-data-source";
 import { IPhase, IPhaseEntry } from "../../types/phase.interface";
 import { IPlayer } from "../../types/player.interface";
 import { IStats } from "../../types/stats.interface";
@@ -23,18 +22,12 @@ export class StatsComponent implements OnInit {
   currentTeams: ITeamWithStats[] = [];
   stats = new Map<string, Map<number, IStats[]>>();
   relations: IPhaseEntry[] = [];
-  tableData = new MatPointsTableSort([]);
+  sortedTeams: ITeamWithStats[] = [];
+  groupTeams: ITeamWithStats[] = [];
   groups = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   tournament!: ITournament;
   loaded = false;
   columns = new Map<string, string[]>();
-
-  private sort!: MatSort;
-
-  @ViewChild(MatSort) set matSort(ms: MatSort) {
-    this.sort = ms;
-    this.setDataSourceAttributes();
-  }
 
   constructor(
     private readonly socketService: SocketService,
@@ -67,8 +60,24 @@ export class StatsComponent implements OnInit {
     });
   }
 
-  setDataSourceAttributes() {
-    this.tableData.sort = this.sort;
+  sortData(sort: Sort) {
+    const teams = this.groupTeams.slice();
+    const sortBy = sort.active.split("_")[0];
+    const round = parseInt(sort.active.split("_")[1]);
+    const isAsc = sort.direction === "desc";
+
+    this.sortedTeams = teams.sort((a, b) => {
+      switch (sortBy) {
+        case "players":
+          return compare(this.playerNameString(a.players), this.playerNameString(b.players), isAsc);
+        case "pointsAll":
+          return compare(this.getPointsSum(a.points), this.getPointsSum(b.points), isAsc);
+        case "points":
+          return compare(a.points.get(round) || 0, b.points.get(round) || 0, isAsc);
+        default:
+          return 0;
+      }
+    });
   }
 
   openViewLogComponent(phase: IPhase, teamId: number): void {
@@ -103,19 +112,13 @@ export class StatsComponent implements OnInit {
   }
 
   selectGroup(index: number) {
-    this.tableData.data = [];
-
-    if (index === 0) {
-      this.tableData.data = this.currentTeams;
-    } else {
-      this.tableData.data = this.currentTeams.filter((t) => t.group === this.groups[index - 1]);
-    }
+    this.groupTeams = this.currentTeams.filter((t) => t.group === this.groups[index]);
+    this.sortedTeams = this.currentTeams;
+    this.sortData({ active: "pointsAll", direction: "asc" });
   }
 
   selectTab(index: number): void {
-    this.tableData.data = [];
     const phase = this.tournament.phases[index];
-
     const phaseStats = this.stats.get(phase.acronym);
 
     const relations = this.relations.filter((r) => r.phase === phase.acronym);
@@ -123,16 +126,20 @@ export class StatsComponent implements OnInit {
 
     for (let team of this.teams) {
       const entry = relations.find((r) => r.teamId === team.id);
-      let stats: IStats[] = [];
-      if (phaseStats) stats = phaseStats.get(team.id) || [];
-      const points = new Map<number, number>();
-      for (const stat of stats) {
-        const round = points.get(stat.round) || 0;
-        points.set(stat.round, round + stat.points);
-      }
 
       if (entry) {
-        teams.push({ ...team, group: entry.group, points });
+        let stats: IStats[] = [];
+        if (phaseStats) stats = phaseStats.get(team.id) || [];
+        const points = new Map<number, number>();
+
+        for (let i = 0; i < stats.length; i++) {
+          const stat = stats[i];
+
+          const round = points.get(stat.round) || 0;
+          points.set(stat.round, round + stat.points);
+        }
+
+        teams.push({ group: entry.group, points, players: team.players, id: team.id, disqualified: team.disqualified });
       }
     }
 
@@ -194,4 +201,8 @@ export class StatsComponent implements OnInit {
   counter(index: number): Array<void> {
     return new Array(index);
   }
+}
+
+function compare(a: number | string, b: number | string, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
