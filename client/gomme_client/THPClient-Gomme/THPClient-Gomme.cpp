@@ -93,8 +93,6 @@ public:
             return;
         }
 
-        //        std::string body = R"({"killer":")" + killer + R"(", "killed":")" + killed + R"(", "phase": ")" + phase + R"(", "round": )" + to_string(round) + "}";
-
         Document d;
         Document::AllocatorType& alloc = d.GetAllocator();
 
@@ -349,6 +347,8 @@ int main() {
 
         if (success) break;
     }
+
+    cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" << endl;
 
     input.AskUsesBAC();
 
