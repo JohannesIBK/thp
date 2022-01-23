@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { IOptionalPlayer } from "../types/player.interface";
+import { TeamEntity } from "./team.entity";
 
 @Entity({ name: "players" })
 export class PlayerEntity {
@@ -9,14 +10,17 @@ export class PlayerEntity {
   @Column("varchar", { length: 16 })
   name: string;
 
-  @Column("int", { nullable: true })
-  team?: number | null;
+  @OneToOne(() => TeamEntity, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn()
+  team?: TeamEntity | null;
 
   constructor(payload?: IOptionalPlayer) {
     if (payload) {
       this.uuid = payload.uuid;
       this.name = payload.name!;
-      this.team = payload.team;
+      if (Number.isInteger(payload.team)) {
+        this.team = new TeamEntity({ id: payload.team });
+      }
     }
   }
 }

@@ -22,7 +22,7 @@ export class PlayerService {
   }
 
   delete(uuid: string): Promise<DeleteResult> {
-    return this.playerRepository.createQueryBuilder().delete().whereInIds(uuid).returning("team").execute();
+    return this.playerRepository.createQueryBuilder().delete().whereInIds(uuid).returning('"teamId"').execute();
   }
 
   deleteAll(): Promise<DeleteResult> {

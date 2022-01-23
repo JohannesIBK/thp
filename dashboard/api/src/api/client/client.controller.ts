@@ -59,7 +59,7 @@ export class ClientController {
 
     const stat = new StatsEntity({
       phase: payload.phase,
-      teamId: player?.team,
+      teamId: player?.team?.id,
       round: payload.round,
       points: 1,
       reason: `${payload.killer} hat ${payload.killed} getötet`,
@@ -86,7 +86,7 @@ export class ClientController {
 
     const stat = new StatsEntity({
       phase: payload.phase,
-      teamId: player?.team,
+      teamId: player?.team?.id,
       round: payload.round,
       points: 2,
       reason: `Runde ${payload.round + 1} gewonnen`,

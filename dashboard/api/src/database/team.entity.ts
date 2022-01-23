@@ -1,13 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IOptionalTeam } from "../types/team.interface";
+import { PhaseEntryEntity } from "./phase-entry.entity";
 
 @Entity({ name: "teams" })
 export class TeamEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   id: number;
-
-  @Column("smallint")
-  members: number;
 
   @Column("boolean", { default: false })
   disqualified: boolean;
@@ -15,10 +13,12 @@ export class TeamEntity {
   @Column("varchar", { length: 512, nullable: true })
   reason?: string | null;
 
+  @OneToMany(() => PhaseEntryEntity, (entity) => entity.teamId, { onDelete: "CASCADE" })
+  entities: PhaseEntryEntity[];
+
   constructor(payload?: IOptionalTeam) {
     if (payload) {
       this.id = payload.id!;
-      this.members = payload.members!;
       this.disqualified = payload.disqualified!;
       this.reason = payload.reason;
     }

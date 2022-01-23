@@ -53,8 +53,8 @@ export class TeamController {
     const team = await this.teamService.findOne(parseInt(params.id));
     if (!team) throw new ForbiddenException("Das Team wurde nicht gefunden");
 
-    await this.playerService.update({ team: team.id }, { team: null });
-    await this.playerService.update(payload.uuids, { team: team.id });
+    await this.playerService.update({ team: team }, { team: null });
+    await this.playerService.update(payload.uuids, { team: team });
 
     return {
       teams: await this.teamService.findAll(),

@@ -20,15 +20,15 @@ export class TeamService {
   }
 
   async createTeamWithPlayers(uuids: string[]): Promise<TeamEntity> {
-    const team = await this.teamRepository.save({ members: uuids.length });
-    await this.playerRepository.update(uuids, { team: team.id });
+    const team = await this.teamRepository.save({});
+    await this.playerRepository.update(uuids, { team: team });
 
     return team;
   }
 
   async deleteTeam(teamId: number): Promise<void> {
     await this.teamRepository.delete(teamId);
-    await this.playerRepository.update({ team: teamId }, { team: undefined });
+    await this.playerRepository.update({ team: new TeamEntity({ id: teamId }) }, { teamId: undefined } as any);
   }
 
   async deleteAll(): Promise<void> {
@@ -37,15 +37,11 @@ export class TeamService {
   }
 
   async removePlayer(teamId: number): Promise<void> {
-    const result = await this.teamRepository
-      .createQueryBuilder()
-      .update()
-      .set({ members: () => "members - 1" })
-      .whereInIds(teamId)
-      .returning(["members"])
-      .execute();
+    const result = await this.playerRepository.find({ where: { team: { id: teamId } } });
 
-    if (result.raw[0]?.members || 0 <= 0) await this.deleteTeam(teamId);
+    if (result.length === 0) {
+      await this.deleteTeam(teamId);
+    }
   }
 
   save(entity: TeamEntity): Promise<TeamEntity> {

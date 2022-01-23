@@ -1,4 +1,4 @@
-import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { TeamEntity } from "./team.entity";
 import { IOptionalPhase } from "../types/phase.interface";
 
@@ -9,6 +9,7 @@ export class PhaseEntryEntity {
   id: number;
 
   @ManyToOne(() => TeamEntity, { onDelete: "CASCADE" })
+  @JoinColumn()
   team: TeamEntity;
 
   @Column("int")
