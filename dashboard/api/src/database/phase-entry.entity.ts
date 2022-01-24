@@ -8,12 +8,11 @@ export class PhaseEntryEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   id: number;
 
-  @ManyToOne(() => TeamEntity, { onDelete: "CASCADE" })
-  @JoinColumn()
+  @ManyToOne(() => TeamEntity, (team) => team.id, { onDelete: "CASCADE" })
   team: TeamEntity;
 
   @Column("int")
-  teamId: number;
+  private teamId: number;
 
   @Column("varchar", { length: 5 })
   phase: string;
@@ -26,7 +25,6 @@ export class PhaseEntryEntity {
       this.id = payload.id!;
       this.phase = payload.phase!;
       this.team = payload.team!;
-      this.teamId = payload.teamId!;
       this.group = payload.group!;
     }
   }

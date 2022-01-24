@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindManyOptions, Repository } from "typeorm";
 import { PlayerEntity } from "../database/player.entity";
 import { TeamEntity } from "../database/team.entity";
 
@@ -11,8 +11,8 @@ export class TeamService {
     @InjectRepository(PlayerEntity) private readonly playerRepository: Repository<PlayerEntity>,
   ) {}
 
-  findAll(): Promise<TeamEntity[]> {
-    return this.teamRepository.find();
+  findAll(options?: FindManyOptions<TeamEntity>): Promise<TeamEntity[]> {
+    return this.teamRepository.find(options);
   }
 
   findOne(id: number): Promise<TeamEntity | undefined> {
@@ -21,7 +21,7 @@ export class TeamService {
 
   async createTeamWithPlayers(uuids: string[]): Promise<TeamEntity> {
     const team = await this.teamRepository.save({});
-    await this.playerRepository.update(uuids, { team: team });
+    await this.playerRepository.update(uuids, { teamId: team.id } as any);
 
     return team;
   }

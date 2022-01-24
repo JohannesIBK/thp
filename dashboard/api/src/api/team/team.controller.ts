@@ -24,14 +24,11 @@ export class TeamController {
   @Get("players")
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async getTeamsWithPlayers(): Promise<ITeamsPlayersResponse> {
-    const teams = await this.teamService.findAll();
-    const players = await this.playerService.findAll();
+  async getTeamsWithPlayers(): Promise<TeamEntity[]> {
+    // const teams = await this.teamService.findAll();
+    // const players = await this.playerService.findAll();
 
-    return {
-      teams,
-      players,
-    };
+    return this.teamService.findAll({ join: { alias: "t", leftJoinAndSelect: { players: "t.players" } } });
   }
 
   @Put()
@@ -49,17 +46,14 @@ export class TeamController {
   @Put(":id")
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async saveTeam(@Body() payload: UuidsDto, @Param() params: IdDto): Promise<ITeamsPlayersResponse> {
+  async saveTeam(@Body() payload: UuidsDto, @Param() params: IdDto): Promise<TeamEntity[]> {
     const team = await this.teamService.findOne(parseInt(params.id));
     if (!team) throw new ForbiddenException("Das Team wurde nicht gefunden");
 
-    await this.playerService.update({ team: team }, { team: null });
+    await this.playerService.update({ team: team } as any, { team: null } as any);
     await this.playerService.update(payload.uuids, { team: team });
 
-    return {
-      teams: await this.teamService.findAll(),
-      players: await this.playerService.findAll(),
-    };
+    return this.teamService.findAll({ join: { alias: "players", leftJoinAndSelect: { players: "player.id = team.id" } } });
   }
 
   @Patch("qualify/:id")

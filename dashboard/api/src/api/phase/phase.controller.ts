@@ -10,6 +10,7 @@ import {
   Put,
   UseGuards,
 } from "@nestjs/common";
+import { TeamEntity } from "../../database/team.entity";
 import { PhaseService } from "../../services/phase.service";
 import { PhaseEntity } from "../../database/phase.entity";
 import { JwtAuthGuard } from "../../auth/auth.guard";
@@ -42,7 +43,11 @@ export class PhaseController {
   @HasPermission(PermissionEnum.ADMIN)
   @UseGuards(JwtAuthGuard)
   async addEntry(@Body() payload: AddPhaseEntryDto): Promise<PhaseEntryEntity> {
-    const response = await this.phaseService.updateEntry({ phase: payload.phase, group: payload.group, teamId: payload.teamId });
+    const response = await this.phaseService.updateEntry({
+      phase: payload.phase,
+      group: payload.group,
+      team: new TeamEntity({ id: payload.teamId }),
+    });
 
     if (!response.generatedMaps.length) throw new InternalServerErrorException("Das Team konnte nicht verschoben werden.");
 
