@@ -25,7 +25,7 @@
         <div class="grid-item-wrapper">
           <mat-form-field class="full-width" appearance="standard">
             <mat-label>Nach Name suchen...</mat-label>
-            <input matInput placeholder="JohannesIBK" (input)="applyFilter()" [(ngModel)]="filter" />
+            <input matInput placeholder="JohannesIBK" (keyup)="applyFilter()" [(ngModel)]="filter" />
           </mat-form-field>
 
           <div class="players-container">
@@ -38,7 +38,7 @@
               cdkDropListConnectedTo="teamPlayers"
               class="dd-box"
               (cdkDropListDropped)="drop($event)">
-              <div class="dd-item" *ngFor="let player of players" [cdkDragData]="player" cdkDrag>{{ player.name }}</div>
+              <div class="dd-item" *ngFor="let player of filteredPlayers" [cdkDragData]="player" cdkDrag>{{ player.name }}</div>
             </div>
           </div>
         </div>
@@ -50,6 +50,7 @@
 
             <div
               *ngIf="currentTeam"
+              [cdkDropListDisabled]="saving"
               id="teamPlayers"
               cdkDropList
               [cdkDropListData]="currentTeam.players"

@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IOptionalTeam } from "../types/team.interface";
 import { PhaseEntryEntity } from "./phase-entry.entity";
 import { PlayerEntity } from "./player.entity";
+import { StatsEntity } from "./stats.entity";
 
 @Entity({ name: "teams" })
 export class TeamEntity {
@@ -19,6 +20,9 @@ export class TeamEntity {
 
   @OneToMany(() => PhaseEntryEntity, (entity) => entity.team, { onDelete: "CASCADE" })
   entities: PhaseEntryEntity[];
+
+  @OneToMany(() => StatsEntity, (stats) => stats.team, { onDelete: "CASCADE" })
+  stats: StatsEntity[];
 
   constructor(payload?: IOptionalTeam) {
     if (payload) {

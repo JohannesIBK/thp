@@ -29,19 +29,15 @@ export class TeamService {
       .pipe();
   }
 
-  createTeam(uuids: string[]): Observable<ITeamsPlayersResponse> {
+  createTeam(uuids: string[]): Observable<ITeam> {
     return this.http
-      .put<ITeamsPlayersResponse>(
-        `${environment.url}/teams`,
-        { uuids },
-        { headers: { Authorization: this.authService.token }, withCredentials: true },
-      )
+      .put<ITeam>(`${environment.url}/teams`, { uuids }, { headers: { Authorization: this.authService.token }, withCredentials: true })
       .pipe();
   }
 
-  saveTeam(id: number, uuids: string[]): Observable<ITeamsPlayersResponse> {
+  saveTeam(id: number, uuids: string[]): Observable<ITeam> {
     return this.http
-      .put<ITeamsPlayersResponse>(
+      .put<ITeam>(
         `${environment.url}/teams/${id}`,
         { uuids },
         { headers: { Authorization: this.authService.token }, withCredentials: true },

@@ -18,14 +18,21 @@ export class TeamController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   getTeams(): Promise<TeamEntity[]> {
-    return this.teamService.findAll();
+    return this.teamService.find();
+  }
+
+  @Get("stats")
+  @UseGuards(JwtAuthGuard)
+  @HasPermission(PermissionEnum.ADMIN)
+  async getTeamsWithStats(): Promise<TeamEntity[]> {
+    return await this.teamService.find({ relations: ["players"], join: { alias: "stats" } });
   }
 
   @Get("players")
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getTeamsWithPlayers(): Promise<ITeamsPlayersResponse> {
-    const teams = await this.teamService.findAll({ relations: ["players"] });
+    const teams = await this.teamService.find({ relations: ["players"] });
     const players = await this.playerService.find({ where: { team: null } });
 
     return { teams, players };
@@ -34,26 +41,23 @@ export class TeamController {
   @Put()
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async createTeam(@Body() payload: UuidsDto): Promise<ITeamsPlayersResponse> {
-    await this.teamService.createTeamWithPlayers(payload.uuids);
+  async createTeam(@Body() payload: UuidsDto): Promise<TeamEntity> {
+    const team = await this.teamService.createTeamWithPlayers(payload.uuids);
 
-    return {
-      teams: await this.teamService.findAll(),
-      players: await this.playerService.findAll(),
-    };
+    return (await this.teamService.findOne({ where: { id: team.id }, relations: ["players"] }))!;
   }
 
   @Put(":id")
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async saveTeam(@Body() payload: UuidsDto, @Param() params: IdDto): Promise<TeamEntity[]> {
-    const team = await this.teamService.findOne(parseInt(params.id));
+  async saveTeam(@Body() payload: UuidsDto, @Param() params: IdDto): Promise<TeamEntity> {
+    const team = await this.teamService.findOne({ where: { id: parseInt(params.id) } });
     if (!team) throw new ForbiddenException("Das Team wurde nicht gefunden");
 
-    await this.playerService.update({ team: team } as any, { team: null } as any);
+    await this.playerService.update({ team: team }, { team: null });
     await this.playerService.update(payload.uuids, { team: team });
 
-    return this.teamService.findAll({ join: { alias: "players", leftJoinAndSelect: { players: "player.id = team.id" } } });
+    return (await this.teamService.findOne({ where: { id: team.id }, relations: ["players"] }))!;
   }
 
   @Patch("qualify/:id")

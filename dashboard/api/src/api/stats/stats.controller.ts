@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../../auth/auth.guard";
 import { StatsEntity } from "../../database/stats.entity";
+import { TeamEntity } from "../../database/team.entity";
 import { HasPermission } from "../../decorators/permission.decorator";
 import { User } from "../../decorators/user.decorator";
 import { AddLogDto } from "../../dto/add-log.dto";
@@ -35,9 +36,10 @@ export class StatsController {
   @HasPermission(PermissionEnum.ADMIN)
   @HttpCode(200)
   async addLog(@User() user: IJwtUser, @Body() payload: AddLogDto): Promise<StatsEntity[]> {
+    const team = new TeamEntity({ id: payload.teamId });
     const stat = new StatsEntity({
       phase: payload.phase,
-      teamId: payload.teamId,
+      team,
       round: payload.round,
       points: payload.points,
       reason: payload.reason,
@@ -47,7 +49,7 @@ export class StatsController {
 
     const entity = await this.statsService.saveLog(stat);
     this.socketService.sendStats(entity);
-    return await this.statsService.findLogs({ teamId: payload.teamId, phase: payload.phase });
+    return await this.statsService.findLogs({ team, phase: payload.phase });
   }
 
   @Post("team/:phase")
@@ -55,8 +57,10 @@ export class StatsController {
   @HasPermission(PermissionEnum.ADMIN)
   @HttpCode(200)
   async getTeamPhaseStats(@Param() params: PhaseDto, @Body() payload: QueryTeamDto): Promise<StatsEntity[]> {
-    if (payload.round) return await this.statsService.findLogs({ phase: params.phase, teamId: payload.id, round: payload.round });
-    else return await this.statsService.findLogs({ phase: params.phase, teamId: payload.id });
+    const team = new TeamEntity({ id: payload.id });
+
+    if (payload.round) return await this.statsService.findLogs({ phase: params.phase, team, round: payload.round });
+    else return await this.statsService.findLogs({ phase: params.phase, team });
   }
 
   @Delete(":phase/:round")

@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { TeamEntity } from "./team.entity";
 import { IOptionalPhase } from "../types/phase.interface";
 
@@ -8,9 +8,10 @@ export class PhaseEntryEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   id: number;
 
-  @ManyToOne(() => TeamEntity, (team) => team.id, { onDelete: "CASCADE" })
+  @ManyToOne(() => TeamEntity, (team) => team.entities, { onDelete: "CASCADE" })
   team: TeamEntity;
 
+  // needed for unique index field
   @Column("int")
   private teamId: number;
 

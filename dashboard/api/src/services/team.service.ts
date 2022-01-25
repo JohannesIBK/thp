@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindManyOptions, Repository } from "typeorm";
+import { FindManyOptions, FindOneOptions, Repository } from "typeorm";
 import { PlayerEntity } from "../database/player.entity";
 import { TeamEntity } from "../database/team.entity";
 
@@ -11,24 +11,24 @@ export class TeamService {
     @InjectRepository(PlayerEntity) private readonly playerRepository: Repository<PlayerEntity>,
   ) {}
 
-  findAll(options?: FindManyOptions<TeamEntity>): Promise<TeamEntity[]> {
+  find(options?: FindManyOptions<TeamEntity>): Promise<TeamEntity[]> {
     return this.teamRepository.find(options);
   }
 
-  findOne(id: number): Promise<TeamEntity | undefined> {
-    return this.teamRepository.findOne(id);
+  findOne(options?: FindOneOptions<TeamEntity>): Promise<TeamEntity | undefined> {
+    return this.teamRepository.findOne(options);
   }
 
   async createTeamWithPlayers(uuids: string[]): Promise<TeamEntity> {
     const team = await this.teamRepository.save({});
-    await this.playerRepository.update(uuids, { teamId: team.id } as any);
+    await this.playerRepository.update(uuids, { team });
 
     return team;
   }
 
   async deleteTeam(teamId: number): Promise<void> {
     await this.teamRepository.delete(teamId);
-    await this.playerRepository.update({ team: new TeamEntity({ id: teamId }) }, { teamId: undefined } as any);
+    await this.playerRepository.update({ team: new TeamEntity({ id: teamId }) }, { team: null });
   }
 
   async deleteAll(): Promise<void> {

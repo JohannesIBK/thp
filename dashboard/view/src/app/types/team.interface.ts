@@ -5,6 +5,7 @@ export interface ITeam {
   members: number;
   disqualified: boolean;
   reason?: string;
+  players: IPlayer[];
 }
 
 export interface ITeamWithPlayers extends ITeam {

@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { IOptionalStats } from "../types/stats.interface";
+import { TeamEntity } from "./team.entity";
 
 @Entity({ name: "player_stats" })
 export class StatsEntity {
@@ -12,8 +13,8 @@ export class StatsEntity {
   @Column("smallint")
   round: number;
 
-  @Column("int")
-  teamId: number;
+  @ManyToOne(() => TeamEntity, (team) => team.stats)
+  team: TeamEntity;
 
   @Column("smallint")
   points: number;
@@ -33,7 +34,7 @@ export class StatsEntity {
       this.reason = payload.reason!;
       this.phase = payload.phase!;
       this.round = payload.round!;
-      this.teamId = payload.teamId!;
+      this.team = payload.team!;
       this.points = payload.points!;
       this.userId = payload.userId!;
       this.time = payload.time!;

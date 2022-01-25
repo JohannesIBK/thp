@@ -10,7 +10,7 @@ import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { PermissionEnum } from "../../types/enums";
 import { IPlayer } from "../../types/player.interface";
-import { ITeam, ITeamWithPlayers } from "../../types/team.interface";
+import { ITeamWithPlayers } from "../../types/team.interface";
 import { ITournament } from "../../types/tournament.interface";
 import { playerNameString } from "../../utils/utils";
 
@@ -28,6 +28,7 @@ export class TeamsComponent implements OnInit {
   teams: ITeamWithPlayers[] = [];
   filteredTeams: ITeamWithPlayers[] = [];
   loaded = false;
+  saved = true;
   saving = false;
   playerNameString = playerNameString;
   teamSearch = "";
@@ -56,6 +57,7 @@ export class TeamsComponent implements OnInit {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      this.saved = false;
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
   }
@@ -65,7 +67,7 @@ export class TeamsComponent implements OnInit {
   }
 
   addTeam(): void {
-    if (this.currentTeam && this.currentTeam.players.length) this.resetPlayerList();
+    if (this.currentTeam && this.currentTeam.players.length && !this.saved) this.resetPlayerList();
     this.currentTeam = { disqualified: false, players: [], members: 0, id: -1 };
     this.currentTeamCopy = { ...this.currentTeam };
   }
@@ -124,60 +126,41 @@ export class TeamsComponent implements OnInit {
       this.resetPlayerList();
       return;
     }
+
     this.saving = true;
+    let req;
 
     if (this.currentTeam.id === -1) {
-      this.teamService.createTeam(this.currentTeam.players.map((p) => p.uuid)).subscribe({
-        next: ({ teams, players }) => {
-          this.mapTeams(teams, players);
-          this.currentTeam = undefined;
-          this.currentTeamCopy = undefined;
-          this.addTeam();
-          this.saving = false;
-        },
-      });
+      req = this.teamService.createTeam(this.currentTeam.players.map((p) => p.uuid));
     } else {
-      this.teamService
-        .saveTeam(
-          this.currentTeam.id,
-          this.currentTeam.players.map((p) => p.uuid),
-        )
-        .subscribe({
-          next: ({ teams, players }) => {
-            this.mapTeams(teams, players);
-            this.currentTeam = undefined;
-            this.currentTeamCopy = undefined;
-            this.addTeam();
-            this.saving = false;
-          },
-        });
-    }
-  }
-
-  mapTeams(teams: ITeam[], players: IPlayer[]): void {
-    const _teams = [];
-    let _players = players;
-
-    for (const team of teams) {
-      const teamWithPlayers: ITeamWithPlayers = {
-        ...team,
-        players: players.filter((p) => p.team === team.id),
-      };
-      _players = _players.filter((p) => p.team !== team.id);
-      _teams.push(teamWithPlayers);
+      req = this.teamService.saveTeam(
+        this.currentTeam.id,
+        this.currentTeam.players.map((p) => p.uuid),
+      );
     }
 
-    this.teams = _teams;
-    this.players = _players;
-    this.players = _players;
-    this.applySelectFilter();
-    this.applyFilter();
+    req.subscribe({
+      next: (team) => {
+        this.teams = [...this.teams, team];
+        this.applySelectFilter();
+
+        this.currentTeam = undefined;
+        this.currentTeamCopy = undefined;
+        this.addTeam();
+        this.saving = false;
+        this.saved = true;
+      },
+    });
   }
 
   fetchTeams(): void {
     this.teamService.getAllTeamsWithPlayers().subscribe({
       next: ({ teams, players }) => {
-        this.mapTeams(teams, players);
+        this.teams = teams;
+        this.players = players;
+
+        this.applySelectFilter();
+        this.applyFilter();
         this.loaded = true;
       },
     });
