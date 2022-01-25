@@ -61,6 +61,7 @@ export class UserController {
     }
 
     const accessToken = this.authService.generateAccessToken(user);
+
     response.send({ token: accessToken });
   }
 

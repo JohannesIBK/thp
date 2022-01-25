@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { IOptionalPlayer } from "../types/player.interface";
 import { TeamEntity } from "./team.entity";
 
@@ -10,8 +10,7 @@ export class PlayerEntity {
   @Column("varchar", { length: 16 })
   name: string;
 
-  @ManyToOne(() => TeamEntity, (team) => team.id, { nullable: true, onDelete: "SET NULL" })
-  @JoinColumn({ referencedColumnName: "id" })
+  @ManyToOne(() => TeamEntity, (team) => team.players, { nullable: true, onDelete: "SET NULL" })
   team?: TeamEntity | null;
 
   constructor(payload?: IOptionalPlayer) {

@@ -16,6 +16,11 @@ export interface IExtendedTeamResponse extends ITeam {
   players: PlayerEntity[];
 }
 
+export interface ITeamsWithPlayersResponse {
+  teams: TeamEntity[];
+  players: PlayerEntity[];
+}
+
 export interface ITeamsPlayersResponse {
   players: PlayerEntity[];
   teams: TeamEntity[];

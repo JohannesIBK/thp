@@ -24,11 +24,11 @@ export class TeamController {
   @Get("players")
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async getTeamsWithPlayers(): Promise<TeamEntity[]> {
-    // const teams = await this.teamService.findAll();
-    // const players = await this.playerService.findAll();
+  async getTeamsWithPlayers(): Promise<ITeamsPlayersResponse> {
+    const teams = await this.teamService.findAll({ relations: ["players"] });
+    const players = await this.playerService.find({ where: { team: null } });
 
-    return this.teamService.findAll({ join: { alias: "t", leftJoinAndSelect: { players: "t.players" } } });
+    return { teams, players };
   }
 
   @Put()

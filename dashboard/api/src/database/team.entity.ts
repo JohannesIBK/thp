@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IOptionalTeam } from "../types/team.interface";
 import { PhaseEntryEntity } from "./phase-entry.entity";
 import { PlayerEntity } from "./player.entity";
@@ -14,11 +14,11 @@ export class TeamEntity {
   @Column("varchar", { length: 512, nullable: true })
   reason?: string | null;
 
-  @OneToMany(() => PlayerEntity, (player) => player.uuid)
+  @OneToMany(() => PlayerEntity, (player) => player.team)
   players: PlayerEntity[];
 
-  // @OneToMany(() => PhaseEntryEntity, (entity) => entity.team, { onDelete: "CASCADE" })
-  // entities: PhaseEntryEntity[];
+  @OneToMany(() => PhaseEntryEntity, (entity) => entity.team, { onDelete: "CASCADE" })
+  entities: PhaseEntryEntity[];
 
   constructor(payload?: IOptionalTeam) {
     if (payload) {

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DeleteResult, FindConditions, FindOneOptions, InsertResult, Repository, UpdateResult } from "typeorm";
+import { DeleteResult, FindConditions, FindManyOptions, FindOneOptions, InsertResult, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { PlayerEntity } from "../database/player.entity";
 import { CreatePlayerDto } from "../dto/create-player.dto";
@@ -11,6 +11,10 @@ export class PlayerService {
 
   findAll(): Promise<PlayerEntity[]> {
     return this.playerRepository.find();
+  }
+
+  find(options?: FindManyOptions<PlayerEntity>): Promise<PlayerEntity[]> {
+    return this.playerRepository.find(options);
   }
 
   save(player: PlayerEntity | CreatePlayerDto): Promise<PlayerEntity> {
