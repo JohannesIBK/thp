@@ -47,15 +47,13 @@ export class ClientController {
   @Post("kill")
   @UseGuards(ClientAuthGuard)
   async addKill(@User() user: IJwtUser, @Body() payload: AddKillDto): Promise<void> {
-    const player = await this.playerService.findOne({
-      where: {
-        name: payload.killer,
-      },
-    });
+    const player = await this.playerService.findPlayerForLog(payload.killer);
 
     if (!player) {
       throw new BadRequestException("Der Spieler wurde nicht gefunden");
     }
+
+    console.log(player.team);
 
     const stat = new StatsEntity({
       phase: payload.phase,
@@ -74,11 +72,7 @@ export class ClientController {
   @Post("win")
   @UseGuards(ClientAuthGuard)
   async addWin(@User() user: IJwtUser, @Body() payload: AddWinDto): Promise<void> {
-    const player = await this.playerService.findOne({
-      where: {
-        name: payload.player,
-      },
-    });
+    const player = await this.playerService.findPlayerForLog(payload.player);
 
     if (!player) {
       throw new BadRequestException("Der Spieler wurde nicht gefunden");

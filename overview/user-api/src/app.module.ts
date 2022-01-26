@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { StatsModule } from "./api/stats/stats.module";
 import { validate } from "./config/config.validation";
-import { PhaseEntryEntity } from "./database/phase-entry.entity";
+import { EntryEntity } from "./database/entry.entity";
 import { PhaseEntity } from "./database/phase.entity";
 import { PlayerEntity } from "./database/player.entity";
 import { StatsEntity } from "./database/stats.entity";
@@ -21,7 +21,7 @@ import { IConfig } from "./types/config.interface";
         type: "postgres",
         logging: !configService.get("PRODUCTION"),
         url: configService.get("PG_URI"),
-        entities: [TournamentEntity, TeamEntity, PlayerEntity, StatsEntity, PhaseEntryEntity, PhaseEntity],
+        entities: [TournamentEntity, TeamEntity, PlayerEntity, StatsEntity, EntryEntity, PhaseEntity],
       }),
     }),
     StatsModule,

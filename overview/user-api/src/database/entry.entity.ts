@@ -1,17 +1,18 @@
 import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { TeamEntity } from "./team.entity";
 
-@Entity({ name: "phase_entries" })
+@Entity({ name: "entries" })
 @Index(["phase", "teamId"], { unique: true })
-export class PhaseEntryEntity {
+export class EntryEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   id: number;
 
-  @ManyToOne(() => TeamEntity)
+  @ManyToOne(() => TeamEntity, (team) => team.entries, { onDelete: "CASCADE" })
   team: TeamEntity;
 
+  // needed for unique index field
   @Column("int")
-  teamId: number;
+  private teamId: number;
 
   @Column("varchar", { length: 5 })
   phase: string;

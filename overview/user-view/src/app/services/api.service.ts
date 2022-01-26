@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { IDataResponse } from "../types/response.interface";
+import { ITeam } from "../types/team.interface";
 import { ITournament } from "../types/tournament.interface";
 
 @Injectable({
@@ -15,7 +15,7 @@ export class ApiService {
     return this.http.get<ITournament>(`${environment.url}/api/stats/tournament`).pipe();
   }
 
-  fetchData(): Observable<IDataResponse> {
-    return this.http.get<IDataResponse>(`${environment.url}/api/stats/data`).pipe();
+  fetchData(): Observable<ITeam[]> {
+    return this.http.get<ITeam[]>(`${environment.url}/api/stats/data`).pipe();
   }
 }

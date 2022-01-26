@@ -1,10 +1,9 @@
 import { BadRequestException, Controller, Get } from "@nestjs/common";
+import { TeamEntity } from "../../database/team.entity";
 import { PhaseService } from "../../services/phase.service";
-import { PlayerService } from "../../services/player.service";
-import { StatsService } from "../../services/stats.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
-import { IDataResponse, IExtendedTournamentResponse } from "../../types/response.interface";
+import { IExtendedTournamentResponse } from "../../types/response.interface";
 
 @Controller("stats")
 export class StatsController {
@@ -12,8 +11,6 @@ export class StatsController {
     private readonly tournamentService: TournamentService,
     private readonly phaseService: PhaseService,
     private readonly teamService: TeamService,
-    private readonly statsService: StatsService,
-    private readonly playerService: PlayerService,
   ) {}
 
   @Get("tournament")
@@ -30,17 +27,7 @@ export class StatsController {
   }
 
   @Get("data")
-  async getData(): Promise<IDataResponse> {
-    const teams = await this.teamService.findAll();
-    const players = await this.playerService.findAll();
-    const relations = await this.phaseService.findAllEntries();
-    const stats = await this.statsService.findLogs({});
-
-    return {
-      stats,
-      relations,
-      teams,
-      players,
-    };
+  async getData(): Promise<TeamEntity[]> {
+    return await this.teamService.find({ relations: ["players", "entries", "stats"] });
   }
 }

@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { IOptionalStats } from "../types/stats.interface";
 import { TeamEntity } from "./team.entity";
 
-@Entity({ name: "player_stats" })
+@Entity({ name: "stats" })
 export class StatsEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   id: number;

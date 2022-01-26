@@ -5,4 +5,6 @@ export interface IStats {
   teamId: number;
   points: number;
   reason: string;
+  time: string;
+  userId: number;
 }

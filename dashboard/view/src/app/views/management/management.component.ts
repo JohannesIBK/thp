@@ -15,7 +15,7 @@ import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { PermissionEnum, TeamManageResponse } from "../../types/enums";
 import { IPhase } from "../../types/phase.interface";
-import { ITeamFullData, ITeamWithStats } from "../../types/team.interface";
+import { ITeamFullData, ITeamStats } from "../../types/team.interface";
 import { ITournament } from "../../types/tournament.interface";
 import { MatTableDataSourceWithCustomSort } from "../../utils/sort-table-data-source";
 import { playerNameString } from "../../utils/utils";
@@ -29,9 +29,9 @@ export class ManagementComponent implements OnInit {
   tournament!: ITournament;
   phases: IPhase[] = [];
   teams: ITeamFullData[] = [];
-  tableData = new MatTableDataSourceWithCustomSort<ITeamWithStats>([]);
+  tableData = new MatTableDataSourceWithCustomSort<ITeamStats<ITeamFullData>>([]);
   columns = ["names", "group", "points", "edit"];
-  loaded = 0;
+  loaded = false;
   playerNameString = playerNameString;
 
   private sort!: MatSort;
@@ -75,7 +75,7 @@ export class ManagementComponent implements OnInit {
   selectTab(index: number): void {
     this.tableData.data = [];
     const phase = this.phases[index];
-    const teams: ITeamWithStats[] = [];
+    const teams: ITeamStats<ITeamFullData>[] = [];
 
     for (let team of this.teams) {
       const entry = team.entries.find((e) => e.phase === phase.acronym);
@@ -88,19 +88,11 @@ export class ManagementComponent implements OnInit {
           points += stat.points;
         }
 
-        teams.push({ ...team, group: entry.group, points });
+        teams.push({ team, group: entry.group, points });
       }
-
-      this.tableData.data = teams;
     }
-  }
 
-  updateLoaded(): void {
-    this.loaded++;
-
-    if (this.loaded === 2) {
-      this.selectTab(0);
-    }
+    this.tableData.data = teams;
   }
 
   editTeam(team: ITeamFullData, phase: IPhase): void {
@@ -134,7 +126,7 @@ export class ManagementComponent implements OnInit {
 
     dialog.afterClosed().subscribe((result) => {
       if (result) {
-        this.loaded--;
+        this.loaded = false;
         this.fetchTeams();
       }
     });
@@ -184,7 +176,8 @@ export class ManagementComponent implements OnInit {
     this.teamService.getAllTeamData().subscribe({
       next: (teams) => {
         this.teams = teams;
-        this.updateLoaded();
+        this.selectTab(0);
+        this.loaded = true;
       },
       error: (error: HttpErrorResponse) => {
         this.snackBar.open(error.error.message, "OK", { duration: 3000 });

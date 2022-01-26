@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { TeamEntity } from "./team.entity";
 
 @Entity({ name: "players" })
 export class PlayerEntity {
@@ -8,6 +9,6 @@ export class PlayerEntity {
   @Column("varchar", { length: 16 })
   name: string;
 
-  @Column("int", { nullable: true })
-  team?: number;
+  @ManyToOne(() => TeamEntity, (team) => team.players, { nullable: true, onDelete: "SET NULL" })
+  team?: TeamEntity | null;
 }

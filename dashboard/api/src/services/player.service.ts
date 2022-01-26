@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, FindConditions, FindManyOptions, FindOneOptions, InsertResult, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { PlayerEntity } from "../database/player.entity";
+import { TeamEntity } from "../database/team.entity";
 import { CreatePlayerDto } from "../dto/create-player.dto";
 
 @Injectable()
@@ -46,5 +47,14 @@ export class PlayerService {
 
   findByIds(uuids: string[]): Promise<PlayerEntity[]> {
     return this.playerRepository.findByIds(uuids);
+  }
+
+  async findPlayerForLog(name: string): Promise<PlayerEntity | undefined> {
+    return this.playerRepository
+      .createQueryBuilder("player")
+      .innerJoinAndSelect("player.team", "team", "player.teamId = team.id")
+      .where("player.name = :name", { name })
+      .select(["player.uuid", "team.id"])
+      .getOne();
   }
 }

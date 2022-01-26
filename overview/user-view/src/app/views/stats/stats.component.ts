@@ -6,10 +6,9 @@ import { Sort } from "@angular/material/sort";
 import { ViewLogsComponent } from "../../components/view-logs/view-logs.component";
 import { ApiService } from "../../services/api.service";
 import { SocketService } from "../../services/socket.service";
-import { IPhase, IPhaseEntry } from "../../types/phase.interface";
+import { IPhase } from "../../types/phase.interface";
 import { IPlayer } from "../../types/player.interface";
-import { IStats } from "../../types/stats.interface";
-import { ITeamWithPlayers, ITeamWithStats } from "../../types/team.interface";
+import { ITeam, ITeamWithData } from "../../types/team.interface";
 import { ITournament } from "../../types/tournament.interface";
 
 @Component({
@@ -18,16 +17,15 @@ import { ITournament } from "../../types/tournament.interface";
   styleUrls: ["./stats.component.scss"],
 })
 export class StatsComponent implements OnInit {
-  teams: ITeamWithPlayers[] = [];
-  currentTeams: ITeamWithStats[] = [];
-  stats = new Map<string, Map<number, IStats[]>>();
-  relations: IPhaseEntry[] = [];
-  sortedTeams: ITeamWithStats[] = [];
-  groupTeams: ITeamWithStats[] = [];
+  teams: ITeam[] = [];
+  currentTeams: ITeamWithData[] = [];
+  sortedTeams: ITeamWithData[] = [];
+  groupTeams: ITeamWithData[] = [];
   groups = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   tournament!: ITournament;
   loaded = false;
   columns = new Map<string, string[]>();
+  lastSort?: Sort;
 
   constructor(
     private readonly socketService: SocketService,
@@ -42,8 +40,6 @@ export class StatsComponent implements OnInit {
         this.tournament = tournament;
 
         for (const phase of tournament.phases) {
-          this.stats.set(phase.acronym, new Map());
-
           const cols = ["name", "pointsAll"];
           for (let i = 0; i < phase.rounds; i++) {
             cols.push(`points${i}`);
@@ -65,11 +61,12 @@ export class StatsComponent implements OnInit {
     const sortBy = sort.active.split("_")[0];
     const round = parseInt(sort.active.split("_")[1]);
     const isAsc = sort.direction === "desc";
+    this.lastSort = { active: sort.active, direction: sort.direction };
 
     this.sortedTeams = teams.sort((a, b) => {
       switch (sortBy) {
         case "players":
-          return compare(this.playerNameString(a.players), this.playerNameString(b.players), isAsc);
+          return compare(this.playerNameString(a.team.players), this.playerNameString(b.team.players), isAsc);
         case "pointsAll":
           return compare(this.getPointsSum(a.points), this.getPointsSum(b.points), isAsc);
         case "points":
@@ -80,29 +77,23 @@ export class StatsComponent implements OnInit {
     });
   }
 
-  openViewLogComponent(phase: IPhase, teamId: number): void {
-    const stats = this.stats.get(phase.acronym)!;
-    const logs = stats.get(teamId);
-    if (!logs) return;
-
-    this.dialog.open(ViewLogsComponent, { data: { stats: logs, phase }, width: "90vw" });
+  openViewLogComponent(phase: IPhase, team: ITeam): void {
+    this.dialog.open(ViewLogsComponent, {
+      data: { stats: team.stats.filter((s) => s.phase === phase.acronym), phase },
+      width: "90vw",
+    });
   }
 
   subscribeToStats() {
     this.socketService.connectSocket();
-    this.socketService.onMessage().subscribe((stats) => {
-      const map = this.stats.get(stats.phase);
-      if (map) {
-        const teamStats = map.get(stats.teamId) || [];
-        teamStats.push(stats);
-        map.set(stats.teamId, teamStats);
-      }
-
-      let team = this.currentTeams.find((t) => t.id === stats.teamId);
+    this.socketService.onMessage().subscribe((stat) => {
+      const team = this.currentTeams.find((t) => t.team.id === stat.teamId);
       if (team) {
-        const roundStats = team.points.get(stats.round) || 0;
-        team.points.set(stats.round, roundStats + stats.points);
-        this.teams = [...this.teams.filter((t) => t.id !== stats.teamId), team];
+        team.team.stats.push(stat);
+        const points = team.points.get(stat.round) || 0;
+        team.points.set(stat.round, points + stat.points);
+
+        if (this.lastSort) this.sortData(this.lastSort);
       }
     });
   }
@@ -119,27 +110,21 @@ export class StatsComponent implements OnInit {
 
   selectTab(index: number): void {
     const phase = this.tournament.phases[index];
-    const phaseStats = this.stats.get(phase.acronym);
-
-    const relations = this.relations.filter((r) => r.phase === phase.acronym);
-    const teams: ITeamWithStats[] = [];
+    const teams: ITeamWithData[] = [];
 
     for (let team of this.teams) {
-      const entry = relations.find((r) => r.teamId === team.id);
+      const entry = team.entries.find((e) => e.phase === phase.acronym);
 
       if (entry) {
-        let stats: IStats[] = [];
-        if (phaseStats) stats = phaseStats.get(team.id) || [];
+        const stats = team.stats.filter((s) => s.phase === phase.acronym);
         const points = new Map<number, number>();
 
-        for (let i = 0; i < stats.length; i++) {
-          const stat = stats[i];
-
+        for (const stat of stats) {
           const round = points.get(stat.round) || 0;
           points.set(stat.round, round + stat.points);
         }
 
-        teams.push({ group: entry.group, points, players: team.players, id: team.id, disqualified: team.disqualified });
+        teams.push({ team, points, group: entry.group });
       }
     }
 
@@ -149,34 +134,8 @@ export class StatsComponent implements OnInit {
 
   fetchData(): void {
     this.apiService.fetchData().subscribe({
-      next: ({ players, teams, relations, stats }) => {
-        const _teams = [];
-        let _players = players;
-
-        for (const team of teams) {
-          const teamWithPlayers: ITeamWithPlayers = {
-            ...team,
-            players: players.filter((p) => p.team === team.id),
-          };
-          _players = _players.filter((p) => p.team !== team.id);
-          _teams.push(teamWithPlayers);
-        }
-
-        for (const stat of stats) {
-          let map = this.stats.get(stat.phase);
-          if (map === null) {
-            this.stats.set(stat.phase, new Map<number, IStats[]>());
-            map = this.stats.get(stat.phase);
-          }
-          if (!map) continue;
-
-          const team = map.get(stat.teamId) || [];
-          team.push(stat);
-          map.set(stat.teamId, team);
-        }
-
-        this.teams = _teams;
-        this.relations = relations;
+      next: (teams) => {
+        this.teams = teams;
         this.selectTab(0);
 
         this.subscribeToStats();

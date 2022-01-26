@@ -28,7 +28,16 @@ export class TeamController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getTeamsWithStats(): Promise<TeamEntity[]> {
-    return await this.teamService.find({ relations: ["players"], join: { alias: "stats" } });
+    return await this.teamService.find({
+      join: {
+        alias: "team",
+        leftJoinAndSelect: {
+          "team.players": "players",
+          "team.stats": "stats",
+        },
+      },
+      select: [],
+    });
   }
 
   @Get("data")

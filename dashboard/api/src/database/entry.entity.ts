@@ -2,7 +2,7 @@ import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeor
 import { TeamEntity } from "./team.entity";
 import { IOptionalPhase } from "../types/phase.interface";
 
-@Entity({ name: "phase_entries" })
+@Entity({ name: "entries" })
 @Index(["phase", "teamId"], { unique: true })
 export class EntryEntity {
   @PrimaryGeneratedColumn({ type: "int" })

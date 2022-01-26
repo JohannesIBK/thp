@@ -30,6 +30,12 @@ export interface ITeamWithEntryAndStats {
   points: number;
 }
 
+export interface ITeamStats<T = ITeam> {
+  team: T;
+  points: number;
+  group: string;
+}
+
 export interface ITeamWithStats extends ITeam {
   group: string;
   points: number;

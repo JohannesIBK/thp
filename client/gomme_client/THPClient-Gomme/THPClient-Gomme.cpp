@@ -12,7 +12,8 @@
 #include "rapidjson/stringbuffer.h"
 
 
-#define URL "https://thp-dashboard.greuter.dev"
+// #define URL "https://thp-dashboard.greuter.dev"
+#define URL "http://localhost:3000"
 
 using namespace std;
 using namespace rapidjson;
@@ -137,6 +138,13 @@ public:
         curl_easy_cleanup(curl);
         curl_slist_free_all(list);
         curl_global_cleanup();
+
+        Document pd;
+        pd.Parse(response.c_str());
+        if (pd.HasMember("message")) {
+            Value& message = pd["message"];
+            std::cout << message.GetString() << std::endl;
+        }
     }
 
     void SendWin(const string& player) {
@@ -186,6 +194,13 @@ public:
         curl_easy_cleanup(curl);
         curl_slist_free_all(list);
         curl_global_cleanup();
+
+        Document pd;
+        pd.Parse(response.c_str());
+        if (pd.HasMember("message")) {
+            Value& message = pd["message"];
+            std::cout << message.GetString() << std::endl;
+        }
     }
 };
 
@@ -262,11 +277,8 @@ public:
             str_len++;
 
             if (str_len == 1 && ch != '[') {
-                printf("%c\n", ch);
                 skip_line = true;
             }
-
-
 
             if (ch == '\n') {
                 if (!skip_line) {
@@ -348,7 +360,7 @@ int main() {
         if (success) break;
     }
 
-    cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" << endl;
+    cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" << endl;
 
     input.AskUsesBAC();
 
@@ -375,7 +387,6 @@ int main() {
         minecraft.ClearLines();
 
         for (const string& line : actions) {
-
             regex_search(line, m, STATUS_REGEX);
             if (!m.str(0).empty()) {
 
