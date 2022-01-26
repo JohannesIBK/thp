@@ -1,4 +1,5 @@
 import { IPlayer } from "./player.interface";
+import { IStats } from "./stats.interface";
 
 export interface ITeam {
   id: number;
@@ -6,6 +7,10 @@ export interface ITeam {
   disqualified: boolean;
   reason?: string;
   players: IPlayer[];
+}
+
+export interface ITeamWithStats extends ITeam {
+  entries: IStats[];
 }
 
 export interface ITeamWithPlayers extends ITeam {

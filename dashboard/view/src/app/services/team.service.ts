@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { ITeam, ITeamsPlayersResponse } from "../types/team.interface";
+import { ITeam, ITeamsPlayersResponse, ITeamWithStats } from "../types/team.interface";
 import { AuthService } from "./auth.service";
 
 @Injectable({
@@ -23,6 +23,15 @@ export class TeamService {
   getAllTeamsWithPlayers(): Observable<ITeamsPlayersResponse> {
     return this.http
       .get<ITeamsPlayersResponse>(`${environment.url}/teams/players`, {
+        headers: { Authorization: this.authService.token },
+        withCredentials: true,
+      })
+      .pipe();
+  }
+
+  getAllTeamsWithStats(): Observable<ITeamWithStats[]> {
+    return this.http
+      .get<ITeamWithStats[]>(`${environment.url}/teams/stats`, {
         headers: { Authorization: this.authService.token },
         withCredentials: true,
       })

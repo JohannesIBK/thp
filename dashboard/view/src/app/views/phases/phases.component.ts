@@ -270,20 +270,8 @@ export class PhasesComponent implements OnInit {
 
   fetchTeams(): void {
     this.teamService.getAllTeamsWithPlayers().subscribe({
-      next: ({ teams, players }) => {
-        const _teams = [];
-        let _players = players;
-
-        for (const team of teams) {
-          const teamWithPlayers: ITeamWithEntry = {
-            ...team,
-            players: players.filter((p) => p.team === team.id),
-          };
-          _players = _players.filter((p) => p.team !== team.id);
-          _teams.push(teamWithPlayers);
-        }
-
-        this.teams = _teams;
+      next: ({ teams }) => {
+        this.teams = teams;
         this.loaded++;
       },
       error: (error: HttpErrorResponse) => {

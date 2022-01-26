@@ -28,9 +28,7 @@ import { playerNameString } from "../../utils/utils";
 })
 export class ManagementComponent implements OnInit {
   tournament!: ITournament;
-  relations: IPhaseEntry[] = [];
   phases: IPhase[] = [];
-  stats = new Map<string, Map<number, IStats[]> | null>();
   teams: ITeamWithPlayers[] = [];
   tableData = new MatTableDataSourceWithCustomSort<ITeamWithStats>([]);
   columns = ["names", "group", "points", "edit"];
@@ -78,7 +76,6 @@ export class ManagementComponent implements OnInit {
   selectTab(index: number): void {
     this.tableData.data = [];
     const phase = this.phases[index];
-    const phaseStats = this.stats.get(phase.acronym);
 
     if (!phaseStats) {
       this.statsService.fetchStats(phase.acronym).subscribe({
@@ -195,7 +192,6 @@ export class ManagementComponent implements OnInit {
 
         for (const phase of tournament.phases) {
           this.phases.push(phase);
-          this.stats.set(phase.acronym, null);
         }
 
         if (!tournament.active) this.openActivateTournamentRequest();
@@ -234,18 +230,6 @@ export class ManagementComponent implements OnInit {
         }
 
         this.teams = _teams;
-        this.updateLoaded();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.snackBar.open(error.error.message, "OK", { duration: 3000 });
-      },
-    });
-  }
-
-  fetchPhases(): void {
-    this.phaseService.getAllRelations().subscribe({
-      next: (entities) => {
-        this.relations = entities;
         this.updateLoaded();
       },
       error: (error: HttpErrorResponse) => {
