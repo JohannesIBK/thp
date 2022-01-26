@@ -1,3 +1,4 @@
+import { IEntry } from "./phase.interface";
 import { IPlayer } from "./player.interface";
 import { IStats } from "./stats.interface";
 
@@ -10,23 +11,26 @@ export interface ITeam {
 }
 
 export interface ITeamWithStats extends ITeam {
-  entries: IStats[];
+  stats: IStats[];
 }
 
-export interface ITeamWithPlayers extends ITeam {
-  players: IPlayer[];
+export interface ITeamWithEntries extends ITeam {
+  entries: IEntry[];
 }
 
-export interface ITeamWithEntry extends ITeamWithPlayers {
+export type ITeamFullData = ITeamWithStats & ITeamWithEntries;
+
+export interface ITeamWithEntry extends ITeamWithEntries {
   entry?: number;
 }
 
-export interface ITeamWithEntryAndStats extends ITeamWithPlayers {
+export interface ITeamWithEntryAndStats {
+  team: ITeamFullData;
   entry?: number;
   points: number;
 }
 
-export interface ITeamWithStats extends ITeamWithPlayers {
+export interface ITeamWithStats extends ITeam {
   group: string;
   points: number;
 }

@@ -14,9 +14,8 @@ import { StatsService } from "../../services/stats.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { PermissionEnum, TeamManageResponse } from "../../types/enums";
-import { IPhase, IPhaseEntry } from "../../types/phase.interface";
-import { IStats } from "../../types/stats.interface";
-import { ITeamWithPlayers, ITeamWithStats } from "../../types/team.interface";
+import { IPhase } from "../../types/phase.interface";
+import { ITeamFullData, ITeamWithStats } from "../../types/team.interface";
 import { ITournament } from "../../types/tournament.interface";
 import { MatTableDataSourceWithCustomSort } from "../../utils/sort-table-data-source";
 import { playerNameString } from "../../utils/utils";
@@ -29,7 +28,7 @@ import { playerNameString } from "../../utils/utils";
 export class ManagementComponent implements OnInit {
   tournament!: ITournament;
   phases: IPhase[] = [];
-  teams: ITeamWithPlayers[] = [];
+  teams: ITeamFullData[] = [];
   tableData = new MatTableDataSourceWithCustomSort<ITeamWithStats>([]);
   columns = ["names", "group", "points", "edit"];
   loaded = 0;
@@ -76,48 +75,20 @@ export class ManagementComponent implements OnInit {
   selectTab(index: number): void {
     this.tableData.data = [];
     const phase = this.phases[index];
+    const teams: ITeamWithStats[] = [];
 
-    if (!phaseStats) {
-      this.statsService.fetchStats(phase.acronym).subscribe({
-        next: (stats) => {
-          if (stats.length) {
-            for (const stat of stats) {
-              let map = this.stats.get(stat.phase);
-              if (map === null) {
-                this.stats.set(stat.phase, new Map<number, IStats[]>());
-                map = this.stats.get(stat.phase);
-              }
-              if (!map) continue;
+    for (let team of this.teams) {
+      const entry = team.entries.find((e) => e.phase === phase.acronym);
 
-              const team = map.get(stat.teamId) || [];
-              team.push(stat);
-              map.set(stat.teamId, team);
-            }
-          } else {
-            this.stats.set(phase.acronym, new Map<number, IStats[]>());
-          }
-          setTimeout(() => this.selectTab(index), 500);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.snackBar.open(error.error.message, "OK", { duration: 3000 });
-        },
-      });
-    } else {
-      const relations = this.relations.filter((r) => r.phase === phase.acronym);
-
-      const teams: ITeamWithStats[] = [];
-
-      for (let team of this.teams) {
-        const entry = relations.find((r) => r.teamId === team.id);
-        const stats = phaseStats!.get(team.id) || [];
+      if (entry) {
+        const stats = team.stats.filter((s) => s.phase === phase.acronym);
         let points = 0;
+
         for (const stat of stats) {
           points += stat.points;
         }
 
-        if (entry) {
-          teams.push({ ...team, group: entry.group, points });
-        }
+        teams.push({ ...team, group: entry.group, points });
       }
 
       this.tableData.data = teams;
@@ -132,7 +103,7 @@ export class ManagementComponent implements OnInit {
     }
   }
 
-  editTeam(team: ITeamWithPlayers, phase: IPhase): void {
+  editTeam(team: ITeamFullData, phase: IPhase): void {
     const dialog = this.dialog.open(ManageTeamComponent, { data: { team, phase, tournament: this.tournament }, minWidth: "80vw" });
 
     dialog.afterClosed().subscribe((result) => {
@@ -147,13 +118,9 @@ export class ManagementComponent implements OnInit {
         this.teams = [...this.teams.filter((t) => t.id !== data.id), disqualifiedTeam];
         this.selectTab(this.phases.indexOf(phase));
       } else if (action === TeamManageResponse.LOG_CHANGE) {
-        const stats = this.stats.get(phase.acronym);
-        if (stats) {
-          stats.set(team.id, data);
-          this.selectTab(this.phases.indexOf(phase));
-        }
+        team.stats = result;
       } else if (action === TeamManageResponse.QUALIFIED) {
-        let disqualifiedTeam = this.teams.find((t) => t.id === data.id)!;
+        const disqualifiedTeam = this.teams.find((t) => t.id === data.id)!;
         disqualifiedTeam.disqualified = false;
 
         this.teams = [...this.teams.filter((t) => t.id !== data.id), disqualifiedTeam];
@@ -168,7 +135,7 @@ export class ManagementComponent implements OnInit {
     dialog.afterClosed().subscribe((result) => {
       if (result) {
         this.loaded--;
-        this.fetchPhases();
+        this.fetchTeams();
       }
     });
   }
@@ -197,7 +164,6 @@ export class ManagementComponent implements OnInit {
         if (!tournament.active) this.openActivateTournamentRequest();
         else {
           this.fetchTeams();
-          this.fetchPhases();
         }
       },
       error: async (error: HttpErrorResponse) => {
@@ -215,21 +181,9 @@ export class ManagementComponent implements OnInit {
   }
 
   fetchTeams(): void {
-    this.teamService.getAllTeamsWithPlayers().subscribe({
-      next: ({ teams, players }) => {
-        const _teams = [];
-        let _players = players;
-
-        for (const team of teams) {
-          const teamWithPlayers: ITeamWithPlayers = {
-            ...team,
-            players: players.filter((p) => p.team === team.id),
-          };
-          _players = _players.filter((p) => p.team !== team.id);
-          _teams.push(teamWithPlayers);
-        }
-
-        this.teams = _teams;
+    this.teamService.getAllTeamData().subscribe({
+      next: (teams) => {
+        this.teams = teams;
         this.updateLoaded();
       },
       error: (error: HttpErrorResponse) => {

@@ -7,10 +7,10 @@ import { UserService } from "../../services/user.service";
 import { AuthService } from "../../services/auth.service";
 import { PhaseService } from "../../services/phase.service";
 import { UserEntity } from "../../database/user.entity";
-import { PhaseEntryEntity } from "../../database/phase-entry.entity";
+import { EntryEntity } from "../../database/entry.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PhaseEntity, UserEntity, PhaseEntryEntity]), JwtWrapperModule],
+  imports: [TypeOrmModule.forFeature([PhaseEntity, UserEntity, EntryEntity]), JwtWrapperModule],
   controllers: [PhaseController],
   providers: [UserService, AuthService, PhaseService],
 })

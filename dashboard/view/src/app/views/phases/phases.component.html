@@ -8,7 +8,7 @@
       </button>
       <mat-menu #menu="matMenu">
         <ng-container *ngIf="tournament">
-          <button mat-menu-item [disabled]="!phase" (click)="deletePhaseEntries()">
+          <button mat-menu-item [disabled]="!phase" (click)="resetPhaseEntries()">
             <mat-icon>delete_sweep</mat-icon>
             <span>Phase zurücksetzen</span>
           </button>
@@ -19,7 +19,7 @@
     <mat-divider></mat-divider>
   </section>
 
-  <section *ngIf="loaded === 3" class="overview">
+  <section *ngIf="loaded" class="overview">
     <div class="select-section">
       <mat-form-field appearance="fill" class="phase-select">
         <mat-label>Phase auswählen</mat-label>
@@ -40,10 +40,12 @@
         </mat-select>
       </mat-form-field>
 
-      <button mat-raised-button color="accent" class="full-width" (click)="sortTeams()" [disabled]="!phase">
-        Teams nach Punkten sortieren
-      </button>
-      <button mat-raised-button color="accent" class="full-width mt" (click)="insertPlayers()" [disabled]="!phase">
+      <button
+        mat-raised-button
+        color="accent"
+        class="full-width"
+        (click)="insertPlayers()"
+        [disabled]="!phase || this.unrankedTeams.length === 0">
         Spieler zufällig einsortieren
       </button>
 
@@ -58,7 +60,7 @@
           class="dd-box"
           (cdkDropListDropped)="drop($event)">
           <div class="dd-item" *ngFor="let team of unrankedTeams" [cdkDragData]="team" cdkDrag>
-            {{ playerNameString(team.players) }}
+            {{ playerNameString(team.team.players) }}
             <span>({{ team.points }})</span>
           </div>
         </div>
@@ -77,7 +79,7 @@
           class="dd-box"
           (cdkDropListDropped)="drop($event)">
           <div class="dd-item" *ngFor="let team of rankedTeams.get(group)!" [cdkDragData]="team" cdkDrag>
-            {{ playerNameString(team.players) }}
+            {{ playerNameString(team.team.players) }}
             <span>({{ team.points }})</span>
           </div>
         </div>
@@ -86,4 +88,4 @@
   </section>
 </main>
 
-<app-spinner *ngIf="loaded !== 3"></app-spinner>
+<app-spinner *ngIf="!loaded"></app-spinner>

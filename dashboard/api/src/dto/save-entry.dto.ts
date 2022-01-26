@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional, IsString, Length } from "@nestjs/class-validator";
 
-export class EditPhaseEntryDto {
+export class SaveEntryDto {
   @IsNumber()
   @IsOptional()
   id: number;

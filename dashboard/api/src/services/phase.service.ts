@@ -1,34 +1,34 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindConditions, InsertResult, Repository } from "typeorm";
+import { FindConditions, InsertResult, Repository, SaveOptions } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
-import { PhaseEntryEntity } from "../database/phase-entry.entity";
+import { EntryEntity } from "../database/entry.entity";
 import { PhaseEntity } from "../database/phase.entity";
 
 @Injectable()
 export class PhaseService {
   constructor(
     @InjectRepository(PhaseEntity) private readonly phaseRepository: Repository<PhaseEntity>,
-    @InjectRepository(PhaseEntryEntity) private readonly phaseEntryRepository: Repository<PhaseEntryEntity>,
+    @InjectRepository(EntryEntity) private readonly phaseEntryRepository: Repository<EntryEntity>,
   ) {}
 
   create(phase: PhaseEntity): Promise<PhaseEntity> {
     return this.phaseRepository.save(phase);
   }
 
-  findAllEntries(): Promise<PhaseEntryEntity[]> {
+  findAllEntries(): Promise<EntryEntity[]> {
     return this.phaseEntryRepository.find();
   }
 
-  saveEntry(entity: PhaseEntryEntity): Promise<PhaseEntryEntity> {
-    return this.phaseEntryRepository.save(entity);
+  saveEntry(entity: EntryEntity, options?: SaveOptions): Promise<EntryEntity> {
+    return this.phaseEntryRepository.save(entity, options);
   }
 
-  updateEntry(criteria: QueryDeepPartialEntity<PhaseEntryEntity>): Promise<InsertResult> {
+  updateEntry(criteria: QueryDeepPartialEntity<EntryEntity>): Promise<InsertResult> {
     return this.phaseEntryRepository.upsert(criteria, { conflictPaths: ["phase", "teamId"] });
   }
 
-  async delete(condition: FindConditions<PhaseEntryEntity>): Promise<void> {
+  async delete(condition: FindConditions<EntryEntity>): Promise<void> {
     await this.phaseEntryRepository.delete(condition);
   }
 

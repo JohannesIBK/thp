@@ -3,16 +3,14 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { lastValueFrom } from "rxjs";
 import { AuthService } from "../../services/auth.service";
 import { PhaseService } from "../../services/phase.service";
 import { StatsService } from "../../services/stats.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { PermissionEnum } from "../../types/enums";
-import { IPhase, IPhaseEntry, IPhaseEntryCreate } from "../../types/phase.interface";
-import { IStats } from "../../types/stats.interface";
-import { ITeamWithEntry, ITeamWithEntryAndStats } from "../../types/team.interface";
+import { IEntryCreate, IPhase } from "../../types/phase.interface";
+import { ITeamFullData, ITeamWithEntryAndStats } from "../../types/team.interface";
 import { ITournament } from "../../types/tournament.interface";
 import { playerNameString } from "../../utils/utils";
 
@@ -25,14 +23,12 @@ export class PhasesComponent implements OnInit {
   tournament!: ITournament;
   phase?: IPhase;
   showStatsFor: IPhase | 0 = 0;
-  relations: IPhaseEntry[] = [];
-  teams: ITeamWithEntry[] = [];
-  logs: IStats[] = [];
+  teams: ITeamFullData[] = [];
   rankedTeams = new Map<string, ITeamWithEntryAndStats[]>();
   teamStats = new Map<string, Map<number, number>>();
   unrankedTeams: ITeamWithEntryAndStats[] = [];
   alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  loaded = 0;
+  loaded = false;
   playerNameString = playerNameString;
 
   constructor(
@@ -60,28 +56,27 @@ export class PhasesComponent implements OnInit {
     return (): boolean => teams.length < this.phase!.teams;
   }
 
+  /**
+   * Handles the drag and drop logic
+   * @param {CdkDragDrop<ITeamWithEntryAndStats[]>} event
+   */
   drop(event: CdkDragDrop<ITeamWithEntryAndStats[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      const data = event.item.data as ITeamWithEntry;
+      const data = event.item.data as ITeamWithEntryAndStats;
 
-      if (event.container.id !== "all") {
-        let newEntry: IPhaseEntryCreate;
-
-        newEntry = {
-          id: data.entry,
-          phase: this.phase!.acronym,
-          group: event.container.id,
-          teamId: data.id,
-        };
-
-        this.saveEntry(newEntry);
-      } else if (data.entry) this.deleteEntry(data.entry);
+      // Checks if the team has been moved to the all teams d&d. If yes delete the entry else create a new
+      if (event.container.id !== "all") this.saveEntry(data, event.container.id);
+      else if (data.entry) this.deleteEntry(data);
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
   }
 
+  /**
+   * Returns the group names for the current phase
+   * @return {string[]}
+   */
   getGroups(): string[] {
     if (!this.phase) return [];
 
@@ -103,15 +98,7 @@ export class PhasesComponent implements OnInit {
     return ["all", ...this.getGroups()];
   }
 
-  sortTeams() {
-    this.unrankedTeams.sort((a, b) => b.points - a.points);
-
-    for (const team of this.rankedTeams.values()) {
-      team.sort((a, b) => b.points - a.points);
-    }
-  }
-
-  async insertPlayers(): Promise<void> {
+  insertPlayers(): void {
     if (!this.phase) return;
 
     function getRandomGroup() {
@@ -123,7 +110,7 @@ export class PhasesComponent implements OnInit {
       groups.push(this.alphabet[i]);
     }
 
-    this.sortTeams();
+    this.unrankedTeams.sort((a, b) => b.points - a.points);
 
     for (const [group, teams] of this.rankedTeams.entries()) {
       if (teams.length === this.phase.teams) {
@@ -133,34 +120,38 @@ export class PhasesComponent implements OnInit {
 
     for (const team of this.unrankedTeams) {
       const group = getRandomGroup();
-      let newEntry: IPhaseEntryCreate;
+      let newEntry: IEntryCreate;
 
       newEntry = {
         phase: this.phase!.acronym,
         group: group,
-        teamId: team.id,
+        teamId: team.team.id,
       };
 
-      const res = await this.saveEntry(newEntry);
-      if (res) {
-        const teams = this.rankedTeams.get(group)!;
-        if (teams.length === this.phase.teams) {
-          groups = groups.filter((g) => g !== group);
-        }
-      }
+      this.saveEntry(team, group, true);
     }
   }
 
+  /**
+   * Returns the stats for a team
+   * @param {string} phase
+   * @return {Map<number, number>}
+   */
   getTeamStats(phase: string): Map<number, number> {
-    const phaseStats = this.teamStats.get(phase);
-    if (phaseStats) return phaseStats;
+    const phaseTeamStats = this.teamStats.get(phase);
+    if (phaseTeamStats) return phaseTeamStats;
 
     const stats = new Map<number, number>();
+
     for (const team of this.teams) {
-      const logs = this.logs.filter((l) => l.teamId === team.id && l.phase === phase);
       let points = 0;
 
-      for (const log of logs) points += log.points;
+      for (const stat of team.stats) {
+        if (stat.phase === phase) {
+          points += stat.points;
+        }
+      }
+
       stats.set(team.id, points);
     }
 
@@ -180,31 +171,41 @@ export class PhasesComponent implements OnInit {
       this.rankedTeams.set(this.alphabet[i], []);
     }
 
-    const relations = this.relations.filter((r) => r.phase === value.acronym);
     let stats;
 
     if (typeof this.showStatsFor === "number") stats = this.getTeamStats(value.acronym);
     else stats = this.getTeamStats(this.showStatsFor.acronym);
 
     for (let team of this.teams) {
-      const entry = relations.find((r) => r.teamId === team.id);
+      const entry = team.entries.find((r) => r.phase === value.acronym);
+
       if (entry) {
         const teams = this.rankedTeams.get(entry.group)!;
-        this.rankedTeams.set(entry.group, [...teams, { ...team, entry: entry.id, points: stats.get(team.id)! }]);
+        this.rankedTeams.set(entry.group, [...teams, { team, entry: entry.id, points: stats.get(team.id)! }]);
       } else {
-        this.unrankedTeams.push({ ...team, points: stats.get(team.id)! });
+        this.unrankedTeams.push({ team, points: stats.get(team.id)!, entry });
       }
     }
+
+    this.unrankedTeams.sort((a, b) => b.points - a.points);
   }
 
-  deletePhaseEntries(): void {
+  /**
+   * Resets all entries for the currently selected phase
+   */
+  resetPhaseEntries(): void {
     if (!this.phase) return;
-    const acronym = this.phase.acronym;
 
-    this.phaseService.deleteEntries(acronym).subscribe({
+    this.phaseService.deleteEntries(this.phase.acronym).subscribe({
       next: () => {
-        this.relations = this.relations.filter((e) => e.phase !== acronym);
-        if (this.phase) this.selectPhase({ value: this.phase });
+        // remove the entry from every team
+        for (const team of this.teams) {
+          team.entries = team.entries.filter((e) => e.phase !== this.phase?.acronym);
+        }
+
+        if (this.phase) {
+          this.selectPhase({ value: this.phase });
+        }
       },
       error: (error: HttpErrorResponse) => {
         this.snackBar.open(error.error.message, "OK", { duration: 3000 });
@@ -212,35 +213,66 @@ export class PhasesComponent implements OnInit {
     });
   }
 
-  deleteEntry(id: number) {
-    this.phaseService.deleteEntry(id).subscribe({
+  /**
+   * Removes a team from a group in a phase
+   * @param {ITeamWithEntryAndStats} entry
+   */
+  deleteEntry(entry: ITeamWithEntryAndStats) {
+    this.phaseService.deleteEntry(entry.entry!).subscribe({
       next: () => {
-        this.relations = this.relations.filter((e) => e.id !== id);
-        if (this.phase) this.selectPhase({ value: this.phase });
+        // remove the entry from the array
+        entry.team.entries = entry.team.entries.filter((e) => e.id !== entry.entry);
+
+        // update teams
+        if (this.phase) {
+          this.selectPhase({ value: this.phase });
+        }
       },
     });
   }
 
-  async saveEntry(entry: IPhaseEntryCreate): Promise<IPhaseEntry | undefined> {
-    try {
-      const responseEntry = await lastValueFrom(this.phaseService.saveEntry(entry));
-      this.relations = [...this.relations.filter((e) => e.id !== entry.id), responseEntry];
-      if (this.phase) this.selectPhase({ value: this.phase });
+  /**
+   * Adds a team to a group in a phase
+   * @param {ITeamWithEntryAndStats} data
+   * @param {string} group
+   * @param {boolean} add If the team should be added to the array
+   */
+  saveEntry(data: ITeamWithEntryAndStats, group: string, add = false): void {
+    this.phaseService
+      .saveEntry({
+        id: data.entry,
+        phase: this.phase!.acronym,
+        group,
+        teamId: data.team.id,
+      })
+      .subscribe({
+        next: (newEntry) => {
+          // update the team with the new data
+          data.team.entries.push(newEntry);
+          data.entry = newEntry.id;
 
-      return responseEntry;
-    } catch (error: any) {
-      this.snackBar.open(error.error.message, "OK", { duration: 3000 });
-      return;
-    }
+          if (add) {
+            const teams = this.rankedTeams.get(group)!;
+            teams.push(data);
+
+            this.unrankedTeams = this.unrankedTeams.filter((t) => t.team.id !== data.team.id);
+            this.rankedTeams.set(group, teams);
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          this.snackBar.open(error.error.message, "OK", { duration: 3000 });
+        },
+      });
   }
 
+  /**
+   * Fetches the tournament from the backend
+   */
   fetchTournament(): void {
     this.tournamentService.getTournament().subscribe({
       next: (tournament) => {
         this.tournament = tournament;
         this.fetchTeams();
-        this.fetchPhases();
-        this.fetchStats();
       },
       error: async (error: HttpErrorResponse) => {
         if (error.status === 404) {
@@ -256,35 +288,14 @@ export class PhasesComponent implements OnInit {
     });
   }
 
-  fetchStats(): void {
-    this.statsService.fetchAllStats().subscribe({
-      next: (stats) => {
-        this.logs = stats;
-        this.loaded++;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.snackBar.open(error.error.message, "OK", { duration: 3000 });
-      },
-    });
-  }
-
+  /**
+   * Fetches the teams from the backend
+   */
   fetchTeams(): void {
-    this.teamService.getAllTeamsWithPlayers().subscribe({
-      next: ({ teams }) => {
+    this.teamService.getAllTeamData().subscribe({
+      next: (teams) => {
         this.teams = teams;
-        this.loaded++;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.snackBar.open(error.error.message, "OK", { duration: 3000 });
-      },
-    });
-  }
-
-  fetchPhases(): void {
-    this.phaseService.getAllRelations().subscribe({
-      next: (entities) => {
-        this.relations = entities;
-        this.loaded++;
+        this.loaded = true;
       },
       error: (error: HttpErrorResponse) => {
         this.snackBar.open(error.error.message, "OK", { duration: 3000 });

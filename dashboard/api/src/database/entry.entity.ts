@@ -4,11 +4,11 @@ import { IOptionalPhase } from "../types/phase.interface";
 
 @Entity({ name: "phase_entries" })
 @Index(["phase", "teamId"], { unique: true })
-export class PhaseEntryEntity {
+export class EntryEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   id: number;
 
-  @ManyToOne(() => TeamEntity, (team) => team.entities, { onDelete: "CASCADE" })
+  @ManyToOne(() => TeamEntity, (team) => team.entries, { onDelete: "CASCADE" })
   team: TeamEntity;
 
   // needed for unique index field

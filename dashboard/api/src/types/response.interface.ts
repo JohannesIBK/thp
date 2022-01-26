@@ -1,5 +1,4 @@
 import { PhaseEntity } from "../database/phase.entity";
-import { ITeam } from "./team.interface";
 import { PlayerEntity } from "../database/player.entity";
 import { TeamEntity } from "../database/team.entity";
 
@@ -10,15 +9,6 @@ export interface IExtendedTournamentResponse {
   teamSize: number;
   active: boolean;
   phases: PhaseEntity[];
-}
-
-export interface IExtendedTeamResponse extends ITeam {
-  players: PlayerEntity[];
-}
-
-export interface ITeamsWithPlayersResponse {
-  teams: TeamEntity[];
-  players: PlayerEntity[];
 }
 
 export interface ITeamsPlayersResponse {

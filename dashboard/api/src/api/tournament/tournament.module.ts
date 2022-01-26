@@ -15,12 +15,12 @@ import { AuthService } from "../../services/auth.service";
 import { UserService } from "../../services/user.service";
 import { PhaseService } from "../../services/phase.service";
 import { PhaseEntity } from "../../database/phase.entity";
-import { PhaseEntryEntity } from "../../database/phase-entry.entity";
+import { EntryEntity } from "../../database/entry.entity";
 
 @Module({
   imports: [
     JwtWrapperModule,
-    TypeOrmModule.forFeature([TournamentEntity, UserEntity, PhaseEntity, PhaseEntryEntity, TeamEntity, PlayerEntity, StatsEntity]),
+    TypeOrmModule.forFeature([TournamentEntity, UserEntity, PhaseEntity, EntryEntity, TeamEntity, PlayerEntity, StatsEntity]),
   ],
   controllers: [TournamentController],
   providers: [TournamentService, AuthService, UserService, PhaseService, TeamService, StatsService, RatelimitService],

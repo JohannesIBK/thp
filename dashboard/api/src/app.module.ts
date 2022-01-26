@@ -18,7 +18,7 @@ import { StatsEntity } from "./database/stats.entity";
 import { PhaseEntity } from "./database/phase.entity";
 import { PhaseModule } from "./api/phase/phase.module";
 import { TeamModule } from "./api/team/team.module";
-import { PhaseEntryEntity } from "./database/phase-entry.entity";
+import { EntryEntity } from "./database/entry.entity";
 import { StatsModule } from "./api/stats/stats.module";
 import { ClientModule } from "./api/client/client.module";
 
@@ -35,7 +35,7 @@ import { ClientModule } from "./api/client/client.module";
         type: "postgres",
         logging: !configService.get("PRODUCTION"),
         url: configService.get("PG_URI"),
-        entities: [UserEntity, TournamentEntity, PlayerEntity, TeamEntity, StatsEntity, PhaseEntity, PhaseEntryEntity],
+        entities: [UserEntity, TournamentEntity, PlayerEntity, TeamEntity, StatsEntity, PhaseEntity, EntryEntity],
         synchronize: !configService.get("PRODUCTION"),
       }),
     }),

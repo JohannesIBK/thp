@@ -1,25 +1,13 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  InternalServerErrorException,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  UseGuards,
-} from "@nestjs/common";
-import { TeamEntity } from "../../database/team.entity";
-import { PhaseService } from "../../services/phase.service";
-import { PhaseEntity } from "../../database/phase.entity";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../../auth/auth.guard";
-import { PermissionEnum } from "../../enums/permission.enum";
+import { EntryEntity } from "../../database/entry.entity";
+import { PhaseEntity } from "../../database/phase.entity";
+import { TeamEntity } from "../../database/team.entity";
 import { HasPermission } from "../../decorators/permission.decorator";
-import { AddPhaseEntryDto } from "../../dto/add-phase-entry.dto";
-import { PhaseEntryEntity } from "../../database/phase-entry.entity";
-import { EditPhaseEntryDto } from "../../dto/edit-phase-entry.dto";
 import { PhaseDto } from "../../dto/phase.dto";
+import { SaveEntryDto } from "../../dto/save-entry.dto";
+import { PermissionEnum } from "../../enums/permission.enum";
+import { PhaseService } from "../../services/phase.service";
 
 @Controller("phase")
 export class PhaseController {
@@ -35,37 +23,17 @@ export class PhaseController {
   @Get("entry")
   @HasPermission(PermissionEnum.ADMIN)
   @UseGuards(JwtAuthGuard)
-  async getEntries(): Promise<PhaseEntryEntity[]> {
+  async getEntries(): Promise<EntryEntity[]> {
     return this.phaseService.findAllEntries();
-  }
-
-  @Put("entry")
-  @HasPermission(PermissionEnum.ADMIN)
-  @UseGuards(JwtAuthGuard)
-  async addEntry(@Body() payload: AddPhaseEntryDto): Promise<PhaseEntryEntity> {
-    const response = await this.phaseService.updateEntry({
-      phase: payload.phase,
-      group: payload.group,
-      team: new TeamEntity({ id: payload.teamId }),
-    });
-
-    if (!response.generatedMaps.length) throw new InternalServerErrorException("Das Team konnte nicht verschoben werden.");
-
-    return new PhaseEntryEntity({
-      phase: payload.phase,
-      group: payload.group,
-      teamId: payload.teamId,
-      id: response.generatedMaps[0].id,
-    });
   }
 
   @Post("entry")
   @HasPermission(PermissionEnum.ADMIN)
   @UseGuards(JwtAuthGuard)
-  async moveEntry(@Body() payload: EditPhaseEntryDto): Promise<PhaseEntryEntity> {
-    const entity = new PhaseEntryEntity({
+  async moveEntry(@Body() payload: SaveEntryDto): Promise<EntryEntity> {
+    const entity = new EntryEntity({
       id: payload.id,
-      teamId: payload.teamId,
+      team: new TeamEntity({ id: payload.teamId }),
       phase: payload.phase,
       group: payload.group,
     });

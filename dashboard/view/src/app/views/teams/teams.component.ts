@@ -10,7 +10,7 @@ import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { PermissionEnum } from "../../types/enums";
 import { IPlayer } from "../../types/player.interface";
-import { ITeamWithPlayers } from "../../types/team.interface";
+import { ITeam } from "../../types/team.interface";
 import { ITournament } from "../../types/tournament.interface";
 import { playerNameString } from "../../utils/utils";
 
@@ -21,12 +21,12 @@ import { playerNameString } from "../../utils/utils";
 })
 export class TeamsComponent implements OnInit {
   tournament!: ITournament;
-  currentTeam?: ITeamWithPlayers;
-  currentTeamCopy?: ITeamWithPlayers;
+  currentTeam?: ITeam;
+  currentTeamCopy?: ITeam;
   players: IPlayer[] = [];
   filteredPlayers: IPlayer[] = [];
-  teams: ITeamWithPlayers[] = [];
-  filteredTeams: ITeamWithPlayers[] = [];
+  teams: ITeam[] = [];
+  filteredTeams: ITeam[] = [];
   loaded = false;
   saved = true;
   saving = false;
@@ -100,7 +100,7 @@ export class TeamsComponent implements OnInit {
     }
   }
 
-  selectNewTeam({ value }: { value: ITeamWithPlayers | undefined }) {
+  selectNewTeam({ value }: { value: ITeam | undefined }) {
     if (value?.id === -1) this.resetPlayerList();
     if (this.currentTeam?.players.length) {
       for (const player of this.currentTeam.players) {
@@ -154,7 +154,7 @@ export class TeamsComponent implements OnInit {
   }
 
   fetchTeams(): void {
-    this.teamService.getAllTeamsWithPlayers().subscribe({
+    this.teamService.getTeams().subscribe({
       next: ({ teams, players }) => {
         this.teams = teams;
         this.players = players;

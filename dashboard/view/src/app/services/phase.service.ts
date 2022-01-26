@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { IPhaseEntry, IPhaseEntryCreate } from "../types/phase.interface";
+import { IEntry, IEntryCreate } from "../types/phase.interface";
 import { environment } from "../../environments/environment";
 import { AuthService } from "./auth.service";
 
@@ -11,18 +11,9 @@ import { AuthService } from "./auth.service";
 export class PhaseService {
   constructor(private readonly http: HttpClient, private readonly authService: AuthService) {}
 
-  getAllRelations(): Observable<IPhaseEntry[]> {
+  saveEntry(entry: IEntryCreate): Observable<IEntry> {
     return this.http
-      .get<IPhaseEntry[]>(`${environment.url}/phase/entry`, {
-        withCredentials: true,
-        headers: { Authorization: this.authService.token },
-      })
-      .pipe();
-  }
-
-  saveEntry(entry: IPhaseEntryCreate): Observable<IPhaseEntry> {
-    return this.http
-      .post<IPhaseEntry>(`${environment.url}/phase/entry`, entry, {
+      .post<IEntry>(`${environment.url}/phase/entry`, entry, {
         withCredentials: true,
         headers: { Authorization: this.authService.token },
       })

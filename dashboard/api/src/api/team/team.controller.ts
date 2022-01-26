@@ -17,8 +17,11 @@ export class TeamController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  getTeams(): Promise<TeamEntity[]> {
-    return this.teamService.find();
+  async getTeams(): Promise<ITeamsPlayersResponse> {
+    const teams = await this.teamService.find({ relations: ["players"] });
+    const players = await this.playerService.find({ where: { team: null } });
+
+    return { teams, players };
   }
 
   @Get("stats")
@@ -28,14 +31,11 @@ export class TeamController {
     return await this.teamService.find({ relations: ["players"], join: { alias: "stats" } });
   }
 
-  @Get("players")
+  @Get("data")
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async getTeamsWithPlayers(): Promise<ITeamsPlayersResponse> {
-    const teams = await this.teamService.find({ relations: ["players"] });
-    const players = await this.playerService.find({ where: { team: null } });
-
-    return { teams, players };
+  async getFullData(): Promise<TeamEntity[]> {
+    return await this.teamService.find({ relations: ["players", "stats", "entries"] });
   }
 
   @Put()

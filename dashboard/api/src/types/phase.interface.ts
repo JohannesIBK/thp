@@ -11,7 +11,6 @@ export interface IPhase {
 
 export interface IOptionalPhase {
   id?: number;
-  teamId?: number;
   team?: TeamEntity;
   phase?: string;
   group?: string;

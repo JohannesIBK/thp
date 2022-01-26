@@ -7,14 +7,16 @@ export interface IPhase {
   groups: number;
 }
 
-export interface IPhaseEntry {
+export interface IEntry {
   id: number;
-  teamId: number;
+  team: {
+    id: number;
+  };
   group: string;
   phase: string;
 }
 
-export interface IPhaseEntryCreate {
+export interface IEntryCreate {
   id?: number;
   teamId: number;
   group: string;

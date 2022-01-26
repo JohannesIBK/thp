@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { ITeam, ITeamsPlayersResponse, ITeamWithStats } from "../types/team.interface";
+import { ITeam, ITeamFullData, ITeamsPlayersResponse } from "../types/team.interface";
 import { AuthService } from "./auth.service";
 
 @Injectable({
@@ -11,27 +11,18 @@ import { AuthService } from "./auth.service";
 export class TeamService {
   constructor(private readonly http: HttpClient, private readonly authService: AuthService) {}
 
-  getAllTeams(): Observable<ITeam[]> {
+  getAllTeamData(): Observable<ITeamFullData[]> {
     return this.http
-      .get<ITeam[]>(`${environment.url}/teams`, {
+      .get<ITeamFullData[]>(`${environment.url}/teams/data`, {
         headers: { Authorization: this.authService.token },
         withCredentials: true,
       })
       .pipe();
   }
 
-  getAllTeamsWithPlayers(): Observable<ITeamsPlayersResponse> {
+  getTeams(): Observable<ITeamsPlayersResponse> {
     return this.http
-      .get<ITeamsPlayersResponse>(`${environment.url}/teams/players`, {
-        headers: { Authorization: this.authService.token },
-        withCredentials: true,
-      })
-      .pipe();
-  }
-
-  getAllTeamsWithStats(): Observable<ITeamWithStats[]> {
-    return this.http
-      .get<ITeamWithStats[]>(`${environment.url}/teams/stats`, {
+      .get<ITeamsPlayersResponse>(`${environment.url}/teams`, {
         headers: { Authorization: this.authService.token },
         withCredentials: true,
       })

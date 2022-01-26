@@ -8,7 +8,7 @@ import { TeamService } from "../../services/team.service";
 import { TeamManageResponse } from "../../types/enums";
 import { IPhase } from "../../types/phase.interface";
 import { IStats } from "../../types/stats.interface";
-import { ITeam, ITeamWithPlayers } from "../../types/team.interface";
+import { ITeam } from "../../types/team.interface";
 import { AddLogComponent } from "../add-log/add-log.component";
 import { DisqualifyTeamComponent } from "../disqualify-team/disqualify-team.component";
 import { QualifyTeamComponent } from "../qualify-team/qualify-team.component";
@@ -25,7 +25,7 @@ export class ManageTeamComponent implements OnInit {
   loading = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public readonly data: { team: ITeamWithPlayers; phase: IPhase },
+    @Inject(MAT_DIALOG_DATA) public readonly data: { team: ITeam; phase: IPhase },
     public dialogRef: MatDialogRef<ManageTeamComponent>,
     private readonly statsService: StatsService,
     private readonly teamService: TeamService,
