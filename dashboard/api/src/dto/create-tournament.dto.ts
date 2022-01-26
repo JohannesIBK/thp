@@ -3,6 +3,7 @@ import {
   ArrayMinSize,
   IsAlphanumeric,
   IsArray,
+  IsBoolean,
   IsNumber,
   IsOptional,
   IsString,
@@ -34,7 +35,7 @@ class RoundDto {
 
   @IsNumber()
   @Min(2)
-  @Max(128)
+  @Max(1024)
   teams: number;
 
   @IsNumber()
@@ -57,6 +58,9 @@ export class CreateTournamentDto {
   @Min(1)
   @Max(4)
   teamSize: number;
+
+  @IsBoolean()
+  scrims: boolean;
 
   @IsArray()
   @ArrayMinSize(1)

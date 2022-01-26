@@ -18,6 +18,9 @@ export class TournamentEntity {
   @Column("boolean", { default: false })
   active: boolean;
 
+  @Column("boolean", { default: false })
+  scrims: boolean;
+
   constructor(payload?: IOptionalTournament) {
     if (payload) {
       this.id = payload.id!;
@@ -25,6 +28,7 @@ export class TournamentEntity {
       this.description = payload.description!;
       this.teamSize = payload.teamSize!;
       this.active = payload.active!;
+      this.scrims = payload.scrims!;
     }
   }
 }

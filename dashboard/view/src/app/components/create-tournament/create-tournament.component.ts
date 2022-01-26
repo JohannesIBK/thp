@@ -22,35 +22,44 @@ export class CreateTournamentComponent {
   };
 
   name = new FormControl(null, [V.required, V.minLength(3), V.maxLength(64)]);
-  description = new FormControl(null, [V.minLength(0), V.maxLength(1024)]);
   teamSize = new FormControl(null, [V.required, V.min(1), V.max(4)]);
+  scrims = new FormControl(false);
 
   phaseName = new FormControl(null, [V.required, V.minLength(2), V.maxLength(32)]);
   phaseAcronym = new FormControl(null, [V.required, V.minLength(1), V.maxLength(16)]);
-  phaseDescription = new FormControl(null, [V.minLength(2), V.maxLength(128)]);
   phaseRounds = new FormControl(null, [V.required, V.min(1), V.max(16)]);
   phaseTeams = new FormControl(null, [V.required, V.min(2), V.max(128)]);
   phaseGroups = new FormControl(null, [V.required, V.min(1), V.max(20)]);
 
   infoForm = new FormGroup({
     name: this.name,
-    description: this.description,
     teamSize: this.teamSize,
   });
 
   phaseForm = new FormGroup({
     name: this.phaseName,
-    description: this.phaseDescription,
     rounds: this.phaseRounds,
     acronym: this.phaseAcronym,
     teams: this.phaseTeams,
     groups: this.phaseGroups,
+    scrims: this.scrims,
   });
 
   constructor(private readonly snackBar: MatSnackBar) {}
 
   get validPhaseForm(): boolean {
     return this.phaseForm.valid;
+  }
+
+  selectScrims(value: boolean) {
+    if (value) {
+      this.teamSize.setValue(1);
+      this.phaseForm.disable();
+      this.teamSize.disable();
+    } else {
+      this.teamSize.enable();
+      this.phaseForm.enable();
+    }
   }
 
   addPhase() {
@@ -71,7 +80,6 @@ export class CreateTournamentComponent {
           name: this.phaseName.value,
           rounds: this.phaseRounds.value,
           acronym: this.phaseAcronym.value,
-          description: this.phaseDescription.value,
           teams: this.phaseTeams.value,
           groups: this.phaseGroups.value,
         },
@@ -86,11 +94,16 @@ export class CreateTournamentComponent {
   }
 
   getData() {
+    let phases = this.phases;
+    if (this.scrims.value) {
+      phases = [{ name: "Scrims", acronym: "scrims", rounds: 1, teams: 512, groups: 1 }];
+    }
+
     return {
       name: this.name.value,
       teamSize: this.teamSize.value,
-      description: this.description.value,
-      phases: this.phases,
+      phases,
+      scrims: this.scrims.value,
     };
   }
 }

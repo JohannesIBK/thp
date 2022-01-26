@@ -4,6 +4,7 @@ import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -118,6 +119,7 @@ import { EditUserComponent } from "./components/edit-user/edit-user.component";
     DragDropModule,
     MatTabsModule,
     NgxMatSelectSearchModule,
+    MatCheckboxModule,
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: JwtRefreshInterceptor, multi: true }, MatIconRegistry],
   bootstrap: [AppComponent],

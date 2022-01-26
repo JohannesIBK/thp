@@ -7,16 +7,14 @@
         <input [formControl]="name" matInput maxlength="64" minlength="3" />
       </mat-form-field>
 
-      <mat-form-field class="info-input last-field">
+      <mat-form-field class="info-input">
         <mat-label>Teamgröße</mat-label>
         <input [formControl]="teamSize" matInput max="4" min="1" type="number" />
       </mat-form-field>
-    </div>
-    <div>
-      <mat-form-field class="text-field" appearance="fill">
-        <mat-label>Beschreibung</mat-label>
-        <textarea matInput [formControl]="description" cdkTextareaAutosize></textarea>
-      </mat-form-field>
+
+      <div class="scrims-checkbox">
+        <mat-checkbox [formControl]="scrims" (ngModelChange)="selectScrims($event)">Scrims</mat-checkbox>
+      </div>
     </div>
   </form>
 
@@ -53,13 +51,6 @@
         <mat-label>Runden</mat-label>
         <input [formControl]="phaseRounds" matInput type="number" />
         <mat-hint>Die Anzahl an Runden die diese Phase besitzt.</mat-hint>
-      </mat-form-field>
-    </div>
-    <div>
-      <mat-form-field class="phase-text-field text-field" appearance="fill">
-        <mat-label>Beschreibung</mat-label>
-        <textarea matInput [formControl]="phaseDescription" cdkTextareaAutosize></textarea>
-        <mat-hint>Wird in der Übersicht angezeigt, zB Namen der Maps</mat-hint>
       </mat-form-field>
     </div>
 

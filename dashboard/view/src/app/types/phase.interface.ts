@@ -1,6 +1,6 @@
 export interface IPhase {
   name: string;
-  description: string;
+  description?: string;
   acronym: string;
   rounds: number;
   teams: number;

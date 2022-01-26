@@ -70,6 +70,7 @@ export class TournamentController {
       name: payload.name,
       description: payload.description,
       teamSize: payload.teamSize,
+      scrims: payload.scrims,
     });
 
     const phases: PhaseEntity[] = [];

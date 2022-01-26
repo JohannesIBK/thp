@@ -12,10 +12,6 @@
             <mat-icon>flash_on</mat-icon>
             <span>Aktivieren</span>
           </button>
-          <!--          <button mat-menu-item [disabled]="tournament?.active">-->
-          <!--            <mat-icon>edit</mat-icon>-->
-          <!--            <span>Bearbeiten</span>-->
-          <!--          </button>-->
           <button mat-menu-item [disabled]="!tournament" (click)="downloadBackup()">
             <mat-icon>backup</mat-icon>
             <span>Backup herunterladen</span>
@@ -34,18 +30,20 @@
   <section class="content" *ngIf="tournament && loaded">
     <h2>{{ tournament.name }}</h2>
     <div class="tournament-info">
-      <mat-grid-list cols="5" rowHeight="25px">
+      <mat-grid-list cols="6" rowHeight="25px">
         <mat-grid-tile><b>ID</b></mat-grid-tile>
         <mat-grid-tile><b>Teams-Größe</b></mat-grid-tile>
         <mat-grid-tile><b>Phasen</b></mat-grid-tile>
         <mat-grid-tile><b>Spieleranzahl</b></mat-grid-tile>
         <mat-grid-tile><b>Läuft derzeit</b></mat-grid-tile>
+        <mat-grid-tile><b>Scrims</b></mat-grid-tile>
 
         <mat-grid-tile>{{ tournament.id }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.teamSize }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.phases.length }}</mat-grid-tile>
         <mat-grid-tile>{{ phases[0].groups * phases[0].teams * tournament.teamSize }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.active ? "Ja" : "Nein" }}</mat-grid-tile>
+        <mat-grid-tile>{{ tournament.scrims ? "Ja" : "Nein" }}</mat-grid-tile>
       </mat-grid-list>
 
       <div class="tournament-description">

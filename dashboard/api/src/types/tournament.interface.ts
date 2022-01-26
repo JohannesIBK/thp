@@ -4,4 +4,5 @@ export interface IOptionalTournament {
   description?: string;
   teamSize?: number;
   active?: boolean;
+  scrims?: boolean;
 }

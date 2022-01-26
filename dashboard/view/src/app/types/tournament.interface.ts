@@ -19,4 +19,5 @@ export interface ITournament {
   teamSize: number;
   active: boolean;
   phases: IPhase[];
+  scrims: boolean;
 }

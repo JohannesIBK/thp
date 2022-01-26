@@ -80,6 +80,7 @@ export class TournamentComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        console.log(result);
         this.tournamentService.create(result).subscribe({
           next: (tournament) => {
             this.tournament = tournament;
