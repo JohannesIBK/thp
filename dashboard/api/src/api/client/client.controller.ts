@@ -1,16 +1,21 @@
-import { BadRequestException, Body, Controller, Post, Response, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, NotFoundException, Post, Response, UseGuards } from "@nestjs/common";
 import { compare } from "bcrypt";
 import { randomBytes } from "crypto";
 import { FastifyReply } from "fastify";
 import { ClientAuthGuard } from "../../auth/client-auth.guard";
+import { EntryEntity } from "../../database/entry.entity";
 import { StatsEntity } from "../../database/stats.entity";
 import { User } from "../../decorators/user.decorator";
 import { AddKillDto } from "../../dto/add-kill.dto";
 import { AddWinDto } from "../../dto/add-win.dto";
 import { PermissionEnum } from "../../enums/permission.enum";
+import { MojangService } from "../../services/mojang.service";
+import { PhaseService } from "../../services/phase.service";
 import { PlayerService } from "../../services/player.service";
 import { SocketService } from "../../services/socket.service";
 import { StatsService } from "../../services/stats.service";
+import { TeamService } from "../../services/team.service";
+import { TournamentService } from "../../services/tournament.service";
 import { UserService } from "../../services/user.service";
 import { IJwtUser } from "../../types/jwt-user.interface";
 
@@ -18,9 +23,13 @@ import { IJwtUser } from "../../types/jwt-user.interface";
 export class ClientController {
   constructor(
     private readonly userService: UserService,
+    private readonly teamService: TeamService,
     private readonly statsService: StatsService,
+    private readonly phaseService: PhaseService,
     private readonly playerService: PlayerService,
     private readonly socketService: SocketService,
+    private readonly mojangService: MojangService,
+    private readonly tournamentService: TournamentService,
   ) {}
 
   @Post("login")
@@ -47,22 +56,39 @@ export class ClientController {
   @Post("kill")
   @UseGuards(ClientAuthGuard)
   async addKill(@User() user: IJwtUser, @Body() payload: AddKillDto): Promise<void> {
-    const player = await this.playerService.findPlayerForLog(payload.killer);
-
-    if (!player) {
-      throw new BadRequestException("Der Spieler wurde nicht gefunden");
+    const tournament = await this.tournamentService.findOne();
+    if (!tournament) {
+      throw new NotFoundException("Es wurde kein Turnier gefunden");
     }
 
-    console.log(player.team);
+    const player = await this.playerService.findPlayerForLog(payload.killer);
+    let team = player?.team;
+    if (!player && !tournament.scrims) {
+      throw new BadRequestException("Der Spieler wurde nicht gefunden");
+    } else {
+      const mcPlayer = await this.mojangService.getPlayerUUID(payload.killer);
+      if (!mcPlayer) {
+        throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
+      }
+
+      team = await this.teamService.createTeamWithPlayers([mcPlayer.id]);
+      await this.phaseService.saveEntry(
+        new EntryEntity({
+          phase: "scrims",
+          group: "A",
+          team,
+        }),
+      );
+    }
 
     const stat = new StatsEntity({
       phase: payload.phase,
-      team: player.team,
       round: payload.round,
       points: 1,
       reason: `${payload.killer} hat ${payload.killed} getötet`,
       userId: user.id,
       time: new Date(),
+      team,
     });
 
     const entity = await this.statsService.saveLog(stat);
@@ -72,15 +98,34 @@ export class ClientController {
   @Post("win")
   @UseGuards(ClientAuthGuard)
   async addWin(@User() user: IJwtUser, @Body() payload: AddWinDto): Promise<void> {
-    const player = await this.playerService.findPlayerForLog(payload.player);
+    const tournament = await this.tournamentService.findOne();
+    if (!tournament) {
+      throw new NotFoundException("Es wurde kein Turnier gefunden");
+    }
 
-    if (!player) {
+    const player = await this.playerService.findPlayerForLog(payload.player);
+    let team = player?.team;
+    if (!player && !tournament.scrims) {
       throw new BadRequestException("Der Spieler wurde nicht gefunden");
+    } else {
+      const mcPlayer = await this.mojangService.getPlayerUUID(payload.player);
+      if (!mcPlayer) {
+        throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
+      }
+
+      team = await this.teamService.createTeamWithPlayers([mcPlayer.id]);
+      await this.phaseService.saveEntry(
+        new EntryEntity({
+          phase: "scrims",
+          group: "A",
+          team,
+        }),
+      );
     }
 
     const stat = new StatsEntity({
       phase: payload.phase,
-      team: player.team,
+      team: team,
       round: payload.round,
       points: 2,
       reason: `Runde ${payload.round + 1} gewonnen`,
