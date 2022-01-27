@@ -4,6 +4,7 @@ import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import { DisabledScrimsComponent } from "../../components/disabled-scrims/disabled-scrims.component";
 import { TeamSiteDisabledComponent } from "../../components/team-site-disabled/team-site-disabled.component";
 import { AuthService } from "../../services/auth.service";
 import { TeamService } from "../../services/team.service";
@@ -188,14 +189,20 @@ export class TeamsComponent implements OnInit {
     this.tournamentService.getTournament().subscribe({
       next: (tournament) => {
         this.tournament = tournament;
+        if (tournament.scrims) {
+          this.dialog.open(DisabledScrimsComponent);
+          return;
+        }
         if (tournament.teamSize == 1) {
           this.dialog.open(TeamSiteDisabledComponent);
+          return;
         } else this.fetchTeams();
       },
       error: async (error: HttpErrorResponse) => {
         if (error.status === 404) {
-          if (this.authService.rawUser?.permission === PermissionEnum.ADMIN) {
-            await this.router.navigate(["tournaments"]);
+          const permission = this.authService.rawUser?.permission;
+          if (permission && permission >= PermissionEnum.ADMIN) {
+            await this.router.navigate(["tournament"]);
           } else {
             await this.router.navigate(["/"]);
           }

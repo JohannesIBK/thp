@@ -20,10 +20,6 @@ export interface ITeamWithEntries extends ITeam {
 
 export type ITeamFullData = ITeamWithStats & ITeamWithEntries;
 
-export interface ITeamWithEntry extends ITeamWithEntries {
-  entry?: number;
-}
-
 export interface ITeamWithEntryAndStats {
   team: ITeamFullData;
   entry?: number;

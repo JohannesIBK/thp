@@ -57,6 +57,7 @@ import { TeamsComponent } from "./views/teams/teams.component";
 import { TournamentComponent } from "./views/tournament/tournament.component";
 import { UsersComponent } from "./views/users/users.component";
 import { EditUserComponent } from "./components/edit-user/edit-user.component";
+import { DisabledScrimsComponent } from "./components/disabled-scrims/disabled-scrims.component";
 
 @NgModule({
   declarations: [
@@ -92,6 +93,7 @@ import { EditUserComponent } from "./components/edit-user/edit-user.component";
     TeamSiteDisabledComponent,
     ResetRoundComponent,
     EditUserComponent,
+    DisabledScrimsComponent,
   ],
   imports: [
     BrowserModule,

@@ -30,7 +30,7 @@ export class JwtRefreshInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    return throwError(error);
+    return throwError(() => error);
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<any> {

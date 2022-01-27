@@ -46,7 +46,7 @@
         <mat-grid-tile>{{ tournament.scrims ? "Ja" : "Nein" }}</mat-grid-tile>
       </mat-grid-list>
 
-      <div class="tournament-description">
+      <div class="tournament-description" *ngIf="tournament.description">
         <span class="tournament-info-header">Beschreibung</span><br />
         <span class="tournament-info-text">{{ tournament.description }}</span>
       </div>

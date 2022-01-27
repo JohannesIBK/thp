@@ -160,8 +160,9 @@ export class ManagementComponent implements OnInit {
       },
       error: async (error: HttpErrorResponse) => {
         if (error.status === 404) {
-          if (this.authService.rawUser?.permission === PermissionEnum.ADMIN) {
-            await this.router.navigate(["tournaments"]);
+          const permission = this.authService.rawUser?.permission;
+          if (permission && permission >= PermissionEnum.ADMIN) {
+            await this.router.navigate(["tournament"]);
           } else {
             await this.router.navigate(["/"]);
           }

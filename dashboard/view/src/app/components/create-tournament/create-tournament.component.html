@@ -80,5 +80,5 @@
 
 <mat-dialog-actions class="align-end">
   <button mat-button [mat-dialog-close]="null">Abbrechen</button>
-  <button [mat-dialog-close]="getData()" color="primary" mat-raised-button>Erstellen</button>
+  <button [mat-dialog-close]="getData()" [disabled]="!isValidForm" color="accent" mat-stroked-button>Erstellen</button>
 </mat-dialog-actions>

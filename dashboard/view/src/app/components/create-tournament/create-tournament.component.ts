@@ -62,6 +62,14 @@ export class CreateTournamentComponent {
     }
   }
 
+  get isValidForm(): boolean {
+    if (this.scrims.value) {
+      return this.infoForm.valid;
+    } else {
+      return this.infoForm.valid && this.phases.length > 0;
+    }
+  }
+
   addPhase() {
     if (this.phaseForm.valid) {
       if (this.phases.find((p) => p.name.toLowerCase() === this.phaseName.value.toLowerCase())) {

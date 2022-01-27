@@ -1,8 +1,10 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import { DisabledScrimsComponent } from "../../components/disabled-scrims/disabled-scrims.component";
 import { AuthService } from "../../services/auth.service";
 import { PhaseService } from "../../services/phase.service";
 import { StatsService } from "../../services/stats.service";
@@ -38,6 +40,7 @@ export class PhasesComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly teamService: TeamService,
     private readonly snackBar: MatSnackBar,
+    private readonly dialog: MatDialog,
     private readonly router: Router,
   ) {}
 
@@ -271,13 +274,19 @@ export class PhasesComponent implements OnInit {
   fetchTournament(): void {
     this.tournamentService.getTournament().subscribe({
       next: (tournament) => {
+        if (tournament.scrims) {
+          this.dialog.open(DisabledScrimsComponent);
+          return;
+        }
+
         this.tournament = tournament;
         this.fetchTeams();
       },
       error: async (error: HttpErrorResponse) => {
         if (error.status === 404) {
-          if (this.authService.rawUser?.permission === PermissionEnum.ADMIN) {
-            await this.router.navigate(["tournaments"]);
+          const permission = this.authService.rawUser?.permission;
+          if (permission && permission >= PermissionEnum.ADMIN) {
+            await this.router.navigate(["tournament"]);
           } else {
             await this.router.navigate(["/"]);
           }
