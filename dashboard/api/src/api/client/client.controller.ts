@@ -4,7 +4,9 @@ import { randomBytes } from "crypto";
 import { FastifyReply } from "fastify";
 import { ClientAuthGuard } from "../../auth/client-auth.guard";
 import { EntryEntity } from "../../database/entry.entity";
+import { PlayerEntity } from "../../database/player.entity";
 import { StatsEntity } from "../../database/stats.entity";
+import { TeamEntity } from "../../database/team.entity";
 import { User } from "../../decorators/user.decorator";
 import { AddKillDto } from "../../dto/add-kill.dto";
 import { AddWinDto } from "../../dto/add-win.dto";
@@ -63,15 +65,17 @@ export class ClientController {
 
     const player = await this.playerService.findPlayerForLog(payload.killer);
     let team = player?.team;
-    if (!player && !tournament.scrims) {
-      throw new BadRequestException("Der Spieler wurde nicht gefunden");
-    } else {
+    if (!player) {
+      if (!tournament.scrims) throw new BadRequestException("Der Spieler wurde nicht gefunden");
+
       const mcPlayer = await this.mojangService.getPlayerUUID(payload.killer);
       if (!mcPlayer) {
         throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
       }
 
-      team = await this.teamService.createTeamWithPlayers([mcPlayer.id]);
+      team = await this.teamService.save(new TeamEntity());
+      await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }));
+
       await this.phaseService.saveEntry(
         new EntryEntity({
           phase: "scrims",
@@ -105,15 +109,17 @@ export class ClientController {
 
     const player = await this.playerService.findPlayerForLog(payload.player);
     let team = player?.team;
-    if (!player && !tournament.scrims) {
-      throw new BadRequestException("Der Spieler wurde nicht gefunden");
-    } else {
+    if (!player) {
+      if (!tournament.scrims) throw new BadRequestException("Der Spieler wurde nicht gefunden");
+
       const mcPlayer = await this.mojangService.getPlayerUUID(payload.player);
       if (!mcPlayer) {
         throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
       }
 
-      team = await this.teamService.createTeamWithPlayers([mcPlayer.id]);
+      team = await this.teamService.save(new TeamEntity());
+      await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }));
+
       await this.phaseService.saveEntry(
         new EntryEntity({
           phase: "scrims",
@@ -128,7 +134,7 @@ export class ClientController {
       team: team,
       round: payload.round,
       points: 2,
-      reason: `Runde ${payload.round + 1} gewonnen`,
+      reason: `Hat eine Runde gewonnen (${payload.round + 1})`,
       userId: user.id,
       time: new Date(),
     });
