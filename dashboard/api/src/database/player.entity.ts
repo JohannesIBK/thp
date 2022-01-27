@@ -17,9 +17,7 @@ export class PlayerEntity {
     if (payload) {
       this.uuid = payload.uuid;
       this.name = payload.name!;
-      if (Number.isInteger(payload.team)) {
-        this.team = new TeamEntity({ id: payload.team });
-      }
+      this.team = payload.team!;
     }
   }
 }
