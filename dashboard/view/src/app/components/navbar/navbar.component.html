@@ -61,9 +61,7 @@
   </button>
 
   <mat-menu #menu="matMenu">
-    <a routerLink="/change-password">
-      <button mat-menu-item>Passwort ändern</button>
-    </a>
+    <button mat-menu-item routerLink="/change-password">Passwort ändern</button>
     <button (click)="logout()" mat-menu-item>Logout</button>
   </mat-menu>
 </mat-toolbar>
