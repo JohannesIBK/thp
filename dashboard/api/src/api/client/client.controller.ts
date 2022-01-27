@@ -74,15 +74,17 @@ export class ClientController {
       }
 
       team = await this.teamService.save(new TeamEntity());
-      await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }));
+      team.players = [await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }))];
 
-      await this.phaseService.saveEntry(
-        new EntryEntity({
-          phase: "scrims",
-          group: "A",
-          team,
-        }),
-      );
+      team.entries = [
+        await this.phaseService.saveEntry(
+          new EntryEntity({
+            phase: "scrims",
+            group: "A",
+            team,
+          }),
+        ),
+      ];
     }
 
     const stat = new StatsEntity({
@@ -96,7 +98,9 @@ export class ClientController {
     });
 
     const entity = await this.statsService.saveLog(stat);
-    this.socketService.sendStats(entity);
+
+    if (tournament.scrims && team) this.socketService.sendStats(entity, team);
+    else this.socketService.sendStats(entity);
   }
 
   @Post("win")
@@ -117,16 +121,18 @@ export class ClientController {
         throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
       }
 
-      team = await this.teamService.save(new TeamEntity());
-      await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }));
+      team = (await this.teamService.save(new TeamEntity())) as TeamEntity;
+      team.players = [await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }))];
 
-      await this.phaseService.saveEntry(
-        new EntryEntity({
-          phase: "scrims",
-          group: "A",
-          team,
-        }),
-      );
+      team.entries = [
+        await this.phaseService.saveEntry(
+          new EntryEntity({
+            phase: "scrims",
+            group: "A",
+            team,
+          }),
+        ),
+      ];
     }
 
     const stat = new StatsEntity({
@@ -140,6 +146,8 @@ export class ClientController {
     });
 
     const entity = await this.statsService.saveLog(stat);
-    this.socketService.sendStats(entity);
+
+    if (tournament.scrims && team) this.socketService.sendStats(entity, team);
+    else this.socketService.sendStats(entity);
   }
 }

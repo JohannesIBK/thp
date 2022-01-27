@@ -6,7 +6,7 @@ export class StatsEntity {
   @PrimaryGeneratedColumn({ type: "int" })
   id: number;
 
-  @Column("varchar", { length: 5 })
+  @Column("varchar", { length: 16 })
   phase: string;
 
   @Column("smallint")
