@@ -15,7 +15,7 @@ export class EntryEntity {
   @Column("int")
   private teamId: number;
 
-  @Column("varchar", { length: 5 })
+  @Column("varchar", { length: 16 })
   phase: string;
 
   @Column("char")

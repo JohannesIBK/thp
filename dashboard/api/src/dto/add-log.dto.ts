@@ -2,7 +2,7 @@ import { IsNumber, IsPositive, IsString, Length, Max, Min } from "@nestjs/class-
 
 export class AddLogDto {
   @IsString()
-  @Length(1, 5)
+  @Length(1, 16)
   phase: string;
 
   @IsString()

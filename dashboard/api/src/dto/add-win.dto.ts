@@ -9,6 +9,6 @@ export class AddWinDto {
   round: number;
 
   @IsString()
-  @Length(1, 5)
+  @Length(1, 16)
   phase: string;
 }
