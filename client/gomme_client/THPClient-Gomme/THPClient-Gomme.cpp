@@ -82,10 +82,10 @@ public:
             this->g_token = token.GetString();
             return true;
         }
-        else if (d.HasMember("message")) {
-            Value& message = d["message"];
-            std::cout << message.GetString() << std::endl;
-        }
+//         else if (d.HasMember("message")) {
+//             Value& message = d["message"];
+//             std::cout << "Login returned: " << message.GetString() << std::endl;
+//         }
         return false;
     }
 
@@ -139,12 +139,12 @@ public:
         curl_slist_free_all(list);
         curl_global_cleanup();
 
-        Document pd;
-        pd.Parse(response.c_str());
-        if (pd.HasMember("message")) {
-            Value& message = pd["message"];
-            std::cout << message.GetString() << std::endl;
-        }
+//         Document pd;
+//         pd.Parse(response.c_str());
+//         if (pd.HasMember("message")) {
+//             Value& message = pd["message"];
+//             std::cout << "Log returned" << message.GetString() << std::endl;
+//         }
     }
 
     void SendWin(const string& player) {
@@ -195,12 +195,12 @@ public:
         curl_slist_free_all(list);
         curl_global_cleanup();
 
-        Document pd;
-        pd.Parse(response.c_str());
-        if (pd.HasMember("message")) {
-            Value& message = pd["message"];
-            std::cout << message.GetString() << std::endl;
-        }
+//         Document pd;
+//         pd.Parse(response.c_str());
+//         if (pd.HasMember("message")) {
+//             Value& message = pd["message"];
+//             std::cout << message.GetString() << std::endl;
+//         }
     }
 };
 
@@ -253,7 +253,7 @@ public:
         log_file = fopen(file_path.c_str(), "r");
 
         if (!log_file) {
-            cout << "Die Logfile konnte nicht geöffnet werden." << endl;
+            cout << "Die Logfile konnte nicht geï¿½ffnet werden." << endl;
             exit(2);
         }
 
