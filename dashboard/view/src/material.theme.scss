@@ -10,23 +10,11 @@ $custom-typography: mat.define-typography-config(
 
 @include mat.core($custom-typography);
 
-
-$dark-primary-text: rgba(black, 0.87);
-$dark-secondary-text: rgba(black, 0.54);
-$dark-disabled-text: rgba(black, 0.38);
-$dark-dividers: rgba(black, 0.12);
-$dark-focused: rgba(black, 0.12);
-$light-primary-text: white;
-$light-secondary-text: rgba(white, 0.7);
-$light-disabled-text: rgba(white, 0.5);
-$light-dividers: rgba(white, 0.12);
-$light-focused: rgba(white, 0.12);
-
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $primary: mat.define-palette(mat.$gray-palette);
-$accent: mat.define-palette(mat.$deep-orange-palette, 600, 800, 300);
+$accent: mat.define-palette(mat.$blue-palette, 600, 800, 300);
 
 // The warn palette is optional (defaults to red).
 $warn: mat.define-palette(mat.$red-palette);
