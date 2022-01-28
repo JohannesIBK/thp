@@ -12,6 +12,7 @@ export class SocketService {
   }
 
   sendStats(data: { stats: StatsEntity; team?: TeamEntity | null }): void {
+    console.log("Send data: ", data);
     this.socket.emit("receive-stats", data);
   }
 }

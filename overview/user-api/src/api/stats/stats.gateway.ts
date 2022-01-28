@@ -8,6 +8,7 @@ export class StatsGateway {
 
   @SubscribeMessage("receive-stats")
   handleEvent(client: Socket, data: any): void {
+    console.log("Received data", data);
     if (client.handshake.address !== "127.0.0.1") return;
     this.server.emit("stats", data);
   }

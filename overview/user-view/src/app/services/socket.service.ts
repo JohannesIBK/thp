@@ -19,8 +19,8 @@ export class SocketService {
 
   onMessage(): Observable<{ stat: IStats; team?: ITeam }> {
     return new Observable((observer) => {
-      this.socket.on("stats", (stat: IStats, team?: ITeam) => {
-        observer.next({ stat, team });
+      this.socket.on("stats", (data: { stat: IStats, team?: ITeam }) => {
+        observer.next(data);
       });
     });
   }
