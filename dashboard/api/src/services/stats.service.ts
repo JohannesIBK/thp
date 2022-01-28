@@ -11,10 +11,6 @@ export class StatsService {
     return this.statsRepository.find(condition);
   }
 
-  findLog(condition: FindConditions<StatsEntity>): Promise<StatsEntity | undefined> {
-    return this.statsRepository.findOne(condition);
-  }
-
   saveLog(entity: StatsEntity): Promise<StatsEntity> {
     return this.statsRepository.save(entity);
   }

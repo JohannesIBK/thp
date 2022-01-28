@@ -1,9 +1,9 @@
 import { BadRequestException, Controller, Get } from "@nestjs/common";
 import { TeamEntity } from "../../database/team.entity";
+import { TournamentEntity } from "../../database/tournament.entity";
 import { PhaseService } from "../../services/phase.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
-import { IExtendedTournamentResponse } from "../../types/response.interface";
 
 @Controller("stats")
 export class StatsController {
@@ -14,16 +14,11 @@ export class StatsController {
   ) {}
 
   @Get("tournament")
-  async getTournament(): Promise<IExtendedTournamentResponse> {
+  async getTournament(): Promise<TournamentEntity> {
     const tournament = await this.tournamentService.findOne();
     if (!tournament) throw new BadRequestException("Derzeit läuft kein Turnier");
 
-    const phases = await this.phaseService.findAll();
-
-    return {
-      ...tournament,
-      phases,
-    };
+    return tournament;
   }
 
   @Get("data")

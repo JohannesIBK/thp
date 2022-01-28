@@ -1,8 +1,10 @@
+import { ITeam } from "./team.interface";
+
 export interface IStats {
   id: number;
   phase: string;
   round: number;
-  teamId: number;
+  team: ITeam;
   points: number;
   reason: string;
   time: string;

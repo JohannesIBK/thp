@@ -65,6 +65,7 @@ export class ClientController {
 
     const player = await this.playerService.findPlayerForLog(payload.killer);
     let team = player?.team;
+
     if (!player) {
       if (!tournament.scrims) throw new BadRequestException("Der Spieler wurde nicht gefunden");
 
@@ -74,17 +75,21 @@ export class ClientController {
       }
 
       team = await this.teamService.save(new TeamEntity());
-      team.players = [await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }))];
 
-      team.entries = [
-        await this.phaseService.saveEntry(
-          new EntryEntity({
-            phase: "scrims",
-            group: "A",
-            team,
-          }),
-        ),
-      ];
+      const player = await this.playerService.save(
+        new PlayerEntity({ name: mcPlayer.name, team: new TeamEntity({ id: team.id }), uuid: mcPlayer.id }),
+      );
+
+      const entry = await this.phaseService.saveEntry(
+        new EntryEntity({
+          phase: "scrims",
+          group: "A",
+          team: new TeamEntity({ id: team.id }),
+        }),
+      );
+
+      team.entries = [entry];
+      team.players = [player];
     }
 
     const stat = new StatsEntity({
@@ -98,7 +103,7 @@ export class ClientController {
     });
 
     const entity = await this.statsService.saveLog(stat);
-    this.socketService.sendStats({ stats: entity, team });
+    this.socketService.sendStats(entity);
   }
 
   @Post("win")
@@ -119,31 +124,35 @@ export class ClientController {
         throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
       }
 
-      team = (await this.teamService.save(new TeamEntity())) as TeamEntity;
-      team.players = [await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }))];
+      team = await this.teamService.save(new TeamEntity());
 
-      team.entries = [
-        await this.phaseService.saveEntry(
-          new EntryEntity({
-            phase: "scrims",
-            group: "A",
-            team,
-          }),
-        ),
-      ];
+      const player = await this.playerService.save(
+        new PlayerEntity({ name: mcPlayer.name, team: new TeamEntity({ id: team.id }), uuid: mcPlayer.id }),
+      );
+
+      const entry = await this.phaseService.saveEntry(
+        new EntryEntity({
+          phase: "scrims",
+          group: "A",
+          team: new TeamEntity({ id: team.id }),
+        }),
+      );
+
+      team.entries = [entry];
+      team.players = [player];
     }
 
     const stat = new StatsEntity({
       phase: payload.phase,
-      team: team,
       round: payload.round,
       points: 2,
       reason: `Hat eine Runde gewonnen (${payload.round + 1})`,
       userId: user.id,
       time: new Date(),
+      team,
     });
 
     const entity = await this.statsService.saveLog(stat);
-    this.socketService.sendStats({ stats: entity, team });
+    this.socketService.sendStats(entity);
   }
 }

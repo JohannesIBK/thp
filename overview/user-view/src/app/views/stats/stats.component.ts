@@ -86,20 +86,28 @@ export class StatsComponent implements OnInit {
 
   subscribeToStats() {
     this.socketService.connectSocket();
-    this.socketService.onMessage().subscribe(({ stat, team }) => {
-      const internalTeam = this.currentTeams.find((t) => t.team.id === stat.teamId);
+    this.socketService.onMessage().subscribe((stat) => {
+      const internalTeam = this.currentTeams.find((t) => t.team.id === stat.team.id);
       if (internalTeam) {
         internalTeam.team.stats.push(stat);
         const points = internalTeam.points.get(stat.round) || 0;
         internalTeam.points.set(stat.round, points + stat.points);
 
         if (this.lastSort) this.sortData(this.lastSort);
-      } else if (team) {
-        // only scrims sent team
+      } else if (stat.team?.players?.length) {
+        const team = { ...stat.team };
+
+        stat.team = { id: team.id } as ITeam;
+        team.stats = [stat];
+
+        // only scrims
         const points = new Map<number, number>();
+        const data = { team, points, group: "A" };
         points.set(stat.round, stat.points);
 
-        this.currentTeams = [...this.currentTeams, { team, points, group: "A" }];
+        this.teams.push(stat.team);
+        this.groupTeams.push(data);
+        this.currentTeams.push(data);
         if (this.lastSort) this.sortData(this.lastSort);
       }
     });

@@ -17,8 +17,6 @@ import { StatsService } from "../../services/stats.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { IJwtUser } from "../../types/jwt-user.interface";
-import { IPhase } from "../../types/phase.interface";
-import { IExtendedTournamentResponse } from "../../types/response.interface";
 
 const exec_p = util.promisify(exec);
 
@@ -35,17 +33,14 @@ export class TournamentController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async get(): Promise<IExtendedTournamentResponse> {
+  async get(): Promise<TournamentEntity> {
     const tournament = await this.tournamentService.findOne();
 
     if (!tournament) {
       throw new NotFoundException("Es wurde kein Turnier erstellt.");
     }
 
-    return {
-      ...tournament,
-      phases: await this.phaseService.findAll(),
-    };
+    return tournament;
   }
 
   @Get("backup")
@@ -64,7 +59,7 @@ export class TournamentController {
   @Put()
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
-  async create(@User() user: IJwtUser, @Body() payload: CreateTournamentDto): Promise<IExtendedTournamentResponse> {
+  async create(@User() user: IJwtUser, @Body() payload: CreateTournamentDto): Promise<TournamentEntity> {
     const entity = new TournamentEntity({
       id: 1,
       name: payload.name,
@@ -72,19 +67,19 @@ export class TournamentController {
       teamSize: payload.teamSize,
       scrims: payload.scrims,
     });
+    const tournament = await this.tournamentService.create(entity);
 
     const phases: PhaseEntity[] = [];
 
     for (const phase of payload.phases) {
       const entity = new PhaseEntity({ ...phase });
-
-      phases.push((await this.phaseService.create(entity)) as IPhase);
+      entity.tournament = tournament;
+      phases.push(entity);
     }
 
-    return {
-      ...(await this.tournamentService.create(entity)),
-      phases,
-    };
+    await this.phaseService.create(phases);
+
+    return (await this.tournamentService.findOne()) as TournamentEntity;
   }
 
   @Patch("activate")

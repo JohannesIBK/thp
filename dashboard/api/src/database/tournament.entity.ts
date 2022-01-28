@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IOptionalTournament } from "../types/tournament.interface";
+import { PhaseEntity } from "./phase.entity";
 
 @Entity({ name: "tournaments" })
 export class TournamentEntity {
@@ -20,6 +21,9 @@ export class TournamentEntity {
 
   @Column("boolean", { default: false })
   scrims: boolean;
+
+  @OneToMany(() => PhaseEntity, (phase) => phase.tournament, { onDelete: "CASCADE" })
+  phases: PhaseEntity[];
 
   constructor(payload?: IOptionalTournament) {
     if (payload) {

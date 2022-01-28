@@ -12,8 +12,12 @@ export class PhaseService {
     @InjectRepository(EntryEntity) private readonly phaseEntryRepository: Repository<EntryEntity>,
   ) {}
 
-  create(phase: PhaseEntity): Promise<PhaseEntity> {
+  save(phase: PhaseEntity): Promise<PhaseEntity | PhaseEntity[]> {
     return this.phaseRepository.save(phase);
+  }
+
+  async create(phases: PhaseEntity[]): Promise<void> {
+    await this.phaseRepository.insert(phases);
   }
 
   findAllEntries(): Promise<EntryEntity[]> {

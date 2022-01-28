@@ -48,7 +48,7 @@ export class StatsController {
     });
 
     const entity = await this.statsService.saveLog(stat);
-    this.socketService.sendStats({ stats: entity });
+    this.socketService.sendStats(entity);
     return await this.statsService.findLogs({ team, phase: payload.phase });
   }
 

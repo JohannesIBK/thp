@@ -8,6 +8,6 @@ export class TournamentService {
   constructor(@InjectRepository(TournamentEntity) private readonly tournamentRepository: Repository<TournamentEntity>) {}
 
   findOne(): Promise<TournamentEntity | undefined> {
-    return this.tournamentRepository.findOne({});
+    return this.tournamentRepository.findOne({ relations: ["phases"] });
   }
 }
