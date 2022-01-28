@@ -98,9 +98,7 @@ export class ClientController {
     });
 
     const entity = await this.statsService.saveLog(stat);
-
-    if (tournament.scrims && team) this.socketService.sendStats(entity, team);
-    else this.socketService.sendStats(entity);
+    this.socketService.sendStats({ stats: entity, team });
   }
 
   @Post("win")
@@ -146,8 +144,6 @@ export class ClientController {
     });
 
     const entity = await this.statsService.saveLog(stat);
-
-    if (tournament.scrims && team) this.socketService.sendStats(entity, team);
-    else this.socketService.sendStats(entity);
+    this.socketService.sendStats({ stats: entity, team });
   }
 }

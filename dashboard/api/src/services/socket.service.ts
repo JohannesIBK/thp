@@ -11,7 +11,7 @@ export class SocketService {
     this.socket = io("http://localhost:3210", { path: "/api/live-stats" });
   }
 
-  sendStats(stats: StatsEntity, team?: TeamEntity): void {
-    this.socket.emit("receive-stats", stats, team);
+  sendStats(data: { stats: StatsEntity; team?: TeamEntity | null }): void {
+    this.socket.emit("receive-stats", data);
   }
 }
