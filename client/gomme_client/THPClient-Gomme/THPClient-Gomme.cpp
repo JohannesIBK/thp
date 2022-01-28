@@ -253,7 +253,7 @@ public:
         log_file = fopen(file_path.c_str(), "r");
 
         if (!log_file) {
-            cout << "Die Logfile konnte nicht ge�ffnet werden." << endl;
+            cout << "Die Logfile konnte nicht geoeffnet werden." << endl;
             exit(2);
         }
 
