@@ -66,7 +66,7 @@ export class PlayerController {
 
     if (!player.raw.length) throw new BadRequestException("Der Spieler wurde nicht gefunden");
 
-    const teamId = player.raw[0].team as number | null;
+    const teamId = player.raw[0].teamId as number | null;
     if (teamId) {
       await this.teamService.removePlayer(teamId);
     }

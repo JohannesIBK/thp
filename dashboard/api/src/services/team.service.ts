@@ -38,7 +38,6 @@ export class TeamService {
 
   async removePlayer(teamId: number): Promise<void> {
     const result = await this.playerRepository.find({ where: { team: { id: teamId } } });
-
     if (result.length === 0) {
       await this.deleteTeam(teamId);
     }
