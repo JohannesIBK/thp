@@ -29,9 +29,9 @@ export class UserService {
       .pipe();
   }
 
-  editUser(payload: IUser): Observable<IUser> {
+  editUser(id: number, payload: { permission?: number; username: string }): Observable<IUser> {
     return this.http
-      .patch<IUser>(`${environment.url}/user/${payload.id}`, payload, {
+      .patch<IUser>(`${environment.url}/user/${id}`, payload, {
         headers: {
           Authorization: this.authService.token,
         },
@@ -40,7 +40,7 @@ export class UserService {
       .pipe();
   }
 
-  deleteUser(id: string): Observable<void> {
+  deleteUser(id: number): Observable<void> {
     return this.http
       .delete<void>(`${environment.url}/user/${id}`, {
         headers: {

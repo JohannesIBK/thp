@@ -5,7 +5,7 @@ export interface ILoginResponse {
 }
 
 export interface IUser {
-  id?: string;
+  id?: number;
   username: string;
   permission: PermissionEnum;
 }

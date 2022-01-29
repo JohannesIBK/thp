@@ -52,7 +52,7 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  openDeleteUserDialog(userId: string): void {
+  openDeleteUserDialog(userId: number): void {
     const dialog = this.dialog.open(DeleteUserComponent);
 
     dialog.afterClosed().subscribe((result) => {

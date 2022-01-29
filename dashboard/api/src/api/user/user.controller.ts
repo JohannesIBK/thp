@@ -109,8 +109,17 @@ export class UserController {
       throw new ForbiddenException("Du kannst diesen User nicht bearbeiten.");
     }
 
+    const entity = new UserEntity({ id });
+
+    if (typeof payload.permission !== "undefined") {
+      entity.permission = payload.permission;
+    }
+
+    if (typeof payload.username !== "undefined") {
+      entity.username = payload.username;
+    }
+
     try {
-      const entity = new UserEntity({ id, permission: payload.permission, username: payload.username });
       await this.userService.save(entity);
       return this.userService.findOne({ where: { id }, select: ["username", "permission", "id"] });
     } catch {
@@ -189,7 +198,5 @@ export class UserController {
     }
 
     await this.userService.delete(id);
-
-    return;
   }
 }

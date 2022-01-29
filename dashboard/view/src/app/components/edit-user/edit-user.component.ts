@@ -43,18 +43,16 @@ export class EditUserComponent {
     if (this.form.invalid) return;
     this.loading = true;
 
-    const data: Record<string, any> = {
-      id: this.user.id,
-    };
+    const data: Record<string, any> = {};
     if (this.form.value.username.toLowerCase() !== this.user.username) {
       data["username"] = this.form.value.username.toLowerCase();
     }
 
-    if (this.form.value.username.toLowerCase() !== this.user.username && this.user.id !== this.currentUser.id) {
+    if (this.form.value.permission !== this.user.permission && this.user.id !== this.currentUser.id) {
       data["permission"] = this.form.value.permission;
     }
 
-    this.userService.editUser(data as any).subscribe({
+    this.userService.editUser(this.user.id!, data as any).subscribe({
       next: (user) => {
         this.dialogRef.close(user);
       },
