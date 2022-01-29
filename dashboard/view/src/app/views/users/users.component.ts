@@ -97,10 +97,12 @@ export class UsersComponent implements OnInit {
         return "Admin";
       case PermissionEnum.HEAD:
         return "Site-Admin";
-      case PermissionEnum.HELPER:
-        return "Helper";
+      case PermissionEnum.TOURNAMENT_HELPER:
+        return "Turnier-Helfer";
       case PermissionEnum.USER:
         return "User";
+      case PermissionEnum.SCRIMS_HELPER:
+        return "Scrims-Helfer";
       default:
         return "";
     }

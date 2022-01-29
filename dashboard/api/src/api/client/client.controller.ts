@@ -1,4 +1,13 @@
-import { BadRequestException, Body, Controller, NotFoundException, Post, Response, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  ForbiddenException,
+  NotFoundException,
+  Post,
+  Response,
+  UseGuards,
+} from "@nestjs/common";
 import { compare } from "bcrypt";
 import { randomBytes } from "crypto";
 import { FastifyReply } from "fastify";
@@ -38,7 +47,7 @@ export class ClientController {
   async login(@Body() payload: any, @Response() response: FastifyReply): Promise<void> {
     const user = await this.userService.findByUsername(payload.username.toLowerCase());
 
-    if ((user?.permission || 0) < PermissionEnum.HELPER)
+    if ((user?.permission || 0) < PermissionEnum.SCRIMS_HELPER)
       throw new BadRequestException("Du hast keine Berechtigung, dich hier einzuloggen.");
 
     if (user && (await compare(payload.password, user.password))) {
@@ -61,6 +70,13 @@ export class ClientController {
     const tournament = await this.tournamentService.findOne();
     if (!tournament) {
       throw new NotFoundException("Es wurde kein Turnier gefunden");
+    }
+
+    if (!tournament.scrims && user.permission === PermissionEnum.SCRIMS_HELPER)
+      throw new ForbiddenException("Du hast keine Berechtigungen bei Turnieren zu zählen.");
+
+    if (tournament.scrims && user.permission === PermissionEnum.TOURNAMENT_HELPER) {
+      throw new ForbiddenException("Du hast keine Berechtigungen bei Scrims zu zählen.");
     }
 
     const player = await this.playerService.findPlayerForLog(payload.killer);
@@ -112,6 +128,13 @@ export class ClientController {
     const tournament = await this.tournamentService.findOne();
     if (!tournament) {
       throw new NotFoundException("Es wurde kein Turnier gefunden");
+    }
+
+    if (!tournament.scrims && user.permission === PermissionEnum.SCRIMS_HELPER)
+      throw new ForbiddenException("Du hast keine Berechtigungen bei Turnieren zu zählen.");
+
+    if (tournament.scrims && user.permission === PermissionEnum.TOURNAMENT_HELPER) {
+      throw new ForbiddenException("Du hast keine Berechtigungen bei Scrims zu zählen.");
     }
 
     const player = await this.playerService.findPlayerForLog(payload.player);

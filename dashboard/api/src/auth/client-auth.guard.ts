@@ -21,7 +21,8 @@ export class ClientAuthGuard implements CanActivate {
       throw new UnauthorizedException("Dein Token ist ungültig");
     }
 
-    if (user.permission < PermissionEnum.HELPER) throw new ForbiddenException("Du hast keine Berechtigungen den Client zu benutzen.");
+    if (user.permission < PermissionEnum.SCRIMS_HELPER)
+      throw new ForbiddenException("Du hast keine Berechtigungen den Client zu benutzen.");
 
     request.user = {
       id: user.id,
