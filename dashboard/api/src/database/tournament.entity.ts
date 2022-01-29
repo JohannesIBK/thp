@@ -22,7 +22,7 @@ export class TournamentEntity {
   @Column("boolean", { default: false })
   scrims: boolean;
 
-  @OneToMany(() => PhaseEntity, (phase) => phase.tournament, { onDelete: "CASCADE" })
+  @OneToMany(() => PhaseEntity, (phase) => phase.tournament)
   phases: PhaseEntity[];
 
   constructor(payload?: IOptionalTournament) {

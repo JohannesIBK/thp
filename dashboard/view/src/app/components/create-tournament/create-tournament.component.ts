@@ -111,7 +111,7 @@ export class CreateTournamentComponent {
       name: this.name.value,
       teamSize: this.teamSize.value,
       phases,
-      scrims: this.scrims.value,
+      scrims: this.scrims.value || false,
     };
   }
 }

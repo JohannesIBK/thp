@@ -10,26 +10,12 @@
   <section *ngIf="loaded">
     <mat-tab-group (selectedIndexChange)="selectTab($event)">
       <mat-tab *ngFor="let phase of tournament.phases" [label]="phase.name">
-        <mat-tab-group (selectedIndexChange)="selectGroup($event)">
-          <mat-tab *ngFor="let _ of counter(phase.groups); index as i" [label]="'Gruppe ' + groups[i]">
-            <table matSort class="mat-elevation-z8" (matSortChange)="sortData($event)" matSortDisableClear>
-              <tr class="table-header">
-                <th mat-sort-header="players">Spieler</th>
-                <th *ngFor="let _ of counter(phase.rounds); index as i" [mat-sort-header]="'points_' + i">Punkte ({{ i + 1 }})</th>
-                <th mat-sort-header="pointsAll">Punkte (gesamt)</th>
-              </tr>
-
-              <tr
-                *ngFor="let team of sortedTeams; index as i"
-                [ngClass]="{ background: i % 2 === 0 }"
-                (click)="openViewLogComponent(phase, team.team)">
-                <td>{{ playerNameString(team.team.players) }}</td>
-                <td *ngFor="let _ of counter(phase.rounds); index as i">{{ team.points.get(i)! }}</td>
-                <td>{{ getPointsSum(team.points) }}</td>
-              </tr>
-            </table>
+        <mat-tab-group (selectedIndexChange)="selectGroup($event)" *ngIf="phase.rounds > 1">
+          <mat-tab *ngFor="let i of counter(phase.groups)" [label]="'Gruppe ' + groups[i]">
+            <app-stats-table [phase]="phase" [teams]="groupTeams" [update]="update"></app-stats-table>
           </mat-tab>
         </mat-tab-group>
+        <app-stats-table *ngIf="phase.rounds === 1" [phase]="phase" [teams]="groupTeams" [update]="update"></app-stats-table>
       </mat-tab>
     </mat-tab-group>
   </section>

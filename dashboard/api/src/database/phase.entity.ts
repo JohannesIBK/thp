@@ -30,7 +30,7 @@ export class PhaseEntity {
   @Column("smallint")
   groups: number;
 
-  @ManyToOne(() => TournamentEntity, (tournament) => tournament.phases)
+  @ManyToOne(() => TournamentEntity, (tournament) => tournament.phases, { onDelete: "CASCADE" })
   tournament: TournamentEntity;
 
   constructor(payload?: IPhasePayload) {

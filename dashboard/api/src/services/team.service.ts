@@ -28,7 +28,6 @@ export class TeamService {
 
   async deleteTeam(teamId: number): Promise<void> {
     await this.teamRepository.delete(teamId);
-    await this.playerRepository.update({ team: new TeamEntity({ id: teamId }) }, { team: null });
   }
 
   async deleteAll(): Promise<void> {

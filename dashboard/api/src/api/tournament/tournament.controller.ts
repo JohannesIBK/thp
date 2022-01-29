@@ -2,8 +2,8 @@ import { Body, Controller, Delete, Get, NotFoundException, Patch, Put, Response,
 import { exec } from "child_process";
 import { FastifyReply } from "fastify";
 import { createReadStream } from "fs";
-import * as util from "util";
 import * as path from "path";
+import * as util from "util";
 import { JwtAuthGuard } from "../../auth/auth.guard";
 import { PhaseEntity } from "../../database/phase.entity";
 import { TournamentEntity } from "../../database/tournament.entity";
@@ -13,7 +13,6 @@ import { CreateTournamentDto } from "../../dto/create-tournament.dto";
 import { PermissionEnum } from "../../enums/permission.enum";
 import { PhaseService } from "../../services/phase.service";
 import { RatelimitService } from "../../services/ratelimit.service";
-import { StatsService } from "../../services/stats.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { IJwtUser } from "../../types/jwt-user.interface";
@@ -27,7 +26,6 @@ export class TournamentController {
     private readonly ratelimitService: RatelimitService,
     private readonly phaseService: PhaseService,
     private readonly teamService: TeamService,
-    private readonly statsService: StatsService,
   ) {}
 
   @Get()
@@ -97,8 +95,6 @@ export class TournamentController {
   @HasPermission(PermissionEnum.ADMIN)
   async deleteTournament(): Promise<void> {
     await this.tournamentService.deleteTournament();
-    await this.phaseService.deleteAll();
     await this.teamService.deleteAll();
-    await this.statsService.delete({});
   }
 }
