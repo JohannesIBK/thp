@@ -36,7 +36,7 @@
 </span>
 <mat-dialog-content class="mat-typography">
   <mat-tab-group (selectedIndexChange)="selectTab($event)">
-    <mat-tab *ngFor="let _ of counter(data.phase.rounds); index as i" [label]="'Runde ' + (i + 1)">
+    <mat-tab *ngFor="let i of ngCounter(data.phase.rounds)" [label]="'Runde ' + (i + 1)">
       <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
         <ng-container matColumnDef="reason">
           <th mat-header-cell *matHeaderCellDef>Grund</th>

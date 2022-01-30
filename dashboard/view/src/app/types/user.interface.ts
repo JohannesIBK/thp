@@ -15,8 +15,3 @@ export interface ICreateUserPayload {
   permission: PermissionEnum;
   password: string;
 }
-
-export interface IEditUserPayload {
-  username: string;
-  permission: PermissionEnum;
-}

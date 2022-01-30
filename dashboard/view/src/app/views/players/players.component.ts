@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, HostListener, OnInit } from "@angular/core";
-import { FormControl, Validators as V } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
@@ -25,7 +24,6 @@ export class PlayersComponent implements OnInit {
   dialogIsOpen = false;
   filter = "";
   filteredPlayers: IPlayer[] = [];
-  nameField = new FormControl("", [V.required, V.maxLength(16), V.minLength(3)]);
 
   constructor(
     private readonly tournamentService: TournamentService,

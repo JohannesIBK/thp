@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
-import { AuthService } from "../services/auth.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserEntity } from "../database/user.entity";
-import { JwtWrapperModule } from "./jwt-wrapper.module";
+import { AuthService } from "../services/auth.service";
 import { UserService } from "../services/user.service";
+import { JwtWrapperModule } from "./jwt-wrapper.module";
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity]), JwtWrapperModule],

@@ -1,7 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { MatTableDataSource } from "@angular/material/table";
 import { IPhase } from "../../types/phase.interface";
+
 import { IStats } from "../../types/stats.interface";
 
 @Component({
@@ -20,7 +20,11 @@ export class ViewLogsComponent {
     this.tableData = this.data.stats.filter((s) => s.round === index);
   }
 
-  counter(i: number): Array<number> {
-    return new Array(i);
+  toTimeString(time: string): string {
+    return "";
+  }
+
+  counter(index: number): Array<number> {
+    return Array.from(Array(index).keys());
   }
 }

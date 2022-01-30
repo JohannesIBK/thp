@@ -1,9 +1,9 @@
-import { Component } from "@angular/core";
-import { MojangService } from "../../services/mojang.service";
-import { FormControl, Validators as V } from "@angular/forms";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { HttpErrorResponse } from "@angular/common/http";
+import { Component } from "@angular/core";
+import { FormControl, Validators as V } from "@angular/forms";
 import { MatDialogRef } from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MojangService } from "../../services/mojang.service";
 
 @Component({
   selector: "app-add-player",

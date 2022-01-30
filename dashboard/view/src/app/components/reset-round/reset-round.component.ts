@@ -44,6 +44,6 @@ export class ResetRoundComponent {
 
   counter(): Array<number> {
     if (this.phaseSelect.invalid) return new Array(0);
-    return new Array(this.tournament.phases.find((p) => p.acronym === this.phaseSelect.value)!.rounds);
+    return Array.from(Array(this.tournament.phases.find((p) => p.acronym === this.phaseSelect.value)!.rounds).keys());
   }
 }

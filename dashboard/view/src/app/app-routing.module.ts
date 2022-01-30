@@ -4,12 +4,12 @@ import { ChangePasswordComponent } from "./views/change-password/change-password
 import { ClientComponent } from "./views/client/client.component";
 import { HomeComponent } from "./views/home/home.component";
 import { LoginComponent } from "./views/login/login.component";
+import { ManagementComponent } from "./views/management/management.component";
+import { PhasesComponent } from "./views/phases/phases.component";
+import { PlayersComponent } from "./views/players/players.component";
 import { TeamsComponent } from "./views/teams/teams.component";
 import { TournamentComponent } from "./views/tournament/tournament.component";
 import { UsersComponent } from "./views/users/users.component";
-import { PlayersComponent } from "./views/players/players.component";
-import { PhasesComponent } from "./views/phases/phases.component";
-import { ManagementComponent } from "./views/management/management.component";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
