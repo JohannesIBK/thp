@@ -18,6 +18,6 @@ export class StatsController {
 
   @Get("data")
   async getData(): Promise<TeamEntity[]> {
-    return await this.teamService.find({ relations: ["players", "entries", "stats"] });
+    return this.teamService.find({ relations: ["players", "entries", "stats"] });
   }
 }
