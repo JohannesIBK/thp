@@ -1,26 +1,26 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { IConfig } from "./types/config.interface";
+import { JwtModule } from "@nestjs/jwt";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { WinstonModule } from "nest-winston";
 import { transports } from "winston";
-import { JwtModule } from "@nestjs/jwt";
-import { AuthModule } from "./auth/auth.module";
-import { UserEntity } from "./database/user.entity";
-import { validate } from "./config/config.validation";
-import { UserModule } from "./api/user/user.module";
-import { TournamentModule } from "./api/tournament/tournament.module";
-import { TournamentEntity } from "./database/tournament.entity";
-import { PlayerModule } from "./api/player/player.module";
-import { PlayerEntity } from "./database/player.entity";
-import { TeamEntity } from "./database/team.entity";
-import { StatsEntity } from "./database/stats.entity";
-import { PhaseEntity } from "./database/phase.entity";
-import { PhaseModule } from "./api/phase/phase.module";
-import { TeamModule } from "./api/team/team.module";
-import { EntryEntity } from "./database/entry.entity";
-import { StatsModule } from "./api/stats/stats.module";
 import { ClientModule } from "./api/client/client.module";
+import { PhaseModule } from "./api/phase/phase.module";
+import { PlayerModule } from "./api/player/player.module";
+import { StatsModule } from "./api/stats/stats.module";
+import { TeamModule } from "./api/team/team.module";
+import { TournamentModule } from "./api/tournament/tournament.module";
+import { UserModule } from "./api/user/user.module";
+import { AuthModule } from "./auth/auth.module";
+import { validate } from "./config/config.validation";
+import { EntryEntity } from "./database/entry.entity";
+import { PhaseEntity } from "./database/phase.entity";
+import { PlayerEntity } from "./database/player.entity";
+import { StatsEntity } from "./database/stats.entity";
+import { TeamEntity } from "./database/team.entity";
+import { TournamentEntity } from "./database/tournament.entity";
+import { UserEntity } from "./database/user.entity";
+import { IConfig } from "./types/config.interface";
 
 @Module({
   imports: [

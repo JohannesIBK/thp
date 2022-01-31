@@ -17,7 +17,7 @@ import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { IJwtUser } from "../../types/jwt-user.interface";
 
-const exec_p = util.promisify(exec);
+const execPromise = util.promisify(exec);
 
 @Controller("tournament")
 export class TournamentController {
@@ -45,13 +45,13 @@ export class TournamentController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async createBackup(@Response() response: FastifyReply): Promise<void> {
-    const sql_dump = path.join(__dirname, "..", "..", "..");
+    const sqlDumpPath = path.join(__dirname, "..", "..", "..");
 
     if (this.ratelimitService.consumePoint()) {
-      await exec_p(`pg_dump -T users thp > ${sql_dump}/thp.sql`);
+      await execPromise(`pg_dump -T users thp > ${sqlDumpPath}/thp.sql`);
     }
 
-    response.send(createReadStream(sql_dump + "/thp.sql"));
+    response.send(createReadStream(`${sqlDumpPath}/thp.sql`));
   }
 
   @Put()
@@ -70,9 +70,9 @@ export class TournamentController {
     const phases: PhaseEntity[] = [];
 
     for (const phase of payload.phases) {
-      const entity = new PhaseEntity({ ...phase });
-      entity.tournament = tournament;
-      phases.push(entity);
+      const phaseEntity = new PhaseEntity({ ...phase });
+      phaseEntity.tournament = tournament;
+      phases.push(phaseEntity);
     }
 
     await this.phaseService.create(phases);

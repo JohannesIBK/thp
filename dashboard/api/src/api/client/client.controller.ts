@@ -47,8 +47,9 @@ export class ClientController {
   async login(@Body() payload: any, @Response() response: FastifyReply): Promise<void> {
     const user = await this.userService.findByUsername(payload.username.toLowerCase());
 
-    if ((user?.permission || 0) < PermissionEnum.SCRIMS_HELPER)
+    if ((user?.permission || 0) < PermissionEnum.SCRIMS_HELPER) {
       throw new BadRequestException("Du hast keine Berechtigung, dich hier einzuloggen.");
+    }
 
     if (user && (await compare(payload.password, user.password))) {
       const token = randomBytes(32).toString("base64url");
@@ -57,7 +58,7 @@ export class ClientController {
       await this.userService.save(user);
 
       response.send({
-        token: token,
+        token,
       });
     }
 
@@ -72,8 +73,9 @@ export class ClientController {
       throw new NotFoundException("Es wurde kein Turnier gefunden");
     }
 
-    if (!tournament.scrims && user.permission === PermissionEnum.SCRIMS_HELPER)
+    if (!tournament.scrims && user.permission === PermissionEnum.SCRIMS_HELPER) {
       throw new ForbiddenException("Du hast keine Berechtigungen bei Turnieren zu zählen.");
+    }
 
     if (tournament.scrims && user.permission === PermissionEnum.TOURNAMENT_HELPER) {
       throw new ForbiddenException("Du hast keine Berechtigungen bei Scrims zu zählen.");
@@ -92,7 +94,7 @@ export class ClientController {
 
       team = await this.teamService.save(new TeamEntity());
 
-      const player = await this.playerService.save(
+      const savedPlayer = await this.playerService.save(
         new PlayerEntity({ name: mcPlayer.name, team: new TeamEntity({ id: team.id }), uuid: mcPlayer.id }),
       );
 
@@ -105,7 +107,7 @@ export class ClientController {
       );
 
       team.entries = [entry];
-      team.players = [player];
+      team.players = [savedPlayer];
     }
 
     const stat = new StatsEntity({
@@ -130,8 +132,9 @@ export class ClientController {
       throw new NotFoundException("Es wurde kein Turnier gefunden");
     }
 
-    if (!tournament.scrims && user.permission === PermissionEnum.SCRIMS_HELPER)
+    if (!tournament.scrims && user.permission === PermissionEnum.SCRIMS_HELPER) {
       throw new ForbiddenException("Du hast keine Berechtigungen bei Turnieren zu zählen.");
+    }
 
     if (tournament.scrims && user.permission === PermissionEnum.TOURNAMENT_HELPER) {
       throw new ForbiddenException("Du hast keine Berechtigungen bei Scrims zu zählen.");
@@ -149,7 +152,7 @@ export class ClientController {
 
       team = await this.teamService.save(new TeamEntity());
 
-      const player = await this.playerService.save(
+      const savedPlayer = await this.playerService.save(
         new PlayerEntity({ name: mcPlayer.name, team: new TeamEntity({ id: team.id }), uuid: mcPlayer.id }),
       );
 
@@ -162,7 +165,7 @@ export class ClientController {
       );
 
       team.entries = [entry];
-      team.players = [player];
+      team.players = [savedPlayer];
     }
 
     const stat = new StatsEntity({

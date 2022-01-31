@@ -17,7 +17,7 @@ export class AuthService {
     });
   }
 
-  generateRefreshToken(): string {
+  static generateRefreshToken(): string {
     return randomBytes(32).toString("base64url");
   }
 

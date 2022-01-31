@@ -17,7 +17,7 @@ export class JwtAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
     const response = context.switchToHttp().getResponse<FastifyReply>();
 
-    const accessToken = request.headers["authorization"]?.split(" ")[1];
+    const accessToken = request.headers.authorization?.split(" ")[1];
     const requiredPermissions = this.reflector.getAllAndOverride<PermissionEnum>("permission", [
       context.getHandler(),
       context.getClass(),
@@ -47,8 +47,8 @@ export class JwtAuthGuard implements CanActivate {
         const user = await this.userService.findOne({ where: { refreshToken } });
 
         if (user) {
-          const accessToken = this.authService.generateAccessToken(user);
-          response.header("X-Access-Token", accessToken);
+          const newAccessToken = this.authService.generateAccessToken(user);
+          response.header("X-Access-Token", newAccessToken);
           response.header("Access-Control-Expose-Headers", "X-Access-Token");
 
           request.user = {

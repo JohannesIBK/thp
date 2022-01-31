@@ -10,7 +10,7 @@ export class ClientAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
 
-    const token = request.headers["authorization"];
+    const token = request.headers.authorization;
 
     if (!token) {
       throw new ForbiddenException("Du bist nicht eingeloggt");
@@ -21,8 +21,9 @@ export class ClientAuthGuard implements CanActivate {
       throw new UnauthorizedException("Dein Token ist ungültig");
     }
 
-    if (user.permission < PermissionEnum.SCRIMS_HELPER)
+    if (user.permission < PermissionEnum.SCRIMS_HELPER) {
       throw new ForbiddenException("Du hast keine Berechtigungen den Client zu benutzen.");
+    }
 
     request.user = {
       id: user.id,

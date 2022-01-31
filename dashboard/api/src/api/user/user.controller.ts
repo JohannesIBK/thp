@@ -43,7 +43,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getAllUsers(): Promise<UserEntity[]> {
-    return await this.userService.find({ select: ["username", "id", "permission"] });
+    return this.userService.find({ select: ["username", "id", "permission"] });
   }
 
   @Get("token")
@@ -135,7 +135,7 @@ export class UserController {
     const user = await this.userService.findByUsername(payload.username.toLowerCase());
 
     if (user && (await compare(payload.password, user.password))) {
-      const refreshToken = this.authService.generateRefreshToken();
+      const refreshToken = AuthService.generateRefreshToken();
       const accessToken = this.authService.generateAccessToken(user);
 
       user.refreshToken = refreshToken;
