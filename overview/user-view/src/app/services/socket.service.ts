@@ -3,7 +3,6 @@ import { Observable } from "rxjs";
 import { io, Socket } from "socket.io-client";
 import { environment } from "../../environments/environment";
 import { IStats } from "../types/stats.interface";
-import { ITeam } from "../types/team.interface";
 
 @Injectable({
   providedIn: "root",
@@ -17,10 +16,10 @@ export class SocketService {
     this.socket.connect();
   }
 
-  onMessage(): Observable<{ stat: IStats; team?: ITeam }> {
+  onMessage(): Observable<IStats> {
     return new Observable((observer) => {
-      this.socket.on("stats", (data: { stat: IStats, team?: ITeam }) => {
-        observer.next(data);
+      this.socket.on("stats", (stat: IStats) => {
+        observer.next(stat);
       });
     });
   }

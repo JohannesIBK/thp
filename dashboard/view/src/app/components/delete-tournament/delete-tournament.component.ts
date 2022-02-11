@@ -1,5 +1,5 @@
-import { Component } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
+import { Component } from "@angular/core";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TournamentService } from "../../services/tournament.service";

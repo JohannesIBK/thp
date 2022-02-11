@@ -9,6 +9,7 @@ import { TeamManageResponse } from "../../types/enums";
 import { IPhase } from "../../types/phase.interface";
 import { IStats } from "../../types/stats.interface";
 import { ITeam } from "../../types/team.interface";
+import { ngCounter } from "../../utils/utils";
 import { AddLogComponent } from "../add-log/add-log.component";
 import { DisqualifyTeamComponent } from "../disqualify-team/disqualify-team.component";
 import { QualifyTeamComponent } from "../qualify-team/qualify-team.component";
@@ -23,6 +24,7 @@ export class ManageTeamComponent implements OnInit {
   tableData = new MatTableDataSource<IStats>();
   columns = ["reason", "points"];
   loading = false;
+  ngCounter = ngCounter;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public readonly data: { team: ITeam; phase: IPhase },
@@ -85,9 +87,5 @@ export class ManageTeamComponent implements OnInit {
         this.dialogRef.close(result);
       }
     });
-  }
-
-  counter(i: number): Array<number> {
-    return new Array(i);
   }
 }

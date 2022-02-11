@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserEntity } from "../database/user.entity";
 import { FindConditions, FindOneOptions, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
+import { UserEntity } from "../database/user.entity";
 
 @Injectable()
 export class UserService {

@@ -1,11 +1,11 @@
+import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Inject } from "@angular/core";
 import { FormControl, FormGroup, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ITournament } from "../../types/tournament.interface";
-import { HttpErrorResponse } from "@angular/common/http";
-import { MojangService } from "../../services/mojang.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MojangService } from "../../services/mojang.service";
 import { IPlayer } from "../../types/player.interface";
+import { ITournament } from "../../types/tournament.interface";
 
 @Component({
   selector: "app-add-player-teams",

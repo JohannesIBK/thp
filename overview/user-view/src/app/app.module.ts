@@ -18,9 +18,10 @@ import { SpinnerComponent } from "./components/spinner/spinner.component";
 import { HomeComponent } from "./views/home/home.component";
 import { StatsComponent } from "./views/stats/stats.component";
 import { ViewLogsComponent } from "./components/view-logs/view-logs.component";
+import { StatsTableComponent } from './components/stats-table/stats-table.component';
 
 @NgModule({
-  declarations: [HomeComponent, StatsComponent, NavbarComponent, AppComponent, SpinnerComponent, ViewLogsComponent],
+  declarations: [HomeComponent, StatsComponent, NavbarComponent, AppComponent, SpinnerComponent, ViewLogsComponent, StatsTableComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

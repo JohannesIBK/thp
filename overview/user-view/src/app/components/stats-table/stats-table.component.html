@@ -1,0 +1,21 @@
+<table matSort class="mat-elevation-z8" (matSortChange)="sortData($event)" matSortDisableClear>
+  <tr class="table-header">
+    <th mat-sort-header="players">Spieler</th>
+    <ng-container *ngIf="phase.rounds > 1">
+      <th *ngFor="let i of counter(phase.rounds)" [mat-sort-header]="'points_' + i">Punkte ({{ i + 1 }})</th>
+      <th mat-sort-header="pointsAll">Punkte (gesamt)</th>
+    </ng-container>
+    <th mat-sort-header="pointsAll" *ngIf="phase.rounds === 1">Punkte</th>
+  </tr>
+
+  <tr
+    *ngFor="let team of shownTeams; index as i"
+    [ngClass]="{ background: i % 2 === 0 }"
+    (click)="openViewLogComponent(phase, team.team)">
+    <td>{{ playerNameString(team.team.players) }}</td>
+    <ng-container *ngIf="phase.rounds > 1">
+      <td *ngFor="let i of counter(phase.rounds)">{{ team.points.get(i)! }}</td>
+    </ng-container>
+    <td>{{ getPointsSum(team.points) }}</td>
+  </tr>
+</table>

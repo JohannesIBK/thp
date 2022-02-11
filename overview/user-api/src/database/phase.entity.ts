@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { TournamentEntity } from "./tournament.entity";
 
 @Entity({ name: "phases" })
 export class PhaseEntity {
@@ -19,4 +20,7 @@ export class PhaseEntity {
 
   @Column("smallint")
   groups: number;
+
+  @ManyToOne(() => TournamentEntity, (tournament) => tournament.phases)
+  tournament: TournamentEntity;
 }

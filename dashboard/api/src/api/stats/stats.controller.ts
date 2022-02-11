@@ -21,14 +21,14 @@ export class StatsController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getAllStats(): Promise<StatsEntity[]> {
-    return await this.statsService.findLogs({});
+    return this.statsService.findLogs({});
   }
 
   @Get("phase/:phase")
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getPhaseStats(@Param() params: PhaseDto): Promise<StatsEntity[]> {
-    return await this.statsService.findLogs({ phase: params.phase });
+    return this.statsService.findLogs({ phase: params.phase });
   }
 
   @Put()
@@ -48,8 +48,8 @@ export class StatsController {
     });
 
     const entity = await this.statsService.saveLog(stat);
-    this.socketService.sendStats({ stats: entity });
-    return await this.statsService.findLogs({ team, phase: payload.phase });
+    this.socketService.sendStats(entity);
+    return this.statsService.findLogs({ team, phase: payload.phase });
   }
 
   @Post("team/:phase")
@@ -59,14 +59,14 @@ export class StatsController {
   async getTeamPhaseStats(@Param() params: PhaseDto, @Body() payload: QueryTeamDto): Promise<StatsEntity[]> {
     const team = new TeamEntity({ id: payload.id });
 
-    if (payload.round) return await this.statsService.findLogs({ phase: params.phase, team, round: payload.round });
-    else return await this.statsService.findLogs({ phase: params.phase, team });
+    if (payload.round) return this.statsService.findLogs({ phase: params.phase, team, round: payload.round });
+    return this.statsService.findLogs({ phase: params.phase, team });
   }
 
   @Delete(":phase/:round")
   @HasPermission(PermissionEnum.ADMIN)
   @UseGuards(JwtAuthGuard)
   async resetRound(@Param() params: ResetRoundDto): Promise<void> {
-    await this.statsService.delete({ phase: params.phase, round: parseInt(params.round) });
+    await this.statsService.delete({ phase: params.phase, round: parseInt(params.round, 10) });
   }
 }

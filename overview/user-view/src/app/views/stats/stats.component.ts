@@ -1,13 +1,9 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Sort } from "@angular/material/sort";
-import { ViewLogsComponent } from "../../components/view-logs/view-logs.component";
+import { Subject } from "rxjs";
 import { ApiService } from "../../services/api.service";
 import { SocketService } from "../../services/socket.service";
-import { IPhase } from "../../types/phase.interface";
-import { IPlayer } from "../../types/player.interface";
 import { ITeam, ITeamWithData } from "../../types/team.interface";
 import { ITournament } from "../../types/tournament.interface";
 
@@ -19,35 +15,22 @@ import { ITournament } from "../../types/tournament.interface";
 export class StatsComponent implements OnInit {
   teams: ITeam[] = [];
   currentTeams: ITeamWithData[] = [];
-  sortedTeams: ITeamWithData[] = [];
   groupTeams: ITeamWithData[] = [];
   groups = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   tournament!: ITournament;
   loaded = false;
-  columns = new Map<string, string[]>();
-  lastSort?: Sort;
+  update = new Subject<void>();
 
   constructor(
     private readonly socketService: SocketService,
     private readonly apiService: ApiService,
     private readonly snackBar: MatSnackBar,
-    private readonly dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
     this.apiService.fetchTournament().subscribe({
       next: (tournament) => {
         this.tournament = tournament;
-
-        for (const phase of tournament.phases) {
-          const cols = ["name", "pointsAll"];
-          for (let i = 0; i < phase.rounds; i++) {
-            cols.push(`points${i}`);
-          }
-
-          this.columns.set(phase.acronym, cols);
-        }
-
         this.fetchData();
       },
       error: (error: HttpErrorResponse) => {
@@ -56,63 +39,39 @@ export class StatsComponent implements OnInit {
     });
   }
 
-  sortData(sort: Sort) {
-    const teams = this.groupTeams.slice();
-    const sortBy = sort.active.split("_")[0];
-    const round = parseInt(sort.active.split("_")[1]);
-    const isAsc = sort.direction === "desc";
-    this.lastSort = { active: sort.active, direction: sort.direction };
-
-    this.sortedTeams = teams.sort((a, b) => {
-      switch (sortBy) {
-        case "players":
-          return compare(this.playerNameString(a.team.players), this.playerNameString(b.team.players), isAsc);
-        case "pointsAll":
-          return compare(this.getPointsSum(a.points), this.getPointsSum(b.points), isAsc);
-        case "points":
-          return compare(a.points.get(round) || 0, b.points.get(round) || 0, isAsc);
-        default:
-          return 0;
-      }
-    });
-  }
-
-  openViewLogComponent(phase: IPhase, team: ITeam): void {
-    this.dialog.open(ViewLogsComponent, {
-      data: { stats: team.stats.filter((s) => s.phase === phase.acronym), phase },
-      width: "90vw",
-    });
-  }
-
   subscribeToStats() {
     this.socketService.connectSocket();
-    this.socketService.onMessage().subscribe(({ stat, team }) => {
-      const internalTeam = this.currentTeams.find((t) => t.team.id === stat.teamId);
+    this.socketService.onMessage().subscribe((stat) => {
+      const internalTeam = this.currentTeams.find((t) => t.team.id === stat.team.id);
       if (internalTeam) {
         internalTeam.team.stats.push(stat);
         const points = internalTeam.points.get(stat.round) || 0;
         internalTeam.points.set(stat.round, points + stat.points);
 
-        if (this.lastSort) this.sortData(this.lastSort);
-      } else if (team) {
-        // only scrims sent team
+        this.update.next();
+      } else if (stat.team?.players?.length) {
+        // only scrims
+        const team = { ...stat.team };
+
+        stat.team = { id: team.id } as ITeam;
+        team.stats = [stat];
+
         const points = new Map<number, number>();
+        const data = { team, points, group: "A" };
         points.set(stat.round, stat.points);
 
-        this.currentTeams = [...this.currentTeams, { team, points, group: "A" }];
-        if (this.lastSort) this.sortData(this.lastSort);
+        this.teams.push(stat.team);
+        this.groupTeams.push(data);
+        this.currentTeams.push(data);
+        this.update.next();
       }
     });
   }
 
-  playerNameString(players: IPlayer[]): string {
-    return players.map((p) => p.name).join(", ") || "Keine Spieler";
-  }
-
   selectGroup(index: number) {
-    this.groupTeams = this.currentTeams.filter((t) => t.group === this.groups[index]);
-    this.sortedTeams = this.currentTeams;
-    this.sortData({ active: "pointsAll", direction: "asc" });
+    if (this.tournament.scrims) this.groupTeams = this.currentTeams;
+    else this.groupTeams = this.currentTeams.filter((t) => t.group === this.groups[index]);
+    this.update.next();
   }
 
   selectTab(index: number): void {
@@ -154,21 +113,7 @@ export class StatsComponent implements OnInit {
     });
   }
 
-  getPointsSum(points: Map<number, number>): number {
-    let sum = 0;
-
-    for (const point of points.values()) {
-      sum += point;
-    }
-
-    return sum;
+  counter(index: number): Array<number> {
+    return Array.from(Array(index).keys());
   }
-
-  counter(index: number): Array<void> {
-    return new Array(index);
-  }
-}
-
-function compare(a: number | string, b: number | string, isAsc: boolean) {
-  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }

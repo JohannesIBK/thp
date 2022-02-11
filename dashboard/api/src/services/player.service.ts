@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, FindConditions, FindManyOptions, FindOneOptions, InsertResult, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { PlayerEntity } from "../database/player.entity";
-import { TeamEntity } from "../database/team.entity";
 import { CreatePlayerDto } from "../dto/create-player.dto";
 
 @Injectable()

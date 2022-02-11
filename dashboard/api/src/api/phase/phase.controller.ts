@@ -38,7 +38,7 @@ export class PhaseController {
       group: payload.group,
     });
 
-    return await this.phaseService.saveEntry(entity);
+    return this.phaseService.saveEntry(entity);
   }
 
   @Delete("entry/:id")

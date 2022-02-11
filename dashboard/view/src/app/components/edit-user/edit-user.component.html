@@ -9,7 +9,8 @@
       <mat-label>Berechtigung</mat-label>
       <mat-select [formControl]="permission">
         <mat-option [value]="PermissionEnum.USER" [disabled]="currentUser.id === user.id">User</mat-option>
-        <mat-option [value]="PermissionEnum.HELPER" [disabled]="currentUser.id === user.id">Helper</mat-option>
+        <mat-option [value]="PermissionEnum.SCRIMS_HELPER" [disabled]="currentUser.id === user.id">Scrims-Helfer</mat-option>
+        <mat-option [value]="PermissionEnum.TOURNAMENT_HELPER" [disabled]="currentUser.id === user.id">Turnier-Helfer</mat-option>
         <mat-option
           [value]="PermissionEnum.ADMIN"
           *ngIf="currentUser.permission === PermissionEnum.HEAD"

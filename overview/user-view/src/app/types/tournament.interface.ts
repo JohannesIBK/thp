@@ -6,5 +6,6 @@ export interface ITournament {
   description: string | null;
   teamSize: number;
   active: boolean;
+  scrims: boolean;
   phases: IPhase[];
 }

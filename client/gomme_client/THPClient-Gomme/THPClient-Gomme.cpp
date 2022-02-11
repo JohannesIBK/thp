@@ -11,9 +11,12 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
-
-// #define URL "https://thp-dashboard.greuter.dev"
+#ifdef _DEBUG
 #define URL "http://localhost:3000"
+#else
+#define URL "https://thp-dashboard.greuter.dev"
+#endif
+
 
 using namespace std;
 using namespace rapidjson;
@@ -139,12 +142,16 @@ public:
         curl_slist_free_all(list);
         curl_global_cleanup();
 
-//         Document pd;
-//         pd.Parse(response.c_str());
-//         if (pd.HasMember("message")) {
-//             Value& message = pd["message"];
-//             std::cout << "Log returned" << message.GetString() << std::endl;
-//         }
+        if (response.empty()) return;
+        cout << response << endl;
+
+
+        Document pd;
+        pd.Parse(response.c_str());
+        if (pd.HasMember("message")) {
+            Value& message = pd["message"];
+            std::cout << "Error when sending kill: " << message.GetString() << std::endl;
+        }
     }
 
     void SendWin(const string& player) {
@@ -195,12 +202,16 @@ public:
         curl_slist_free_all(list);
         curl_global_cleanup();
 
-//         Document pd;
-//         pd.Parse(response.c_str());
-//         if (pd.HasMember("message")) {
-//             Value& message = pd["message"];
-//             std::cout << message.GetString() << std::endl;
-//         }
+        if (response.empty()) return;
+
+        cout << response << endl;
+
+        Document pd;
+        pd.Parse(response.c_str());
+        if (pd.HasMember("message")) {
+            Value& message = pd["message"];
+            std::cout << "Error when sending win" <<  message.GetString() << std::endl;
+        }
     }
 };
 

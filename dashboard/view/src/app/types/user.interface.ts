@@ -5,7 +5,7 @@ export interface ILoginResponse {
 }
 
 export interface IUser {
-  id?: string;
+  id?: number;
   username: string;
   permission: PermissionEnum;
 }
@@ -14,9 +14,4 @@ export interface ICreateUserPayload {
   username: string;
   permission: PermissionEnum;
   password: string;
-}
-
-export interface IEditUserPayload {
-  username: string;
-  permission: PermissionEnum;
 }

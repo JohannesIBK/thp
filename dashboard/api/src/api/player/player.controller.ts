@@ -1,14 +1,14 @@
 import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Put, UseGuards } from "@nestjs/common";
-import { PlayerEntity } from "../../database/player.entity";
-import { PlayerService } from "../../services/player.service";
 import { JwtAuthGuard } from "../../auth/auth.guard";
+import { PlayerEntity } from "../../database/player.entity";
 import { HasPermission } from "../../decorators/permission.decorator";
-import { PermissionEnum } from "../../enums/permission.enum";
 import { CreatePlayerDto } from "../../dto/create-player.dto";
-import { UuidDto } from "../../dto/uuid.dto";
 import { CreatePlayersTeamDto } from "../../dto/create-players-team.dto";
-import { TournamentService } from "../../services/tournament.service";
+import { UuidDto } from "../../dto/uuid.dto";
+import { PermissionEnum } from "../../enums/permission.enum";
+import { PlayerService } from "../../services/player.service";
 import { TeamService } from "../../services/team.service";
+import { TournamentService } from "../../services/tournament.service";
 
 @Controller("player")
 export class PlayerController {
@@ -55,7 +55,7 @@ export class PlayerController {
     await this.playerService.createMany(payload.players);
     await this.teamService.createTeamWithPlayers(uuids);
 
-    return await this.playerService.findAll();
+    return this.playerService.findAll();
   }
 
   @Delete(":uuid")
@@ -66,7 +66,7 @@ export class PlayerController {
 
     if (!player.raw.length) throw new BadRequestException("Der Spieler wurde nicht gefunden");
 
-    const teamId = player.raw[0].team as number | null;
+    const teamId = player.raw[0].teamId as number | null;
     if (teamId) {
       await this.teamService.removePlayer(teamId);
     }

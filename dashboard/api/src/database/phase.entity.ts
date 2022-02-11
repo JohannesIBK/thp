@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { TournamentEntity } from "./tournament.entity";
 
 export interface IPhasePayload {
   name?: string;
@@ -28,6 +29,9 @@ export class PhaseEntity {
 
   @Column("smallint")
   groups: number;
+
+  @ManyToOne(() => TournamentEntity, (tournament) => tournament.phases, { onDelete: "CASCADE" })
+  tournament: TournamentEntity;
 
   constructor(payload?: IPhasePayload) {
     if (payload) {

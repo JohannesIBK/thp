@@ -6,6 +6,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatsService } from "../../services/stats.service";
 import { TeamManageResponse } from "../../types/enums";
 import { IPhase } from "../../types/phase.interface";
+import { ngCounter } from "../../utils/utils";
 
 @Component({
   selector: "app-add-log",
@@ -17,6 +18,7 @@ export class AddLogComponent {
   pointsInput = new FormControl(0, [V.required, V.max(10), V.min(-10)]);
   reasonInput = new FormControl("", [V.required, V.minLength(1), V.maxLength(128)]);
   roundSelect = new FormControl(null, [V.required]);
+  ngCounter = ngCounter;
 
   form = new FormGroup({
     points: this.pointsInput,
@@ -30,10 +32,6 @@ export class AddLogComponent {
     private readonly statsService: StatsService,
     private readonly snackBar: MatSnackBar,
   ) {}
-
-  counter(i: number): Array<number> {
-    return new Array(i);
-  }
 
   saveLog(): void {
     if (this.form.invalid) return;

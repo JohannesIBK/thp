@@ -13,7 +13,7 @@ export class TournamentService {
   }
 
   findOne(): Promise<TournamentEntity | undefined> {
-    return this.tournamentRepository.findOne({});
+    return this.tournamentRepository.findOne({ relations: ["phases"] });
   }
 
   async update(update: IOptionalTournament): Promise<void> {

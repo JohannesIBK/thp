@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { randomBytes } from "crypto";
-import { UserService } from "./user.service";
 import { UserEntity } from "../database/user.entity";
 import { IJwtUser } from "../types/jwt-user.interface";
+import { UserService } from "./user.service";
 
 @Injectable()
 export class AuthService {
@@ -17,7 +17,7 @@ export class AuthService {
     });
   }
 
-  generateRefreshToken(): string {
+  static generateRefreshToken(): string {
     return randomBytes(32).toString("base64url");
   }
 

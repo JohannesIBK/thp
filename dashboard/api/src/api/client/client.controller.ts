@@ -1,4 +1,13 @@
-import { BadRequestException, Body, Controller, NotFoundException, Post, Response, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  ForbiddenException,
+  NotFoundException,
+  Post,
+  Response,
+  UseGuards,
+} from "@nestjs/common";
 import { compare } from "bcrypt";
 import { randomBytes } from "crypto";
 import { FastifyReply } from "fastify";
@@ -38,8 +47,9 @@ export class ClientController {
   async login(@Body() payload: any, @Response() response: FastifyReply): Promise<void> {
     const user = await this.userService.findByUsername(payload.username.toLowerCase());
 
-    if ((user?.permission || 0) < PermissionEnum.HELPER)
+    if ((user?.permission || 0) < PermissionEnum.SCRIMS_HELPER) {
       throw new BadRequestException("Du hast keine Berechtigung, dich hier einzuloggen.");
+    }
 
     if (user && (await compare(payload.password, user.password))) {
       const token = randomBytes(32).toString("base64url");
@@ -48,7 +58,7 @@ export class ClientController {
       await this.userService.save(user);
 
       response.send({
-        token: token,
+        token,
       });
     }
 
@@ -63,8 +73,17 @@ export class ClientController {
       throw new NotFoundException("Es wurde kein Turnier gefunden");
     }
 
+    if (!tournament.scrims && user.permission === PermissionEnum.SCRIMS_HELPER) {
+      throw new ForbiddenException("Du hast keine Berechtigungen bei Turnieren zu zählen.");
+    }
+
+    if (tournament.scrims && user.permission === PermissionEnum.TOURNAMENT_HELPER) {
+      throw new ForbiddenException("Du hast keine Berechtigungen bei Scrims zu zählen.");
+    }
+
     const player = await this.playerService.findPlayerForLog(payload.killer);
     let team = player?.team;
+
     if (!player) {
       if (!tournament.scrims) throw new BadRequestException("Der Spieler wurde nicht gefunden");
 
@@ -74,17 +93,21 @@ export class ClientController {
       }
 
       team = await this.teamService.save(new TeamEntity());
-      team.players = [await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }))];
 
-      team.entries = [
-        await this.phaseService.saveEntry(
-          new EntryEntity({
-            phase: "scrims",
-            group: "A",
-            team,
-          }),
-        ),
-      ];
+      const savedPlayer = await this.playerService.save(
+        new PlayerEntity({ name: mcPlayer.name, team: new TeamEntity({ id: team.id }), uuid: mcPlayer.id }),
+      );
+
+      const entry = await this.phaseService.saveEntry(
+        new EntryEntity({
+          phase: "scrims",
+          group: "A",
+          team: new TeamEntity({ id: team.id }),
+        }),
+      );
+
+      team.entries = [entry];
+      team.players = [savedPlayer];
     }
 
     const stat = new StatsEntity({
@@ -98,7 +121,7 @@ export class ClientController {
     });
 
     const entity = await this.statsService.saveLog(stat);
-    this.socketService.sendStats({ stats: entity, team });
+    this.socketService.sendStats(entity);
   }
 
   @Post("win")
@@ -107,6 +130,14 @@ export class ClientController {
     const tournament = await this.tournamentService.findOne();
     if (!tournament) {
       throw new NotFoundException("Es wurde kein Turnier gefunden");
+    }
+
+    if (!tournament.scrims && user.permission === PermissionEnum.SCRIMS_HELPER) {
+      throw new ForbiddenException("Du hast keine Berechtigungen bei Turnieren zu zählen.");
+    }
+
+    if (tournament.scrims && user.permission === PermissionEnum.TOURNAMENT_HELPER) {
+      throw new ForbiddenException("Du hast keine Berechtigungen bei Scrims zu zählen.");
     }
 
     const player = await this.playerService.findPlayerForLog(payload.player);
@@ -119,31 +150,35 @@ export class ClientController {
         throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
       }
 
-      team = (await this.teamService.save(new TeamEntity())) as TeamEntity;
-      team.players = [await this.playerService.save(new PlayerEntity({ name: mcPlayer.name, team: team, uuid: mcPlayer.id }))];
+      team = await this.teamService.save(new TeamEntity());
 
-      team.entries = [
-        await this.phaseService.saveEntry(
-          new EntryEntity({
-            phase: "scrims",
-            group: "A",
-            team,
-          }),
-        ),
-      ];
+      const savedPlayer = await this.playerService.save(
+        new PlayerEntity({ name: mcPlayer.name, team: new TeamEntity({ id: team.id }), uuid: mcPlayer.id }),
+      );
+
+      const entry = await this.phaseService.saveEntry(
+        new EntryEntity({
+          phase: "scrims",
+          group: "A",
+          team: new TeamEntity({ id: team.id }),
+        }),
+      );
+
+      team.entries = [entry];
+      team.players = [savedPlayer];
     }
 
     const stat = new StatsEntity({
       phase: payload.phase,
-      team: team,
       round: payload.round,
       points: 2,
       reason: `Hat eine Runde gewonnen (${payload.round + 1})`,
       userId: user.id,
       time: new Date(),
+      team,
     });
 
     const entity = await this.statsService.saveLog(stat);
-    this.socketService.sendStats({ stats: entity, team });
+    this.socketService.sendStats(entity);
   }
 }

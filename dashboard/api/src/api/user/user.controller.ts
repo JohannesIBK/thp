@@ -43,7 +43,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getAllUsers(): Promise<UserEntity[]> {
-    return await this.userService.find({ select: ["username", "id", "permission"] });
+    return this.userService.find({ select: ["username", "id", "permission"] });
   }
 
   @Get("token")
@@ -109,8 +109,17 @@ export class UserController {
       throw new ForbiddenException("Du kannst diesen User nicht bearbeiten.");
     }
 
+    const entity = new UserEntity({ id });
+
+    if (typeof payload.permission !== "undefined") {
+      entity.permission = payload.permission;
+    }
+
+    if (typeof payload.username !== "undefined") {
+      entity.username = payload.username;
+    }
+
     try {
-      const entity = new UserEntity({ id, permission: payload.permission, username: payload.username });
       await this.userService.save(entity);
       return this.userService.findOne({ where: { id }, select: ["username", "permission", "id"] });
     } catch {
@@ -126,7 +135,7 @@ export class UserController {
     const user = await this.userService.findByUsername(payload.username.toLowerCase());
 
     if (user && (await compare(payload.password, user.password))) {
-      const refreshToken = this.authService.generateRefreshToken();
+      const refreshToken = AuthService.generateRefreshToken();
       const accessToken = this.authService.generateAccessToken(user);
 
       user.refreshToken = refreshToken;
@@ -189,7 +198,5 @@ export class UserController {
     }
 
     await this.userService.delete(id);
-
-    return;
   }
 }

@@ -28,7 +28,7 @@ export class TeamController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getTeamsWithStats(): Promise<TeamEntity[]> {
-    return await this.teamService.find({
+    return this.teamService.find({
       join: {
         alias: "team",
         leftJoinAndSelect: {
@@ -44,7 +44,7 @@ export class TeamController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getFullData(): Promise<TeamEntity[]> {
-    return await this.teamService.find({ relations: ["players", "stats", "entries"] });
+    return this.teamService.find({ relations: ["players", "stats", "entries"] });
   }
 
   @Put()
@@ -60,11 +60,11 @@ export class TeamController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async saveTeam(@Body() payload: UuidsDto, @Param() params: IdDto): Promise<TeamEntity> {
-    const team = await this.teamService.findOne({ where: { id: parseInt(params.id) } });
+    const team = await this.teamService.findOne({ where: { id: parseInt(params.id, 10) } });
     if (!team) throw new ForbiddenException("Das Team wurde nicht gefunden");
 
-    await this.playerService.update({ team: team }, { team: null });
-    await this.playerService.update(payload.uuids, { team: team });
+    await this.playerService.update({ team }, { team: null });
+    await this.playerService.update(payload.uuids, { team });
 
     return (await this.teamService.findOne({ where: { id: team.id }, relations: ["players"] }))!;
   }
@@ -73,16 +73,16 @@ export class TeamController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async qualifyTeam(@Param() params: IdDto): Promise<TeamEntity> {
-    const entity = new TeamEntity({ id: parseInt(params.id), disqualified: false, reason: null });
-    return await this.teamService.save(entity);
+    const entity = new TeamEntity({ id: parseInt(params.id, 10), disqualified: false, reason: null });
+    return this.teamService.save(entity);
   }
 
   @Delete("qualify/:id")
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async disqualifyTeam(@Param() params: IdDto, @Query() payload: ReasonDto): Promise<TeamEntity> {
-    const entity = new TeamEntity({ id: parseInt(params.id), disqualified: true, reason: payload.reason });
-    return await this.teamService.save(entity);
+    const entity = new TeamEntity({ id: parseInt(params.id, 10), disqualified: true, reason: payload.reason });
+    return this.teamService.save(entity);
   }
 
   @Delete(":id")

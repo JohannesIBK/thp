@@ -31,13 +31,13 @@ export class ChangePasswordComponent {
       return;
     }
 
-    this.authService.changePassword(this.oldPW.value, this.newPW.value).subscribe(
-      () => {
+    this.authService.changePassword(this.oldPW.value, this.newPW.value).subscribe({
+      next: () => {
         this.snackbar.open("Das Passwort wurde erfolgreich geändert.", "OK");
       },
-      (error: HttpErrorResponse) => {
+      error: (error: HttpErrorResponse) => {
         this.snackbar.open(error.error.message, "OK");
       },
-    );
+    });
   }
 }
