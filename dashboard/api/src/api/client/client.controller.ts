@@ -88,10 +88,6 @@ export class ClientController {
       if (!tournament.scrims) throw new BadRequestException("Der Spieler wurde nicht gefunden");
 
       const mcPlayer = await this.mojangService.getPlayerUUID(payload.killer);
-      if (!mcPlayer) {
-        throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
-      }
-
       team = await this.teamService.save(new TeamEntity());
 
       const savedPlayer = await this.playerService.save(
@@ -113,7 +109,7 @@ export class ClientController {
     const stat = new StatsEntity({
       phase: payload.phase,
       round: payload.round,
-      points: 1,
+      points: tournament.kill,
       reason: `${payload.killer} hat ${payload.killed} getötet`,
       userId: user.id,
       time: new Date(),
@@ -146,10 +142,6 @@ export class ClientController {
       if (!tournament.scrims) throw new BadRequestException("Der Spieler wurde nicht gefunden");
 
       const mcPlayer = await this.mojangService.getPlayerUUID(payload.player);
-      if (!mcPlayer) {
-        throw new BadRequestException("Der Spieler wurde von Mojang nicht gefunden");
-      }
-
       team = await this.teamService.save(new TeamEntity());
 
       const savedPlayer = await this.playerService.save(
@@ -171,7 +163,7 @@ export class ClientController {
     const stat = new StatsEntity({
       phase: payload.phase,
       round: payload.round,
-      points: 2,
+      points: tournament.win,
       reason: `Hat eine Runde gewonnen (${payload.round + 1})`,
       userId: user.id,
       time: new Date(),

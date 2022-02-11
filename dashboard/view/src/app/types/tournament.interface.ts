@@ -9,6 +9,8 @@ export interface ICreateTournamentPayload {
   name: string;
   teamSize: number;
   sheetId: string;
+  win: number;
+  kill: number;
   rounds: Round[];
 }
 
@@ -19,5 +21,7 @@ export interface ITournament {
   teamSize: number;
   active: boolean;
   phases: IPhase[];
+  win: number;
+  kill: number;
   scrims: boolean;
 }

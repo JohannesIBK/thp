@@ -22,8 +22,11 @@ export class CreateTournamentComponent {
   };
 
   name = new FormControl(null, [V.required, V.minLength(3), V.maxLength(64)]);
+  killPoints = new FormControl(1, [V.required, V.min(0), V.max(100)]);
+  winPoints = new FormControl(2, [V.required, V.min(0), V.max(100)]);
   teamSize = new FormControl(null, [V.required, V.min(1), V.max(4)]);
   scrims = new FormControl(false);
+  scrimsRounds = new FormControl(null, [V.required, V.min(1), V.max(32)]);
 
   phaseName = new FormControl(null, [V.required, V.minLength(2), V.maxLength(32)]);
   phaseAcronym = new FormControl(null, [V.required, V.minLength(1), V.maxLength(16)]);
@@ -34,6 +37,8 @@ export class CreateTournamentComponent {
   infoForm = new FormGroup({
     name: this.name,
     teamSize: this.teamSize,
+    kill: this.killPoints,
+    win: this.winPoints,
   });
 
   phaseForm = new FormGroup({
@@ -42,7 +47,6 @@ export class CreateTournamentComponent {
     acronym: this.phaseAcronym,
     teams: this.phaseTeams,
     groups: this.phaseGroups,
-    scrims: this.scrims,
   });
 
   constructor(private readonly snackBar: MatSnackBar) {}
@@ -104,14 +108,16 @@ export class CreateTournamentComponent {
   getData() {
     let phases = this.phases;
     if (this.scrims.value) {
-      phases = [{ name: "Scrims", acronym: "scrims", rounds: 1, teams: 512, groups: 1 }];
+      phases = [{ name: "Scrims", acronym: "scrims", rounds: this.scrimsRounds.value, teams: 512, groups: 1 }];
     }
 
     return {
       name: this.name.value,
       teamSize: this.teamSize.value,
-      phases,
+      kill: this.killPoints.value,
+      win: this.winPoints.value,
       scrims: this.scrims.value || false,
+      phases,
     };
   }
 }
