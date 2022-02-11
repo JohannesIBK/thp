@@ -11,7 +11,7 @@ import { IConfig } from "../types/config.interface";
       useFactory: async (configService: ConfigService<IConfig, true>) => ({
         secret: configService.get("JWT_SECRET"),
         signOptions: {
-          expiresIn: "900s",
+          expiresIn: "180s",
         },
       }),
     }),
