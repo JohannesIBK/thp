@@ -22,6 +22,12 @@ export class TournamentEntity {
   @Column("boolean", { default: false })
   scrims: boolean;
 
+  @Column("smallint")
+  win: number;
+
+  @Column("smallint")
+  kill: number;
+
   @OneToMany(() => PhaseEntity, (phase) => phase.tournament)
   phases: PhaseEntity[];
 
@@ -33,6 +39,8 @@ export class TournamentEntity {
       this.teamSize = payload.teamSize!;
       this.active = payload.active!;
       this.scrims = payload.scrims!;
+      this.win = payload.win!;
+      this.kill = payload.kill!;
     }
   }
 }

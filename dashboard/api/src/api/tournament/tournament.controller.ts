@@ -64,9 +64,11 @@ export class TournamentController {
       description: payload.description,
       teamSize: payload.teamSize,
       scrims: payload.scrims,
+      kill: payload.kill,
+      win: payload.win,
     });
-    const tournament = await this.tournamentService.create(entity);
 
+    const tournament = await this.tournamentService.create(entity);
     const phases: PhaseEntity[] = [];
 
     for (const phase of payload.phases) {

@@ -67,4 +67,14 @@ export class CreateTournamentDto {
   @ArrayMaxSize(16)
   @ValidateNested({ each: true })
   phases: RoundDto[];
+
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  win: number;
+
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  kill: number;
 }
