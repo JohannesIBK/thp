@@ -1,5 +1,5 @@
 import { plainToClass } from "@nestjs/class-transformer";
-import { IsBooleanString, IsNotEmpty, IsNumber, IsString, validateSync } from "@nestjs/class-validator";
+import { IsBooleanString, IsNotEmpty, IsNumber, IsString, IsUrl, validateSync } from "@nestjs/class-validator";
 import { IConfig } from "../types/config.interface";
 
 class ConfigValidation {
@@ -12,6 +12,10 @@ class ConfigValidation {
   @IsString()
   @IsNotEmpty()
   PG_URI: string;
+
+  @IsUrl()
+  @IsNotEmpty()
+  VIEW_SERVER: string;
 
   @IsString()
   @IsNotEmpty()
@@ -36,5 +40,6 @@ export function validate(config: Record<string, unknown>): IConfig {
     PRODUCTION: validatedConfig.PRODUCTION === "true",
     PORT: validatedConfig.PORT,
     PG_URI: validatedConfig.PG_URI,
+    VIEW_SERVER: validatedConfig.VIEW_SERVER,
   };
 }
