@@ -13,7 +13,7 @@ class ConfigValidation {
   @IsNotEmpty()
   PG_URI: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   @IsNotEmpty()
   VIEW_SERVER: string;
 
