@@ -21,7 +21,7 @@ export class TeamEntity {
   @OneToMany(() => EntryEntity, (entity) => entity.team, { onDelete: "CASCADE" })
   entries: EntryEntity[];
 
-  @OneToMany(() => StatsEntity, (stats) => stats.team, { onDelete: "CASCADE" })
+  @OneToMany(() => StatsEntity, (stats) => stats.team)
   stats: StatsEntity[];
 
   constructor(payload?: IOptionalTeam) {

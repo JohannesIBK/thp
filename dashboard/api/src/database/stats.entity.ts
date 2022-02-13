@@ -13,7 +13,7 @@ export class StatsEntity {
   @Column("smallint")
   round: number;
 
-  @ManyToOne(() => TeamEntity, (team) => team.stats)
+  @ManyToOne(() => TeamEntity, (team) => team.stats, { onDelete: "CASCADE" })
   team: TeamEntity;
 
   @Column("smallint")
