@@ -31,5 +31,7 @@ module.exports = {
     "global-require": "off",
     "no-plusplus": "off",
     "no-restricted-syntax": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"],
   },
 };
