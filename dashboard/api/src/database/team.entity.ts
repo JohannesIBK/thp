@@ -18,7 +18,7 @@ export class TeamEntity {
   @OneToMany(() => PlayerEntity, (player) => player.team)
   players: PlayerEntity[];
 
-  @OneToMany(() => EntryEntity, (entity) => entity.team, { onDelete: "CASCADE" })
+  @OneToMany(() => EntryEntity, (entity) => entity.team)
   entries: EntryEntity[];
 
   @OneToMany(() => StatsEntity, (stats) => stats.team)
