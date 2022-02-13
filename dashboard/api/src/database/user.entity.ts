@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { PermissionEnum } from "src/enums/permission.enum";
+import { PermissionEnum } from "../enums/permission.enum";
 import { IUserPayload } from "../types/user.interface";
 
 @Entity({ name: "users" })
