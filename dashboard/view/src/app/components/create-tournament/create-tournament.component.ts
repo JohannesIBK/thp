@@ -68,7 +68,7 @@ export class CreateTournamentComponent {
 
   get isValidForm(): boolean {
     if (this.scrims.value) {
-      return this.infoForm.valid;
+      return this.infoForm.valid && this.scrimsRounds.valid;
     } else {
       return this.infoForm.valid && this.phases.length > 0;
     }
