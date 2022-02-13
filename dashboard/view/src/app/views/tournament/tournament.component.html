@@ -30,18 +30,22 @@
   <section class="content" *ngIf="tournament && loaded">
     <h2>{{ tournament.name }}</h2>
     <div class="tournament-info">
-      <mat-grid-list cols="6" rowHeight="25px">
+      <mat-grid-list [cols]="tournament.scrims ? 6 : 8" rowHeight="25px">
         <mat-grid-tile><b>ID</b></mat-grid-tile>
-        <mat-grid-tile><b>Teams-Größe</b></mat-grid-tile>
+        <mat-grid-tile *ngIf="!tournament.scrims"><b>Team-Größe</b></mat-grid-tile>
         <mat-grid-tile><b>Phasen</b></mat-grid-tile>
-        <mat-grid-tile><b>Spieleranzahl</b></mat-grid-tile>
+        <mat-grid-tile *ngIf="!tournament.scrims"><b>Spieleranzahl</b></mat-grid-tile>
+        <mat-grid-tile><b>Punkte Kill</b></mat-grid-tile>
+        <mat-grid-tile><b>Punkte Win</b></mat-grid-tile>
         <mat-grid-tile><b>Läuft derzeit</b></mat-grid-tile>
         <mat-grid-tile><b>Scrims</b></mat-grid-tile>
 
         <mat-grid-tile>{{ tournament.id }}</mat-grid-tile>
-        <mat-grid-tile>{{ tournament.teamSize }}</mat-grid-tile>
+        <mat-grid-tile *ngIf="!tournament.scrims">{{ tournament.teamSize }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.phases.length }}</mat-grid-tile>
-        <mat-grid-tile>{{ phases[0].groups * phases[0].teams * tournament.teamSize }}</mat-grid-tile>
+        <mat-grid-tile *ngIf="!tournament.scrims">{{ phases[0].groups * phases[0].teams * tournament.teamSize }}</mat-grid-tile>
+        <mat-grid-tile>{{ tournament.kill }}</mat-grid-tile>
+        <mat-grid-tile>{{ tournament.win }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.active ? "Ja" : "Nein" }}</mat-grid-tile>
         <mat-grid-tile>{{ tournament.scrims ? "Ja" : "Nein" }}</mat-grid-tile>
       </mat-grid-list>
