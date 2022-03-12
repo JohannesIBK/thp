@@ -14,7 +14,7 @@
 #ifdef _DEBUG
 #define URL "http://localhost:3000"
 #else
-#define URL "https://thp-dashboard.greuter.dev"
+#define URL "https://dashboard.skywars-scrims.de"
 #endif
 
 
@@ -298,8 +298,8 @@ public:
                         line.erase(0, 39);
                         skywars.push_back(line);
                     }
-                    else if (line.rfind("[Client thread/INFO]: [CHAT] [Freunde] ", 0) == 0) {
-                        line.erase(0, 29);
+                    else if (line.rfind("[Client thread/INFO]: [CHAT] [Freunde] ", 0) == 0 || line.rfind("[Client thread/INFO]: [CHAT] [Friends] ", 0) == 0) {
+                        line.erase(0, 39);
                         actions.push_back(line);
                     }
                 }
@@ -353,9 +353,13 @@ public:
 
 
 int main() {
-    regex KILL_REGEX = regex("([a-zA-Z0-9_]{3,16}) wurde von ([a-zA-Z0-9_]{3,16})");
-    regex WIN_REGEX = regex("([a-zA-Z0-9_]{3,16}) hat SkyWars gewonnen");
-    regex STATUS_REGEX = regex(R"(\[Freunde\] Spieler f.r -r-(((start)-([a-zA-Z0-9]{1,16})-([0-9]))|(stop)) nicht gefunden)");
+    regex KILL_REGEX_DE = regex("([a-zA-Z0-9_]{3,16}) von ([a-zA-Z0-9_]{3,16})");
+    regex WIN_REGEX_DE = regex("([a-zA-Z0-9_]{3,16}) hat SkyWars gewonnen");
+    regex STATUS_REGEX_DE = regex(R"(^Spieler f.r -r-(((start)-([a-zA-Z0-9]{1,16})-([0-9]))|(stop)) nicht gefunden)");
+
+    regex KILL_REGEX_EN = regex("([a-zA-Z0-9_]{3,16}) was killed by ([a-zA-Z0-9_]{3,16})");
+    regex WIN_REGEX_EN = regex("([a-zA-Z0-9_]{3,16}) won SkyWars");
+    regex STATUS_REGEX_EN = regex(R"(^Player for -r-(((start)-([a-zA-Z0-9]{1,16})-([0-9]))|(stop)) not found)");
 
     HttpClient client;
     InputHandler input{};
@@ -386,7 +390,7 @@ int main() {
     minecraft.OpenFile();
     minecraft.SetFilePointer();
 
-    std::smatch m;
+    std::smatch m_de, m_en, m;
     string player1, player2;
     string buffer;
 
@@ -398,9 +402,11 @@ int main() {
         minecraft.ClearLines();
 
         for (const string& line : actions) {
-            regex_search(line, m, STATUS_REGEX);
-            if (!m.str(0).empty()) {
+            regex_search(line, m_de, STATUS_REGEX_DE);
+            regex_search(line, m_en, STATUS_REGEX_EN);
+            m = m_en.empty() ? m_de : m_en;
 
+            if (!m.str(0).empty()) {
                 if (m.str(1) == "stop") {
                     cout << "Die Runde wurde beendet." << endl;
                     client.EndRound();
@@ -415,16 +421,21 @@ int main() {
         }
 
         for (const string& line : skywars) {
-            regex_search(line, m, KILL_REGEX);
+            regex_search(line, m_de, KILL_REGEX_DE);
+            regex_search(line, m_en, KILL_REGEX_EN);
+            m = m_en.empty() ? m_de : m_en;
+
             if (!m.str(0).empty()) {
                 player1 = m.str(1);
                 player2 = m.str(2);
-
                 client.SendKill(player1, player2);
                 continue;
             }
 
-            regex_search(line, m, WIN_REGEX);
+            regex_search(line, m_de, WIN_REGEX_DE);
+            regex_search(line, m_en, WIN_REGEX_EN);
+            m = m_en.empty() ? m_de : m_en;
+
             if (!m.str(0).empty()) {
                 player1 = m.str(1);
 
