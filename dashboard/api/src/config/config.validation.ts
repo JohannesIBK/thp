@@ -1,5 +1,5 @@
-import { plainToClass } from "@nestjs/class-transformer";
-import { IsBooleanString, IsNotEmpty, IsNumber, IsString, IsUrl, validateSync } from "@nestjs/class-validator";
+import { plainToClass } from "class-transformer";
+import { IsBooleanString, IsNotEmpty, IsNumber, IsString, IsUrl, validateSync } from "class-validator";
 import { IConfig } from "../types/config.interface";
 
 class ConfigValidation {

@@ -1,4 +1,4 @@
-import { IsString, MaxLength } from "@nestjs/class-validator";
+import { IsString, MaxLength } from "class-validator";
 
 export class ReasonDto {
   @IsString()

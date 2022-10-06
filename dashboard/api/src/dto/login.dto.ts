@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length } from "@nestjs/class-validator";
+import { IsNotEmpty, IsString, Length } from "class-validator";
 
 export class LoginDto {
   @Length(3, 16)

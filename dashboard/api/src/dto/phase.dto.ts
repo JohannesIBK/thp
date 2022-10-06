@@ -1,4 +1,4 @@
-import { IsAlphanumeric, Length } from "@nestjs/class-validator";
+import { IsAlphanumeric, Length } from "class-validator";
 
 export class PhaseDto {
   @IsAlphanumeric()

@@ -2,8 +2,6 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { WinstonModule } from "nest-winston";
-import { transports } from "winston";
 import { ClientModule } from "./api/client/client.module";
 import { PhaseModule } from "./api/phase/phase.module";
 import { PlayerModule } from "./api/player/player.module";
@@ -38,11 +36,6 @@ import { IConfig } from "./types/config.interface";
         entities: [UserEntity, TournamentEntity, PlayerEntity, TeamEntity, StatsEntity, PhaseEntity, EntryEntity],
         synchronize: !configService.get("PRODUCTION"),
       }),
-    }),
-    WinstonModule.forRoot({
-      level: "info",
-      exitOnError: false,
-      transports: [new transports.File({ filename: "./logs/combined.log" })],
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

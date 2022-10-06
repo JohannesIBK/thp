@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DeleteResult, FindConditions, FindManyOptions, FindOneOptions, InsertResult, Repository, UpdateResult } from "typeorm";
+import { DeleteResult, FindOptionsWhere, FindManyOptions, FindOneOptions, InsertResult, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { PlayerEntity } from "../database/player.entity";
 import { CreatePlayerDto } from "../dto/create-player.dto";
@@ -29,12 +29,12 @@ export class PlayerService {
     return this.playerRepository.createQueryBuilder().delete().whereInIds(uuid).returning('"teamId"').execute();
   }
 
-  findOne(condition: FindOneOptions<PlayerEntity>): Promise<PlayerEntity | undefined> {
+  findOne(condition: FindOneOptions<PlayerEntity>): Promise<PlayerEntity | null> {
     return this.playerRepository.findOne(condition);
   }
 
   update(
-    criteria: FindConditions<PlayerEntity> | string | string[],
+    criteria: FindOptionsWhere<PlayerEntity> | string | string[],
     team: QueryDeepPartialEntity<PlayerEntity>,
   ): Promise<UpdateResult> {
     return this.playerRepository.update(criteria, team);
@@ -44,7 +44,7 @@ export class PlayerService {
     return this.playerRepository.findByIds(uuids);
   }
 
-  async findPlayerForLog(name: string): Promise<PlayerEntity | undefined> {
+  async findPlayerForLog(name: string): Promise<PlayerEntity | null> {
     return this.playerRepository
       .createQueryBuilder("player")
       .innerJoinAndSelect("player.team", "team", "player.teamId = team.id")

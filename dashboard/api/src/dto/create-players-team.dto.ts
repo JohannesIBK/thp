@@ -1,4 +1,4 @@
-import { ValidateNested } from "@nestjs/class-validator";
+import { ValidateNested } from "class-validator";
 import { CreatePlayerDto } from "./create-player.dto";
 
 export class CreatePlayersTeamDto {

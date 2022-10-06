@@ -12,7 +12,7 @@ import {
   MaxLength,
   Min,
   ValidateNested,
-} from "@nestjs/class-validator";
+} from "class-validator";
 
 class RoundDto {
   @IsString()

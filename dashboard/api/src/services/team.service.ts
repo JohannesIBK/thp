@@ -15,7 +15,7 @@ export class TeamService {
     return this.teamRepository.find(options);
   }
 
-  findOne(options?: FindOneOptions<TeamEntity>): Promise<TeamEntity | undefined> {
+  findOne(options: FindOneOptions<TeamEntity>): Promise<TeamEntity | null> {
     return this.teamRepository.findOne(options);
   }
 

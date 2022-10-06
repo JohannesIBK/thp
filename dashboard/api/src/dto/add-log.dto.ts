@@ -1,4 +1,4 @@
-import { IsNumber, IsPositive, IsString, Length, Max, Min } from "@nestjs/class-validator";
+import { IsNumber, IsPositive, IsString, Length, Max, Min } from "class-validator";
 
 export class AddLogDto {
   @IsString()

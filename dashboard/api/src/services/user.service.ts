@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindConditions, FindOneOptions, Repository, UpdateResult } from "typeorm";
+import { FindOptionsWhere, FindOneOptions, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { UserEntity } from "../database/user.entity";
 
@@ -13,8 +13,8 @@ export class UserService {
    * @param {string} id The id of the user
    * @returns {Promise<User|null>}
    */
-  findById(id: number): Promise<UserEntity | undefined> {
-    return this.usersRepository.findOne(id);
+  findById(id: number): Promise<UserEntity | null> {
+    return this.usersRepository.findOneBy({ id });
   }
 
   /**
@@ -22,7 +22,7 @@ export class UserService {
    * @param {string} username The username of the user
    * @returns {Promise<User|null>}
    */
-  findByUsername(username: string): Promise<UserEntity | undefined> {
+  findByUsername(username: string): Promise<UserEntity | null> {
     return this.usersRepository.findOne({ where: { username } });
   }
 
@@ -31,7 +31,7 @@ export class UserService {
    * @param {FindOneOptions<UserEntity>} query The query for searching
    * @returns {Promise<User|null>}
    */
-  findOne(query: FindOneOptions<UserEntity>): Promise<UserEntity | undefined> {
+  findOne(query: FindOneOptions<UserEntity>): Promise<UserEntity | null> {
     return this.usersRepository.findOne(query);
   }
 
@@ -50,11 +50,11 @@ export class UserService {
 
   /**
    * Updates a user in the database.
-   * @param {FindConditions<UserEntity>} criteria Criteria to find the user
+   * @param {FindOptionsWhere<UserEntity>} criteria Criteria to find the user
    * @param {QueryDeepPartialEntity<UserEntity>} user Data to update the user with
    * @return {Promise<UpdateResult>}
    */
-  update(criteria: FindConditions<UserEntity> | number, user: QueryDeepPartialEntity<UserEntity>): Promise<UpdateResult> {
+  update(criteria: FindOptionsWhere<UserEntity> | number, user: QueryDeepPartialEntity<UserEntity>): Promise<UpdateResult> {
     return this.usersRepository.update(criteria, user);
   }
 

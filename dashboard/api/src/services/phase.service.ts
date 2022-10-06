@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindConditions, Repository, SaveOptions } from "typeorm";
+import { Repository, SaveOptions, FindOptionsWhere } from "typeorm";
 import { EntryEntity } from "../database/entry.entity";
 import { PhaseEntity } from "../database/phase.entity";
 
@@ -27,7 +27,7 @@ export class PhaseService {
     return this.phaseEntryRepository.save(entity, options);
   }
 
-  async delete(condition: FindConditions<EntryEntity>): Promise<void> {
+  async delete(condition: FindOptionsWhere<EntryEntity>): Promise<void> {
     await this.phaseEntryRepository.delete(condition);
   }
 

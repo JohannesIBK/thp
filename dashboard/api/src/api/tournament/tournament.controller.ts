@@ -12,7 +12,6 @@ import { User } from "../../decorators/user.decorator";
 import { CreateTournamentDto } from "../../dto/create-tournament.dto";
 import { PermissionEnum } from "../../enums/permission.enum";
 import { PhaseService } from "../../services/phase.service";
-import { RatelimitService } from "../../services/ratelimit.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { IJwtUser } from "../../types/jwt-user.interface";
@@ -23,7 +22,6 @@ const execPromise = util.promisify(exec);
 export class TournamentController {
   constructor(
     private readonly tournamentService: TournamentService,
-    private readonly ratelimitService: RatelimitService,
     private readonly phaseService: PhaseService,
     private readonly teamService: TeamService,
   ) {}
@@ -47,9 +45,7 @@ export class TournamentController {
   async createBackup(@Response() response: FastifyReply): Promise<void> {
     const sqlDumpPath = path.join(__dirname, "..", "..", "..");
 
-    if (this.ratelimitService.consumePoint()) {
-      await execPromise(`pg_dump -T users thp > ${sqlDumpPath}/thp.sql`);
-    }
+    await execPromise(`pg_dump -T users thp > ${sqlDumpPath}/thp.sql`);
 
     response.send(createReadStream(`${sqlDumpPath}/thp.sql`));
   }

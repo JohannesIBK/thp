@@ -28,7 +28,7 @@ export class StatsController {
   @UseGuards(JwtAuthGuard)
   @HasPermission(PermissionEnum.ADMIN)
   async getPhaseStats(@Param() params: PhaseDto): Promise<StatsEntity[]> {
-    return this.statsService.findLogs({ phase: params.phase });
+    return this.statsService.findLogs({ where: { phase: params.phase } });
   }
 
   @Put()
@@ -49,7 +49,8 @@ export class StatsController {
 
     const entity = await this.statsService.saveLog(stat);
     this.socketService.sendStats(entity);
-    return this.statsService.findLogs({ team, phase: payload.phase });
+
+    return this.statsService.findLogs({ where: { team: { id: team.id }, phase: payload.phase } });
   }
 
   @Post("team/:phase")
@@ -57,10 +58,15 @@ export class StatsController {
   @HasPermission(PermissionEnum.ADMIN)
   @HttpCode(200)
   async getTeamPhaseStats(@Param() params: PhaseDto, @Body() payload: QueryTeamDto): Promise<StatsEntity[]> {
-    const team = new TeamEntity({ id: payload.id });
-
-    if (payload.round) return this.statsService.findLogs({ phase: params.phase, team, round: payload.round });
-    return this.statsService.findLogs({ phase: params.phase, team });
+    if (payload.round)
+      return this.statsService.findLogs({
+        where: {
+          phase: params.phase,
+          team: { id: payload.id },
+          round: payload.round,
+        },
+      });
+    return this.statsService.findLogs({ where: { phase: params.phase, team: { id: payload.id } } });
   }
 
   @Delete(":phase/:round")

@@ -1,4 +1,4 @@
-import { IsNumberString } from "@nestjs/class-validator";
+import { IsNumberString } from "class-validator";
 
 export class IdDto {
   @IsNumberString()

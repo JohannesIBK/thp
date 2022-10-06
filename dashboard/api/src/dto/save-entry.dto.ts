@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, Length } from "@nestjs/class-validator";
+import { IsNumber, IsOptional, IsString, Length } from "class-validator";
 
 export class SaveEntryDto {
   @IsNumber()

@@ -9,7 +9,6 @@ import { TournamentEntity } from "../../database/tournament.entity";
 import { UserEntity } from "../../database/user.entity";
 import { AuthService } from "../../services/auth.service";
 import { PhaseService } from "../../services/phase.service";
-import { RatelimitService } from "../../services/ratelimit.service";
 import { TeamService } from "../../services/team.service";
 import { TournamentService } from "../../services/tournament.service";
 import { UserService } from "../../services/user.service";
@@ -21,6 +20,6 @@ import { TournamentController } from "./tournament.controller";
     TypeOrmModule.forFeature([TournamentEntity, UserEntity, PhaseEntity, EntryEntity, TeamEntity, PlayerEntity]),
   ],
   controllers: [TournamentController],
-  providers: [TournamentService, AuthService, UserService, PhaseService, TeamService, RatelimitService],
+  providers: [TournamentService, AuthService, UserService, PhaseService, TeamService],
 })
 export class TournamentModule {}

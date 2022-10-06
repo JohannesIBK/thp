@@ -19,6 +19,7 @@ export class TeamController {
   @HasPermission(PermissionEnum.ADMIN)
   async getTeams(): Promise<ITeamsPlayersResponse> {
     const teams = await this.teamService.find({ relations: ["players"] });
+    // @ts-ignore
     const players = await this.playerService.find({ where: { team: null } });
 
     return { teams, players };
@@ -63,7 +64,7 @@ export class TeamController {
     const team = await this.teamService.findOne({ where: { id: parseInt(params.id, 10) } });
     if (!team) throw new ForbiddenException("Das Team wurde nicht gefunden");
 
-    await this.playerService.update({ team }, { team: null });
+    await this.playerService.update({ team: { id: team.id } }, { team: null });
     await this.playerService.update(payload.uuids, { team });
 
     return (await this.teamService.findOne({ where: { id: team.id }, relations: ["players"] }))!;

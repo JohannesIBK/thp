@@ -1,4 +1,4 @@
-import { IsAlphanumeric, IsNumberString, Length } from "@nestjs/class-validator";
+import { IsAlphanumeric, IsNumberString, Length } from "class-validator";
 
 export class ResetRoundDto {
   @IsAlphanumeric()

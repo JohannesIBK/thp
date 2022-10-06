@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Inject } from "@angular/core";
-import { FormControl, FormGroup, Validators as V } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatsService } from "../../services/stats.service";
@@ -15,12 +15,12 @@ import { ngCounter } from "../../utils/utils";
 })
 export class AddLogComponent {
   loading = false;
-  pointsInput = new FormControl(0, [V.required, V.max(10), V.min(-10)]);
-  reasonInput = new FormControl("", [V.required, V.minLength(1), V.maxLength(128)]);
-  roundSelect = new FormControl(null, [V.required]);
+  pointsInput = new UntypedFormControl(0, [V.required, V.max(10), V.min(-10)]);
+  reasonInput = new UntypedFormControl("", [V.required, V.minLength(1), V.maxLength(128)]);
+  roundSelect = new UntypedFormControl(null, [V.required]);
   ngCounter = ngCounter;
 
-  form = new FormGroup({
+  form = new UntypedFormGroup({
     points: this.pointsInput,
     reason: this.reasonInput,
     round: this.roundSelect,

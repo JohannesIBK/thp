@@ -1,4 +1,4 @@
-import { IsAscii, IsString, IsUUID, Length } from "@nestjs/class-validator";
+import { IsAscii, IsString, IsUUID, Length } from "class-validator";
 
 export class CreatePlayerDto {
   @IsUUID(4)

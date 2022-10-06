@@ -91,7 +91,7 @@ export class UserController {
     @Param("id", new ParseIntPipe()) id: number,
     @Body() payload: EditUserDto,
     @User() user: IJwtUser,
-  ): Promise<UserEntity | undefined> {
+  ): Promise<UserEntity | null> {
     if (!payload.permission && !payload.username) {
       throw new BadRequestException("Mindestens eine Sache muss verändert werden");
     }
@@ -121,6 +121,7 @@ export class UserController {
 
     try {
       await this.userService.save(entity);
+
       return this.userService.findOne({ where: { id }, select: ["username", "permission", "id"] });
     } catch {
       throw new BadRequestException("Der Username ist bereits vergeben.");

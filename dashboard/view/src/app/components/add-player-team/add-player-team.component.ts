@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Inject } from "@angular/core";
-import { FormControl, FormGroup, Validators as V } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MojangService } from "../../services/mojang.service";
@@ -15,8 +15,8 @@ import { ITournament } from "../../types/tournament.interface";
 export class AddPlayerTeamComponent {
   loading = false;
   players: IPlayer[] = [];
-  names: Record<number, FormControl> = {};
-  form: FormGroup;
+  names: Record<number, UntypedFormControl> = {};
+  form: UntypedFormGroup;
 
   constructor(
     private readonly dialogRef: MatDialogRef<AddPlayerTeamComponent>,
@@ -25,10 +25,10 @@ export class AddPlayerTeamComponent {
     private readonly snackBar: MatSnackBar,
   ) {
     for (let i = 0; i < tournament.teamSize; i++) {
-      this.names[i] = new FormControl("", [V.required, V.minLength(3), V.maxLength(16)]);
+      this.names[i] = new UntypedFormControl("", [V.required, V.minLength(3), V.maxLength(16)]);
     }
 
-    this.form = new FormGroup(this.names);
+    this.form = new UntypedFormGroup(this.names);
   }
 
   addPlayers(): void {

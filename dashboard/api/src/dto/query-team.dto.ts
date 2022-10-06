@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from "@nestjs/class-validator";
+import { IsNumber, IsOptional } from "class-validator";
 
 export class QueryTeamDto {
   @IsNumber()

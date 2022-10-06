@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component } from "@angular/core";
-import { FormControl, Validators as V } from "@angular/forms";
+import { UntypedFormControl, Validators as V } from "@angular/forms";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MojangService } from "../../services/mojang.service";
@@ -11,7 +11,7 @@ import { MojangService } from "../../services/mojang.service";
   styleUrls: ["./add-player.component.scss"],
 })
 export class AddPlayerComponent {
-  name = new FormControl("", [V.required, V.maxLength(32), V.minLength(2)]);
+  name = new UntypedFormControl("", [V.required, V.maxLength(32), V.minLength(2)]);
   loading = false;
 
   constructor(

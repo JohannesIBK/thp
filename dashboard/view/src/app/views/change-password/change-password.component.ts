@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component } from "@angular/core";
-import { FormControl, Validators } from "@angular/forms";
+import { UntypedFormControl, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
@@ -15,9 +15,9 @@ export class ChangePasswordComponent {
   hide1 = true;
   hide2 = true;
 
-  oldPW = new FormControl("", [Validators.required]);
-  newPW = new FormControl("", [Validators.required, Validators.minLength(8)]);
-  newPWRetry = new FormControl("", [Validators.required, Validators.minLength(8)]);
+  oldPW = new UntypedFormControl("", [Validators.required]);
+  newPW = new UntypedFormControl("", [Validators.required, Validators.minLength(8)]);
+  newPWRetry = new UntypedFormControl("", [Validators.required, Validators.minLength(8)]);
 
   constructor(private snackbar: MatSnackBar, private router: Router, private readonly authService: AuthService) {}
 

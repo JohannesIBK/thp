@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { FormControl, FormGroup, Validators as V } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators as V } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { IPhase } from "../../types/phase.interface";
 
@@ -21,27 +21,27 @@ export class CreateTournamentComponent {
     groups: "Gruppen",
   };
 
-  name = new FormControl(null, [V.required, V.minLength(3), V.maxLength(64)]);
-  killPoints = new FormControl(1, [V.required, V.min(0), V.max(100)]);
-  winPoints = new FormControl(2, [V.required, V.min(0), V.max(100)]);
-  teamSize = new FormControl(null, [V.required, V.min(1), V.max(4)]);
-  scrims = new FormControl(false);
-  scrimsRounds = new FormControl(null, [V.required, V.min(1), V.max(32)]);
+  name = new UntypedFormControl(null, [V.required, V.minLength(3), V.maxLength(64)]);
+  killPoints = new UntypedFormControl(1, [V.required, V.min(0), V.max(100)]);
+  winPoints = new UntypedFormControl(2, [V.required, V.min(0), V.max(100)]);
+  teamSize = new UntypedFormControl(null, [V.required, V.min(1), V.max(4)]);
+  scrims = new UntypedFormControl(false);
+  scrimsRounds = new UntypedFormControl(null, [V.required, V.min(1), V.max(32)]);
 
-  phaseName = new FormControl(null, [V.required, V.minLength(2), V.maxLength(32)]);
-  phaseAcronym = new FormControl(null, [V.required, V.minLength(1), V.maxLength(16)]);
-  phaseRounds = new FormControl(null, [V.required, V.min(1), V.max(16)]);
-  phaseTeams = new FormControl(null, [V.required, V.min(2), V.max(128)]);
-  phaseGroups = new FormControl(null, [V.required, V.min(1), V.max(20)]);
+  phaseName = new UntypedFormControl(null, [V.required, V.minLength(2), V.maxLength(32)]);
+  phaseAcronym = new UntypedFormControl(null, [V.required, V.minLength(1), V.maxLength(16)]);
+  phaseRounds = new UntypedFormControl(null, [V.required, V.min(1), V.max(16)]);
+  phaseTeams = new UntypedFormControl(null, [V.required, V.min(2), V.max(128)]);
+  phaseGroups = new UntypedFormControl(null, [V.required, V.min(1), V.max(20)]);
 
-  infoForm = new FormGroup({
+  infoForm = new UntypedFormGroup({
     name: this.name,
     teamSize: this.teamSize,
     kill: this.killPoints,
     win: this.winPoints,
   });
 
-  phaseForm = new FormGroup({
+  phaseForm = new UntypedFormGroup({
     name: this.phaseName,
     rounds: this.phaseRounds,
     acronym: this.phaseAcronym,

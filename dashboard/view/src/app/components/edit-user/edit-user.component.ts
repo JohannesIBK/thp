@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Inject } from "@angular/core";
-import { FormControl, FormGroup, Validators as V } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserService } from "../../services/user.service";
@@ -13,9 +13,9 @@ import { IUser } from "../../types/user.interface";
   styleUrls: ["./edit-user.component.scss"],
 })
 export class EditUserComponent {
-  username: FormControl;
-  permission: FormControl;
-  form: FormGroup;
+  username: UntypedFormControl;
+  permission: UntypedFormControl;
+  form: UntypedFormGroup;
   PermissionEnum = PermissionEnum;
   loading = false;
   currentUser: IUser;
@@ -30,10 +30,10 @@ export class EditUserComponent {
     this.currentUser = data.currentUser;
     this.user = data.user;
 
-    this.username = new FormControl(this.user.username, [V.minLength(3), V.maxLength(16)]);
-    this.permission = new FormControl(this.user.permission);
+    this.username = new UntypedFormControl(this.user.username, [V.minLength(3), V.maxLength(16)]);
+    this.permission = new UntypedFormControl(this.user.permission);
 
-    this.form = new FormGroup({
+    this.form = new UntypedFormGroup({
       username: this.username,
       permission: this.permission,
     });

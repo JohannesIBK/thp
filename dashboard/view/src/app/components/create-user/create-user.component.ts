@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Inject } from "@angular/core";
-import { FormControl, FormGroup, Validators as V } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserService } from "../../services/user.service";
@@ -14,10 +14,10 @@ import { PermissionEnum } from "../../types/enums";
 export class CreateUserComponent {
   loading = false;
   PermissionEnum = PermissionEnum;
-  username = new FormControl("", [V.required, V.minLength(3), V.maxLength(16)]);
-  password = new FormControl("", [V.required, V.minLength(8)]);
-  permission = new FormControl(PermissionEnum.USER, [V.required]);
-  form = new FormGroup({
+  username = new UntypedFormControl("", [V.required, V.minLength(3), V.maxLength(16)]);
+  password = new UntypedFormControl("", [V.required, V.minLength(8)]);
+  permission = new UntypedFormControl(PermissionEnum.USER, [V.required]);
+  form = new UntypedFormGroup({
     username: this.username,
     password: this.password,
     permission: this.permission,

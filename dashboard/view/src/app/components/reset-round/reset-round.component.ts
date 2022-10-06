@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Inject } from "@angular/core";
-import { FormControl, FormGroup, Validators as V } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatsService } from "../../services/stats.service";
@@ -13,9 +13,9 @@ import { ITournament } from "../../types/tournament.interface";
 })
 export class ResetRoundComponent {
   loading = false;
-  phaseSelect = new FormControl(null, [V.required]);
-  roundSelect = new FormControl(null, [V.required]);
-  form = new FormGroup({
+  phaseSelect = new UntypedFormControl(null, [V.required]);
+  roundSelect = new UntypedFormControl(null, [V.required]);
+  form = new UntypedFormGroup({
     phase: this.phaseSelect,
     round: this.roundSelect,
   });

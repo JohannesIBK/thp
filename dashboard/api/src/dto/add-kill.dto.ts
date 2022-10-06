@@ -1,4 +1,4 @@
-import { IsNumber, IsString, Length } from "@nestjs/class-validator";
+import { IsNumber, IsString, Length } from "class-validator";
 
 export class AddKillDto {
   @IsString()

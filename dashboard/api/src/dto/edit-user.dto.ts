@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, Length } from "@nestjs/class-validator";
+import { IsEnum, IsOptional, IsString, Length } from "class-validator";
 import { PermissionEnum } from "../enums/permission.enum";
 
 export class EditUserDto {

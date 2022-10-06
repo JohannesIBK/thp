@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Inject } from "@angular/core";
-import { FormControl, Validators as V } from "@angular/forms";
+import { UntypedFormControl, Validators as V } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TeamService } from "../../services/team.service";
@@ -13,7 +13,7 @@ import { TeamManageResponse } from "../../types/enums";
 })
 export class DisqualifyTeamComponent {
   loading = false;
-  reasonInput = new FormControl("", [V.required, V.maxLength(512)]);
+  reasonInput = new UntypedFormControl("", [V.required, V.maxLength(512)]);
 
   constructor(
     private readonly dialogRef: MatDialogRef<DisqualifyTeamComponent>,

@@ -12,7 +12,7 @@ export class TournamentService {
     return this.tournamentRepository.save(tournament);
   }
 
-  findOne(): Promise<TournamentEntity | undefined> {
+  findOne(): Promise<TournamentEntity | null> {
     return this.tournamentRepository.findOne({ relations: ["phases"] });
   }
 
