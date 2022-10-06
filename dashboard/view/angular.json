@@ -161,6 +161,7 @@
   },
   "cli": {
     "analytics": false,
+    "packageManager": "pnpm",
     "schematicCollections": [
       "@angular-eslint/schematics"
     ]
