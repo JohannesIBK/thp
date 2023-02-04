@@ -1,8 +1,8 @@
 import { Location } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
 import { MatSort } from "@angular/material/sort";
 import { Router } from "@angular/router";
 import { ActivateTournamentRequestComponent } from "../../components/activate-tournament-request/activate-tournament-request.component";

@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { UntypedFormControl, UntypedFormGroup, Validators as V } from "@angular/forms";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
 import { IPhase } from "../../types/phase.interface";
 
 @Component({
